@@ -1,0 +1,50 @@
+.code-editor {
+  display: block;
+  width: 100%;
+  /* 100vh - (header + edit menu) */
+  height: calc(100vh - ((4rem + 1px) + (2rem + 2 * 0.5rem)));
+}
+
+.mh-full {
+  min-height: 100%;
+}
+
+/* Drag line */
+div[draggable] {
+  position: relative;
+  user-select: none;
+
+  /* Select button attached to line */
+  & > div::before {
+    @apply border border-dotted;
+    border-right: none; /* No right border */
+    border-radius: 0.25rem 0 0 0.25rem; /* round left border */
+
+    background-image: url(/assets/ellipsis.double.svg);
+    background-repeat: no-repeat;
+    background-position: 40% 50%;
+    background-size: 16px 16px;
+
+    cursor: ew-resize;
+    content: '';
+    position: absolute;
+    top: 0.5rem;
+    right: 4px;
+    width: calc(1rem - 2px);
+    height: 2rem;
+  }
+
+  &.dragActive > div::before,
+  &:hover > div::before {
+    /* background: var(--border-color); */
+    /* @apply bg-blue border-solid border-blue; */
+    @apply border-solid;
+    border-right: none;
+    background-color: var(--bg-btn-hover);
+  }
+
+  &.dragActive > div,
+  &:hover > div {
+    @apply border-l-2; /* border-blue */
+  }
+}

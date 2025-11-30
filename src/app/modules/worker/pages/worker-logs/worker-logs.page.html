@@ -1,0 +1,75 @@
+<div>
+  <div class="overflow-hidden rounded w-full">
+    <table>
+      <tbody>
+        @if (logs$ | async; as logs) {
+          @for (log of logs; track log) {
+            @if (log.type === 'log') {
+              <tr class="log" [ngClass]="log.level">
+                <td>
+                  <div class="dot" [ngClass]="log.level"></div>
+                </td>
+                <td>
+                  <code [innerHTML]="log.message"></code>
+                </td>
+                <td>
+                  <code>{{ log.date | date:'MMM dd, yyyy HH:mm:ss.SSS' }}</code>
+                </td>
+              </tr>
+            }
+            @if (log.type === 'open') {
+              <tr class="log init">
+                <td></td>
+                <td>
+                  <code> Connected to log service, waiting for logs... </code>
+                </td>
+                <td>
+                  <code>{{ log.date | date:'MMM dd, yyyy HH:mm:ss.SSS' }}</code>
+                </td>
+              </tr>
+            }
+            @if (log.type === 'error') {
+              <tr class="log error">
+                <td></td>
+                <td>
+                  <code>
+                    Error connecting to log service@if (log.message) {
+                    <span> ({{ log.message | json }})</span>
+                    }, <br />
+                    trying again in 3 seconds...
+                  </code>
+                </td>
+                <td>
+                  <code>{{ log.date | date:'MMM dd, yyyy HH:mm:ss.SSS' }}</code>
+                </td>
+              </tr>
+            }
+            <!--  -->
+            @if (log.type === 'timeout') {
+              <tr class="log error">
+                <td></td>
+                <td>
+                  <code>
+                    Connection closed due to inactivity (5 minutes without log), <br />
+                    please refresh the page to reconnect.
+                  </code>
+                </td>
+                <td>
+                  <code>{{ log.date | date:'MMM dd, yyyy HH:mm:ss.SSS' }}</code>
+                </td>
+              </tr>
+            }
+          }
+        } @else {
+          <tr>
+            <td colspan="5">Waiting for logs...</td>
+            <td></td>
+          </tr>
+        }
+
+      </tbody>
+    </table>
+  </div>
+
+  <app-debug [expand]="true">{{ worker | json }}</app-debug>
+</div>

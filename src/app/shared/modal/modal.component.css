@@ -1,0 +1,53 @@
+.modal-content {
+  border: none;
+}
+
+/* rgba(115, 115, 115, 0.1) -> Neutral 500 */
+.stripped {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 20px,
+    rgba(115, 115, 115, 0.1) 20px,
+    rgba(115, 115, 115, 0.1) 40px
+  );
+}
+
+.modal {
+  position: fixed;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-dialog {
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  width: 32em;
+  max-width: 100%;
+  padding: 1.25em;
+  border-radius: 0.3125em;
+  background: var(--bg-secondary);
+  font-family: inherit;
+  font-size: 1rem;
+  box-sizing: border-box;
+
+  &.small {
+    width: 32em;
+  }
+
+  &.large {
+    width: 48em;
+  }
+}

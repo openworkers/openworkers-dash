@@ -1,0 +1,13 @@
+ul {
+  background-color: var(--input-bg);
+}
+
+li {
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--input-border);
+  }
+
+  &.deleted {
+    text-decoration: line-through 1px #434343;
+  }
+}

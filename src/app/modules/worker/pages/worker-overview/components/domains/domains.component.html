@@ -1,0 +1,67 @@
+@if (domains && form) {
+  <form (submit)="$event.preventDefault(); onSubmit()">
+    <ul class="rounded mt-2 px-2 w-full empty:hidden">
+      @for (el of form.controls; track el; let index = $index) {
+        <li
+          class="input-group flex px-1 py-0 items-center"
+          [ngClass]="{ deleted: el.deleted }"
+          >
+          @switch (el.disabled) {
+            @case (true) {
+              <a class="btn-link flex-1 w-0 text-left text-blue" [href]="'//' + el.value" target="_blank">
+                <div class="flex align-middle items-center px-3 h-8">
+                  {{ el.value }}
+                </div>
+              </a>
+            }
+            @case (false) {
+              <input class="input flex-1 w-0" type="text" [formControl]="el" placeholder="Domain name" required />
+            }
+          }
+          @switch (el.deleted) {
+            @case (true) {
+              <button type="button" (click)="el.rollbackDelete()">
+                <i icon="revert"></i>
+              </button>
+            }
+            @case (false) {
+              <button type="button" (click)="form.deleteAt(index)">
+                <i icon="trash"></i>
+              </button>
+            }
+          }
+        </li>
+      }
+    </ul>
+    <div class="mt-2 flex justify-between">
+      <div>
+        <button type="button" class="btn-light mr-2" (click)="addValue()">+ Add domain</button>
+      </div>
+      @if (form.changed) {
+        <div class="flex">
+          <button type="button" class="btn-light mr-2" (click)="resetForm()" [disabled]="form.pending">Reset</button>
+          <button type="submit" class="btn-blue" [disabled]="form.invalid || form.pending">Save</button>
+        </div>
+      }
+    </div>
+    <div class="mt-2">
+      @if (form.getError('duplicateKey'); as err) {
+        <div class="text-xs pb-2 text-red">
+          <div>Duplicate key {{ err | json }}</div>
+        </div>
+      }
+      @for (ctr of form.controls; track ctr) {
+        @if (ctr.getError('domainName'); as err) {
+          <div class="text-xs pb-2 text-red">
+            <div>Invalid domain name {{ ctr.value }}</div>
+          </div>
+        }
+        @if (ctr.getError('maxlength'); as err) {
+          <div class="text-xs pb-2 text-red">
+            <div>Domain name {{ ctr.value?.slice(0, 10) }}...{{ ctr.value?.slice(-20) }} is too long</div>
+          </div>
+        }
+      }
+    </div>
+  </form>
+}

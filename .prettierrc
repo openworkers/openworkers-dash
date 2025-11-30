@@ -1,0 +1,17 @@
+{
+  "tabWidth": 2,
+  "useTabs": false,
+  "singleQuote": true,
+  "trailingComma": "none",
+  "endOfLine": "lf",
+  "arrowParens": "always",
+  "printWidth": 120,
+  "overrides": [
+    {
+      "files": ["src/**/*.html"],
+      "options": {
+        "parser": "angular"
+      }
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+table {
+  width: 100%;
+  overflow: hidden;
+  tbody {
+    tr {
+      &.log {
+        &:nth-of-type(odd) {
+          background-color: var(--bg-secondary);
+        }
+
+        &.init {
+          background-color: #22c55e33;
+        }
+
+        &.warn {
+          background-color: #eab30833;
+        }
+
+        &.error {
+          background-color: #ef444433;
+        }
+      }
+
+      td {
+        padding: 0.5rem;
+
+        &:first-of-type {
+          padding-left: 1rem;
+        }
+
+        &:last-of-type {
+          text-align: right;
+          padding-right: 1rem;
+        }
+      }
+    }
+  }
+}
+
+.dot {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  background-color: #6b7280;
+  border-radius: 9999px;
+
+  &.info {
+    background-color: #22c55e80;
+  }
+
+  &.warn {
+    background-color: #eab30880;
+  }
+
+  &.error {
+    background-color: #ef444480;
+  }
+
+  &.debug,
+  &.log {
+    background-color: #06b6d480;
+  }
+}

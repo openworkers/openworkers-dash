@@ -1,0 +1,75 @@
+@if (kv && form) {
+  <form (submit)="$event.preventDefault(); onSubmit()">
+    <ul class="rounded mt-2 px-2 w-full empty:hidden">
+      @for (el of form.controls; track el; let index = $index) {
+        <li
+          class="input-group flex px-1 py-0 items-center"
+          [ngClass]="{ deleted: el.deleted, secret: el.controls.secret.value }"
+          >
+          <input class="input flex-1 w-0" type="text" [formControl]="el.controls.key" placeholder="KEY" required />
+          <input
+            [ngClass]="{ hidden: el.controls.secret.value }"
+            class="input flex-1 w-0"
+            type="text"
+            [formControl]="el.controls.value"
+            placeholder="VALUE"
+            required
+            />
+          <div class="flex-1 w-0" [ngClass]="el.controls.secret.value ? 'inline' : 'hidden'">
+            <span class="text-gray-500">************</span>
+          </div>
+          <!-- Controls -->
+          <div class="flex gap-2">
+            <!-- Button lock -->
+            @switch (el.controls.secret.defaultValue && el.controls.secret.value) {
+              @case (true) {
+                <button type="button" (click)="resetSecret(el, $event)">
+                  <i icon="lock-close"></i>
+                </button>
+              }
+              @case (false) {
+                <input #lock class="hidden" type="checkbox" [formControl]="el.controls.secret" />
+                <label class="flex items-center" (click)="lock.click()">
+                  <button type="button">
+                    <i [icon]="el.controls.secret.value ? 'lock-close' : 'lock-open'"></i>
+                  </button>
+                </label>
+              }
+            }
+            <!-- Button trash/undo -->
+            @switch (el.deleted) {
+              @case (true) {
+                <button type="button" (click)="el.rollbackDelete()">
+                  <i icon="revert"></i>
+                </button>
+              }
+              @case (false) {
+                <button type="button" (click)="form.deleteAt(index)">
+                  <i icon="trash"></i>
+                </button>
+              }
+            }
+          </div>
+        </li>
+      }
+    </ul>
+    <div class="mt-2 flex justify-between">
+      <div>
+        <button type="button" class="btn-light mr-2" (click)="addKeyValue()">+ Add variable</button>
+      </div>
+      @if (form.changed) {
+        <div class="flex">
+          <button type="button" class="btn-light mr-2" (click)="resetForm()">Reset</button>
+          <button type="submit" class="btn-blue" [disabled]="form.invalid">Save</button>
+        </div>
+      }
+    </div>
+    <div class="mt-2">
+      @if (form.getError('duplicateKey'); as err) {
+        <div class="text-xs pb-2 text-red">
+          <div>Duplicate key {{ err | json }}</div>
+        </div>
+      }
+    </div>
+  </form>
+}

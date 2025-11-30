@@ -1,0 +1,64 @@
+@if (worker) {
+<div class="h-full flex" [ngClass]="'theme-' + (theme$ | async)">
+  <div class="flex flex-1">
+    <div class="mh-full">
+      <!-- Editor nav -->
+      <nav class="flex justify-between py-2 px-2">
+        <div class="flex items-center h-8 gap-4">
+          <a [routerLink]="['/worker', worker.id]" class="font-bold">
+            <div class="flex items-center font-size-1">
+              <i icon="arrow-back" class="mr-2 fill-current"></i>
+              Return to worker&nbsp;<span>({{ worker.name }})</span>
+            </div>
+          </a>
+          @if (!script.pristine) {
+          <button
+            class="btn-blue mr-2"
+            type="button"
+            (click)="updateWorker()"
+            [disabled]="script.value === worker.script"
+          >
+            Update
+          </button>
+          }
+        </div>
+      </nav>
+      <!-- Editor -->
+      <ngx-monaco-editor
+        class="code-editor"
+        [style.width.px]="splitPosition$ | async"
+        [options]="options"
+        [formControl]="script"
+        (init)="onEditorInit($event)"
+      ></ngx-monaco-editor>
+    </div>
+    <div
+      [ngClass]="{ 'dragActive': dragActive }"
+      class="bg-white w-1"
+      draggable="true"
+      (drag)="splitPosition.next($event.x)"
+      (dragend)="dragActive = false"
+      (dragstart)="onDragStart($event)"
+    >
+      <div class="absolute cursor-ew-resize w-1 border-l h-full"></div>
+    </div>
+    <div class="flex flex-col mh-full w-full">
+      <!-- Preview nav -->
+      <nav class="flex justify-between p-2">
+        <a class="btn-outline mr-2 flex items-center" [href]="workerUrl + href.value" target="_blank">
+          <i icon="new-tab"></i>
+        </a>
+        <input class="input-outline w-full" name="value" [formControl]="href" />
+      </nav>
+      <!-- Preview -->
+      <div class="relative bg-white flex flex-1 mx-2">
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-transparent" [ngClass]="{ 'hidden': !dragActive }"></div>
+        <ng-container>
+          <app-iframe class="w-full" [reload]="refreshPreview$"></app-iframe>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+}

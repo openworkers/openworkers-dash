@@ -1,0 +1,75 @@
+<div class="page">
+  <div class="mb-8">
+    @if ((resourceName + 's').toLowerCase(); as res) {
+      <a class="font-bold" [routerLink]="['/', res]">
+        <div class="flex items-center font-size-1">
+          <i icon="arrow-back" class="mr-2 fill-current"></i>
+          Return to&nbsp;{{ res }}
+        </div>
+      </a>
+    }
+  </div>
+
+  @if (resource !== null) {
+    <div class="flex justify-between">
+      <div>
+        <div>
+          <app-editable
+            class="font-bold font-size-1"
+            size="1.25rem"
+            key="name"
+            placeholder="Name"
+            [target]="resource"
+            (update)="update.emit($event)"
+          >
+          </app-editable>
+          <app-editable key="desc" placeholder="Description" [target]="resource" (update)="update.emit($event)">
+            No description
+          </app-editable>
+        </div>
+        @if (this.menuLinks && this.menuLinks.length > 1) {
+          <ul class="menu-links flex mt-2 mb-4">
+            @for (name of menuLinks; track name) {
+              <li class="mx-2">
+                <a
+                  class="transition-colors border-b border-transparent hover:border-grey"
+                  routerLinkActive="border-grey"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  [routerLink]="name === 'overview' ? '.' : name"
+                >
+                  <span class="capitalize">{{ name }}</span>
+                </a>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+      <div>
+        <button class="btn-outline-red" type="button" (click)="open.emit(true)">Delete</button>
+      </div>
+    </div>
+    <router-outlet></router-outlet>
+  } @else {
+    <h4>{{ resourceName }} not found</h4>
+    <a routerLink="/">back home</a>
+  }
+</div>
+
+<app-modal [open]="(open | async) ?? false" (openChange)="open.emit(false)">
+  <ng-container role="header">
+    <h4 class="font-bold">Delete {{ resourceName }}</h4>
+  </ng-container>
+
+  <ng-container role="body">
+    <div class="my-4">
+      <p>Are you sure you want to delete this {{ resourceName }}?</p>
+    </div>
+  </ng-container>
+
+  <ng-container role="footer">
+    <div class="flex">
+      <button class="btn-light mr-2" type="button" (click)="open.emit(false)">Cancel</button>
+      <button class="btn-outline-red" type="button" (click)="delete.emit()">Delete</button>
+    </div>
+  </ng-container>
+</app-modal>

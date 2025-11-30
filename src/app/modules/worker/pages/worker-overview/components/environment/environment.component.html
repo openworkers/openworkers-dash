@@ -1,0 +1,47 @@
+<ng-container>
+  <h4>Environment</h4>
+
+  @if (editing) {
+    <form (submit)="$event.preventDefault(); submitForm()">
+      <fieldset>
+        <select class="input-outline w-full mt-4" [formControl]="form">
+          <option [ngValue]="null">none</option>
+          @if (environments$ | async; as environments) {
+            @for (env of environments; track env) {
+              <option [ngValue]="env.id">{{ env.name }}</option>
+            }
+          } @else {
+            @if (worker.environment; as env) {
+              <option [ngValue]="env.id">{{ env.name }}</option>
+            }
+            <option [ngValue]="null" disabled>loading...</option>
+          }
+        </select>
+      </fieldset>
+      <fieldset class="flex mt-4">
+        <button class="btn-outline mr-2" type="button" (click)="resetForm()" [disabled]="form.pending">Cancel</button>
+        <button class="btn-blue" type="submit" [disabled]="form.invalid || form.pristine || form.pending">
+          Submit
+        </button>
+      </fieldset>
+    </form>
+  } @else {
+    <ng-container>
+      <div class="flex">
+        <fieldset class="w-full mt-4">
+          @if (worker.environment; as env) {
+            <a class="btn-light w-full text-left justify-start" [routerLink]="['/environment', env.id]">
+              {{ env.name }}
+            </a>
+          } @else {
+            <input class="input w-full" value="none" disabled />
+          }
+        </fieldset>
+      </div>
+      <fieldset class="mt-4">
+        <button class="btn-outline" type="button" (click)="editing = true">Change</button>
+      </fieldset>
+    </ng-container>
+  }
+
+</ng-container>

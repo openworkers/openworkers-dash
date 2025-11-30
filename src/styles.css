@@ -1,0 +1,408 @@
+@import 'tailwindcss';
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Dark mode */
+  --color-scheme: light dark;
+
+  /* Breakpoints */
+  --breakpoint-xs: 375px;
+
+  /* Custom colors */
+  --color-red: #e64040;
+  --color-red-disabled: #f5a9a9;
+  --color-red-hover-dark: #ec6d6d;
+  --color-red-hover: #d71c1c;
+  --color-blue: #057feb;
+  --color-blue-disabled: #74a9eb;
+  --color-blue-hover-dark: #1F99FF;
+  --color-blue-hover: #0075DB;
+  --color-yellow: #ffc145;
+  --color-yellow-disabled: #ffe3ab;
+  --color-yellow-hover-dark: #ffd278;
+  --color-yellow-hover: #ffb012;
+  --color-github-black: #24292f;
+  --color-black: #101010;
+  --color-grey: #6b7280;
+  --color-dark-100: #a6a7ab;
+  --color-dark-200: #909296;
+  --color-dark-300: #5c5f66;
+  --color-dark-400: #373a40;
+  --color-dark-500: #2c2e33;
+  --color-dark-600: #25262b;
+  --color-dark-700: #1a1b1e;
+  --color-dark-800: #141517;
+  --color-dark-900: #101113;
+}
+
+:root,
+:root.light {
+  --color-primary: #1f2937; /* gray-800 | Body */
+  --border-color: #e5e7eb; /* gray-200 | btn border, input border */
+  --bg-primary: #ffffff; /* white */
+  --bg-secondary: #ffffff; /* gray-100 */
+
+  --bg-btn-hover: #f3f4f6; /* gray-100 */
+
+  --disabled-color: #d1d5db; /* gray-300 | btn text */
+  --disabled-border: #e5e7eb; /* gray-200 | btn border */
+
+  /* Inputs */
+  --input-bg: #ffffff;
+  --input-border: #f3f4f6; /* gray-100 */
+  --input-disabled-bg: #f3f4f6; /* gray-100 */
+}
+
+:root.dark {
+  --color-primary: #f3f4f6; /* gray-100 | Body */
+  --border-color: #373a40; /* Open Color Gray 8 */
+  --bg-primary: #141517; /* dark-800 */
+  --bg-secondary: #1a1b1e; /* dark-700 */
+
+  --bg-btn-hover: #25262b; /* dark-600 */
+
+  --disabled-color: #5f6164;
+  --disabled-border: #2b2e32; /* --border-color * 60% opacity on bg-secondary */
+
+  /* Inputs */
+  --input-bg: #25262b; /* dark-600 */
+  --input-border: #1a1b1e; /* dark-700 */
+  --input-disabled-bg: #202226; /* 2 * dark-900 */
+}
+
+@utility btn-core {
+  @apply rounded text-base h-8 py-0 px-3;
+  @apply flex text-center cursor-pointer items-center;
+  @apply flex-none grow-0 justify-center px-4 text-sm;
+}
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--border-color);
+  }
+
+  button:not(:disabled) {
+    @apply cursor-pointer;
+  }
+
+  h1 {
+    @apply text-5xl;
+  }
+  h2 {
+    @apply text-4xl;
+  }
+  h3 {
+    @apply text-3xl;
+  }
+  h4 {
+    @apply text-2xl;
+  }
+  h5 {
+    @apply text-xl;
+  }
+
+  input,
+  select,
+  textarea {
+    @apply outline-none;
+  }
+
+  textarea {
+    @apply min-h-16;
+  }
+
+  input,
+  select {
+    @apply h-8;
+  }
+
+  textarea,
+  fieldset > label {
+    display: block;
+  }
+
+  select option:disabled {
+    @apply text-gray-400;
+  }
+
+  body {
+    @apply font-sans;
+    color: var(--color-primary);
+    background-color: var(--bg-primary);
+  }
+
+  app-root {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@layer components {
+  /* Custom components */
+  .container {
+    @apply mx-auto max-w-5xl;
+  }
+
+  .clickable {
+    @apply cursor-pointer select-none;
+  }
+
+  .page,
+  .main-nav > .nav-content {
+    @apply mx-auto max-w-5xl px-2 xs:px-4 sm:px-6;
+  }
+
+  .page {
+    @apply py-8;
+  }
+
+  .main-nav {
+    & > .nav-content {
+      @apply flex justify-between items-center;
+    }
+  }
+
+  .card {
+    @apply border rounded-lg p-4;
+
+    background-color: var(--bg-secondary);
+
+    @apply text-gray-800;
+    @apply dark:text-gray-100;
+  }
+
+  /* Nav */
+  .menu-item {
+    @apply flex flex-col justify-center;
+
+    @apply fill-current;
+    @apply border-b border-transparent;
+
+    &.active {
+      @apply font-semibold;
+      @apply border-b border-blue-hover dark:border-blue-hover-dark;
+    }
+  }
+
+  /* Buttons & inputs */
+  .input-outline,
+  .input,
+  .btn-outline,
+  .btn {
+    @apply rounded text-base h-8;
+    @apply py-0 px-3;
+  }
+
+  .btn {
+    @apply flex text-center cursor-pointer items-center;
+    @apply flex-none grow-0 justify-center px-4 text-sm;
+  }
+
+  .input.ng-invalid:not(.ng-untouched) {
+    @apply text-red;
+  }
+
+  .input,
+  .input-outline {
+    background-color: var(--input-bg);
+
+    &::placeholder {
+      /* ? */
+      color: var(--disabled-color);
+      font-style: italic;
+      /* ? */
+    }
+  }
+
+  .btn-outline,
+  .input-outline {
+    @apply border;
+
+    border-color: var(--border-color);
+
+    &.ng-invalid:not(.ng-untouched) {
+      @apply border-red text-red;
+    }
+  }
+
+  .input,
+  .btn-light,
+  .btn-outline,
+  .input-outline {
+    &:disabled {
+      color: var(--disabled-color);
+      border-color: var(--disabled-border);
+      background-color: var(--input-disabled-bg);
+      @apply cursor-not-allowed opacity-100;
+    }
+  }
+
+  .big {
+    @apply text-base h-10 rounded-md px-4;
+  }
+
+  /************/
+  /* Colored buttons */
+  .btn-blue {
+    @apply btn-core;
+    @apply text-white hover:text-white disabled:cursor-not-allowed;
+    @apply bg-blue hover:bg-blue-hover disabled:bg-blue-disabled;
+    @apply dark:bg-blue dark:hover:bg-blue-hover-dark dark:disabled:bg-blue-disabled;
+
+    &.hover {
+      @apply bg-blue-hover dark:bg-blue-hover-dark;
+    }
+  }
+
+  .btn-red {
+    @apply btn-core;
+    @apply text-white hover:text-white disabled:cursor-not-allowed;
+    @apply bg-red hover:bg-red-hover disabled:bg-red-disabled;
+    @apply dark:bg-red dark:hover:bg-red-hover-dark dark:disabled:bg-red-disabled;
+
+    &.hover {
+      @apply bg-red-hover dark:bg-red-hover-dark;
+    }
+  }
+
+  .btn-yellow {
+    @apply btn-core;
+    @apply text-white hover:text-white disabled:cursor-not-allowed;
+    @apply bg-yellow hover:bg-yellow-hover disabled:bg-yellow-disabled;
+    @apply dark:bg-yellow dark:hover:bg-yellow-hover-dark dark:disabled:bg-yellow-disabled;
+
+    &.hover {
+      @apply bg-yellow-hover dark:bg-yellow-hover-dark;
+    }
+  }
+  /* End colored buttons */
+  /************/
+
+  .btn-outline,
+  .btn-light {
+    @apply btn-core;
+    @apply flex text-center cursor-pointer items-center;
+    @apply flex-none grow-0 justify-center px-4 text-sm;
+
+    &.hover:not(:disabled),
+    &:hover:not(:disabled) {
+      background-color: var(--bg-btn-hover);
+    }
+  }
+
+  .btn-outline-red {
+    @apply btn-core;
+    @apply border text-red border-red;
+
+    &:hover:not(:disabled) {
+      @apply bg-red;
+      color: var(--bg-primary);
+    }
+  }
+  /* End buttons*/
+
+  /* Tooltip */
+  .ng-tooltip {
+    position: absolute;
+    max-width: 150px;
+    font-size: 14px;
+    text-align: center;
+    color: var(--bg-primary);
+    padding: 3px 8px;
+    background: var(--color-primary);
+    z-index: 1000;
+    opacity: 0;
+
+    transition: opacity 200ms;
+
+    &.display {
+      opacity: 1 !important;
+    }
+
+    &:after {
+      content: '';
+      border-width: 5px;
+      position: absolute;
+      border-style: solid;
+    }
+
+    &.top {
+      &:after {
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-color: var(--color-primary) transparent transparent transparent;
+      }
+    }
+
+    &.bottom {
+      &:after {
+        bottom: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-color: transparent transparent var(--color-primary) transparent;
+      }
+    }
+
+    &.left {
+      &:after {
+        top: 50%;
+        left: 100%;
+        margin-top: -5px;
+        border-color: transparent transparent transparent var(--color-primary);
+      }
+    }
+
+    &.right {
+      &:after {
+        top: 50%;
+        right: 100%;
+        margin-top: -5px;
+        border-color: transparent var(--color-primary) transparent transparent;
+      }
+    }
+  }
+}
+
+@layer utilities {
+  i[icon] {
+    svg {
+      @apply h-4 w-4;
+    }
+  }
+
+  .title {
+    @apply font-medium;
+  }
+
+  .soon {
+    @apply flex-row gap-1 text-sm text-grey items-center;
+    @apply hidden sm:flex;
+    &::after {
+      font-size: 60%;
+      margin-top: -0.25rem;
+      content: '(soon)';
+    }
+  }
+
+  ul.list-checkmark {
+    li {
+      @apply flex items-center p-1;
+    }
+
+    li::before {
+      @apply bg-green-600/10 text-green-600 h-6 w-6 rounded-full flex items-center justify-center mr-2;
+      content: ' ';
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MCA2MCI+PHBhdGggc3Ryb2tlPSIjMTZhMzRhIiBzdHJva2Utd2lkdGg9IjEwIiBmaWxsPSJub25lIiBkPSJNOCAzMCBMMjMgNDUgNTMgMTUiLz48L3N2Zz4=');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 50%;
+    }
+  }
+}

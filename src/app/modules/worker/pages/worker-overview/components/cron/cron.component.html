@@ -1,0 +1,96 @@
+<div>
+  @if (!editMode) {
+    @if (worker.crons?.length) {
+      <div class="flex gap-4">
+        <div class="w-full">
+          <table class="my-4 border-spacing-4">
+            <tbody>
+              @for (cron of worker.crons; track cron) {
+                <tr class="even:bg-slate-50 even:dark:bg-slate-900 h-8">
+                  <td class="font-mono px-4">{{ cron.value }}</td>
+                  <td class="font-mono">{{ cron.value | cron }}</td>
+                  <td class="px-4">
+                    <i icon="pencil-square" class="clickable mr-2" (click)="editCron(cron)"></i>
+                    <i icon="trash" class="clickable" (click)="deleteCron(cron)"></i>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <!-- Cron overview -->
+        <div class="w-80 text-center hidden lg:block">
+          <p class="mb-2">Next scheduled events (UTC)</p>
+          <div class="font-mono">
+            <ul>
+              @for (schedule of getNextEvents(worker.crons!); track schedule) {
+                <li>
+                  {{ schedule | date: 'dd MMM yyyy HH:mm:ss' : 'UTC' }}
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+      <hr class="my-4" />
+    }
+    <button type="button" class="btn-light mt-4" (click)="editMode = true">+ Add Cron</button>
+  }
+
+  @if (editMode) {
+    <div class="flex gap-4 w-full">
+      <!-- Cron creator -->
+      <div class="flex-1">
+        <div class="flex flex-col justify-between h-full">
+          <div>
+            <label class="block mb-2">{{ editId ? 'Edit' : 'Create a new' }} cron schedule</label>
+            <input type="text" class="font-mono input-outline w-full" placeholder="0/15 * * * *" [formControl]="cron" />
+            @if (cron.invalid) {
+              <div class="my-7 border-y border-transparent">
+                @if (cron.hasError('cronExpression')) {
+                  <div class="text-xs pt-2 text-red">
+                    <div>
+                      Invalid cron expression {{ cron.value }}.
+                      <a class="text-blue" href="https://crontab.guru/" target="_blank">Learn more</a>
+                    </div>
+                  </div>
+                }
+                @if (cron.hasError('minutePrecision'); as err) {
+                  <div class="text-xs pt-2 text-red">
+                    <div>Cron expression must be at most minute precision (5 fields)</div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+          <div class="text-sm">
+            @if (cron.valid && cron.value) {
+              {{ cron.value | cron }}
+            }
+          </div>
+          <div class="flex gap-2 mt-2">
+            <button type="button" class="btn-outline mr-2" (click)="cancel()" [disabled]="cron.pending">Cancel</button>
+            <button type="button" class="btn-blue" (click)="addCron()" [disabled]="cron.invalid || cron.pending">
+              {{ editId ? 'Update' : 'Add' }} Trigger
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- Cron overview -->
+      <div class="flex-1 max-w-80">
+        @if (cron.valid && cron.value) {
+          <p class="mb-2">Next scheduled events (UTC)</p>
+          <div class="font-mono border rounded-lg p-4">
+            <ul>
+              @for (schedule of schedules$ | async; track schedule) {
+                <li>
+                  {{ schedule | date: 'dd MMM yyyy HH:mm:ss' : 'UTC' }}
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

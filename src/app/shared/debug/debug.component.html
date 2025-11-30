@@ -1,0 +1,10 @@
+@if (display) {
+  <div>
+    <div class="text-right">
+      <button class="btn-light mt-4" (click)="expand = !expand">debug {{ expand ? '-' : '+' }}</button>
+    </div>
+    @if (expand) {
+      <pre><ng-content></ng-content></pre>
+    }
+  </div>
+}

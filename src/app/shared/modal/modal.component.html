@@ -1,0 +1,23 @@
+<!-- Modal -->
+<div
+  class="modal stripped bg-black/25 dark:bg-white/25"
+  [ngClass]="open ? 'flex' : 'hidden'"
+  (click)="closable && openChange.emit(false)"
+>
+  <div class="modal-dialog shadow mx-auto" (click)="$event.stopPropagation()" [ngClass]="variant">
+    <div class="modal-content">
+      <!-- MODAL HEAD -->
+      <div class="modal-header">
+        <ng-content select="[role=header]"></ng-content>
+      </div>
+      <!-- MODAL BODY -->
+      <div class="modal-body">
+        <ng-content select="[role=body]"></ng-content>
+      </div>
+      <!-- MODAL FOOT -->
+      <div class="modal-footer">
+        <ng-content select="[role=footer]"></ng-content>
+      </div>
+    </div>
+  </div>
+</div>

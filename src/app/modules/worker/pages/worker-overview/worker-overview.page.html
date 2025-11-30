@@ -1,0 +1,16 @@
+@if (worker$ | async; as worker) {
+  <div>
+    <div class="card shadow-sm inline-block mt-2 w-full">
+      <app-worker-environment />
+    </div>
+    <div class="card shadow-sm inline-block mt-2 w-full">
+      <h4>Domains</h4>
+      <app-domains [domains]="worker.domains!" (update)="updateWorkerDomains(worker.id, $event)" />
+    </div>
+    <div class="card shadow-sm inline-block mt-2 w-full">
+      <h4>Cron Triggers</h4>
+      <app-cron [worker]="worker" />
+    </div>
+  </div>
+  <app-debug [expand]="true">{{ worker | json }}</app-debug>
+}

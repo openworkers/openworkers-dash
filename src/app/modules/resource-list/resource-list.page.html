@@ -1,0 +1,85 @@
+<!-- Workers -->
+@if (resourceList$ | async; as resourceList) {
+  <div class="page">
+    @if (resourceName$ | async; as resourceName) {
+      <div>
+        <div class="flex justify-between">
+          <div>
+            <h3 class="title capitalize">{{ resourceName }}s</h3>
+          </div>
+          @if (resourceList.length) {
+            <div class="flex flex-col justify-center">
+              @if ((resourceLimit$ | async) || -1; as resourceLimit) {
+                @if (resourceList.length < resourceLimit) {
+                  <div class="flex items-center gap-4">
+                    <span class="text-grey">{{ resourceList.length }} / {{ resourceLimit }}</span>
+                    <a class="btn-outline big shadow-sm" [routerLink]="['/', resourceName, 'create']">
+                      Create {{ resourceName }}
+                    </a>
+                  </div>
+                } @else {
+                  <div [tooltip]="'Maximum of '+ resourceLimit + ' ' + resourceName + 's reached'" placement="left">
+                    <button class="btn-outline big shadow-sm" disabled>Create {{ resourceName }}</button>
+                  </div>
+                }
+              }
+            </div>
+          }
+        </div>
+        <div class="flex flex-col gap-2 mt-4">
+          @for (resource of resourceList; track resource) {
+            <div class="card shadow-sm">
+              <div class="flex justify-between">
+                <div>
+                  <a class="font-bold" [routerLink]="['/', resourceName, resource.id]"> {{ resource.name }} </a>
+                  <p class="font-light" [ngClass]="{ 'italic': !resource.desc }">{{ resource.desc ?? 'No description' }}</p>
+                  <div class="flex items-center mt-3 text-gray-500">
+                    <i icon="clock"></i>
+                    <span class="ml-3">Last modified {{ resource.updatedAt | date: 'MMM d, y - HH:mm:ss' }}</span>
+                  </div>
+                </div>
+                <div class="flex flex-col justify-center gap-1">
+                  <ng-container>
+                    <a
+                      class="btn-outline hover:shadow-sm justify-between gap-2"
+                      [routerLink]="['/', resourceName, resource.id]"
+                      >
+                      <i icon="pencil-square" class="mr-1"></i>
+                      Edit
+                    </a>
+                  </ng-container>
+                  @if (resourceName === 'worker') {
+                    <a
+                      class="btn-outline hover:shadow-sm justify-between gap-2"
+                      [href]="getWorkerUrl(resource.name)"
+                      target="_blank"
+                      >
+                      <i icon="new-tab" class="mr-1"></i>
+                      View
+                    </a>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+        @if (resourceList.length === 0) {
+          <div>
+            <div class="flex justify-center">
+              <div class="inline-block mt-8">
+                <h4 class="text-center">No {{ resourceName }}s yet</h4>
+                <p class="text-center mt-2">You can create a {{ resourceName }} by clicking the button below.</p>
+                <div class="flex justify-center mt-6">
+                  <a class="btn-blue big font-bold uppercase" [routerLink]="['/', resourceName, 'create']">
+                    Create {{ resourceName }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+        <app-debug [expand]="true">{{ resourceList | json }}</app-debug>
+      </div>
+    }
+  </div>
+}
