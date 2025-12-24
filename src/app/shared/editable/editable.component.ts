@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, ViewChild } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { IconDirective } from '../icon.directive';
+import { NgIconComponent } from '@ng-icons/core';
 import { TypedSimpleChanges } from '~/app/interfaces/typed-changes';
 
 @Component({
-  imports: [CommonModule, ReactiveFormsModule, IconDirective],
+  imports: [CommonModule, ReactiveFormsModule, NgIconComponent],
   selector: 'app-editable',
   template: `
     @switch (editing) {
@@ -22,7 +22,7 @@ import { TypedSimpleChanges } from '~/app/interfaces/typed-changes';
             [minlength]="1"
             required
           />
-          <i [ngClass]="class" class="clickable ml-1" icon="check-circle" (click)="submit()"></i>
+          <ng-icon [ngClass]="class" class="clickable ml-1" name="heroCheckCircle" (click)="submit()" />
         </form>
       }
       @case (false) {
@@ -32,7 +32,7 @@ import { TypedSimpleChanges } from '~/app/interfaces/typed-changes';
           } @else {
             <i class="font-light"><ng-content></ng-content></i>
           }
-          <i [ngClass]="class" class="clickable ml-1" icon="pencil-square" (click)="editing = true"></i>
+          <ng-icon [ngClass]="class" class="clickable ml-1" name="heroPencilSquare" (click)="editing = true" />
         </div>
       }
     }

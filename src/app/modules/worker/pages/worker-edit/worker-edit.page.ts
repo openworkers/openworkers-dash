@@ -1,14 +1,15 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ThemeService } from '~/app/services/theme.service';
 import { WorkersService } from '~/services/workers.service';
 import { EnvironmentsService } from '~/services/environments.service';
+import { EditorStateService } from '~/app/services/editor-state.service';
 import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
-import { debounceTime, filter, firstValueFrom, map, merge, skip, skipWhile, tap } from 'rxjs';
+import { debounceTime, filter, firstValueFrom, map, merge, skip, tap } from 'rxjs';
 import { Observable, Subscription, Subject, BehaviorSubject } from 'rxjs';
 import { Resolved } from '~/app/interfaces/resolved';
 import { getWorkerUrl } from '~/app/utils/url';
-import type { IEnvironment, IEnvironmentValue, IWorker } from '@openworkers/api-types';
+import type { IEnvironmentValue, IWorker } from '@openworkers/api-types';
 import { logger } from '~/logger';
 
 const log = logger.getLogger('WorkerEditPage');
@@ -20,6 +21,7 @@ import { createEnvironmentLib, scheduledLib } from './editor.libs';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '~/app/shared/shared.module';
 import { IframeComponent } from './components/iframe/iframe.component';
+import { AiChatComponent } from './components/ai-chat/ai-chat.component';
 
 const EDITOR_OPTIONS: MonacoEditorConstructionOptions = {
   language: 'typescript',
@@ -36,17 +38,21 @@ const EDITOR_OPTIONS: MonacoEditorConstructionOptions = {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, SharedModule, MonacoEditorModule, IframeComponent],
+  imports: [CommonModule, SharedModule, MonacoEditorModule, IframeComponent, AiChatComponent],
   templateUrl: 'worker-edit.page.html',
   styleUrls: ['./worker-edit.page.css']
 })
-export default class WorkerEditPage implements OnDestroy {
+export default class WorkerEditPage implements OnInit, OnDestroy {
+
   private subscriptions: Subscription[] = [];
   public readonly worker: Resolved<IWorker>;
   public readonly worker$: Observable<IWorker>;
   public readonly workerUrl: string;
   public readonly refreshPreview$$: Subject<void>;
   public readonly refreshPreview$: Observable<string>;
+
+  // Editor state service
+  readonly editorState = inject(EditorStateService);
 
   // Monaco editor
   public options = EDITOR_OPTIONS;
@@ -56,6 +62,7 @@ export default class WorkerEditPage implements OnDestroy {
   public theme$: Observable<'dark' | 'light'>;
 
   public dragActive = false;
+  public activeTab: 'preview' | 'ai' = 'preview';
   public splitPosition = new BehaviorSubject<number>(window.innerWidth / 2);
   public splitPosition$ = this.splitPosition.pipe(
     filter((value) => value > 300),
@@ -120,6 +127,20 @@ export default class WorkerEditPage implements OnDestroy {
     console.time('editor-ready');
   }
 
+  async ngOnInit() {
+    // Initialize editor state with worker context
+    await this.editorState.init(this.worker.id, this.worker.script ?? '');
+
+    // Sync script changes to store
+    this.subscriptions.push(
+      this.script.valueChanges.subscribe((code) => {
+        if (code !== null) {
+          this.editorState.updateCode(code);
+        }
+      })
+    );
+  }
+
   public async updateWorker() {
     const script = this.script.value ?? undefined;
     const id = this.worker.id;
@@ -136,7 +157,11 @@ export default class WorkerEditPage implements OnDestroy {
     this.script.markAsPristine();
   }
 
+  private editor?: monaco.editor.IStandaloneCodeEditor;
+
   public onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
+    this.editor = editor;
+
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
       target: monaco.languages.typescript.ScriptTarget.ES2020,
       lib: ['es2020', 'webworker', 'dom.iterable'],
@@ -150,12 +175,37 @@ export default class WorkerEditPage implements OnDestroy {
     // On save (CTRL + S)
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => this.updateWorker());
 
+    // Watch for diagnostics
+    const model = editor.getModel();
+
+    if (model) {
+      monaco.editor.onDidChangeMarkers(() => {
+        const markers = monaco.editor.getModelMarkers({ resource: model.uri });
+        const diagnostics = markers
+          .filter(m => m.severity >= monaco.MarkerSeverity.Warning)
+          .map(m => `Line ${m.startLineNumber}: ${m.message}`);
+        this.editorState.updateDiagnostics(diagnostics);
+      });
+    }
+
     console.timeEnd('editor-ready');
 
     const env = this.worker.environment;
 
     this.setEnvironmentLib(/* env?.values ?? */ []); // TODO: fix env tracking
     this.watchEnvironment(env?.id ?? null);
+  }
+
+  public async applyAiCode(code: string) {
+    this.script.setValue(code);
+    this.script.markAsDirty();
+    // Auto-deploy after AI applies code
+    await this.updateWorker();
+    this.refreshPreview$$.next();
+  }
+
+  public async clearAiChat() {
+    await this.editorState.clearConversation();
   }
 
   private environmentLibs: monaco.IDisposable[] = [];

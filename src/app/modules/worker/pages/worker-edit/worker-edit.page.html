@@ -1,13 +1,13 @@
 @if (worker) {
 <div class="h-full flex" [ngClass]="'theme-' + (theme$ | async)">
-  <div class="flex flex-1">
+  <div class="flex flex-1 h-full">
     <div class="mh-full">
       <!-- Editor nav -->
       <nav class="flex justify-between py-2 px-2">
         <div class="flex items-center h-8 gap-4">
           <a [routerLink]="['/worker', worker.id]" class="font-bold">
             <div class="flex items-center font-size-1">
-              <i icon="arrow-back" class="mr-2 fill-current"></i>
+              <ng-icon name="heroArrowUturnLeft" class="mr-2" />
               Return to worker&nbsp;<span>({{ worker.name }})</span>
             </div>
           </a>
@@ -33,7 +33,7 @@
       ></ngx-monaco-editor>
     </div>
     <div
-      [ngClass]="{ 'dragActive': dragActive }"
+      [ngClass]="{ dragActive: dragActive }"
       class="bg-white w-1"
       draggable="true"
       (drag)="splitPosition.next($event.x)"
@@ -42,21 +42,45 @@
     >
       <div class="absolute cursor-ew-resize w-1 border-l h-full"></div>
     </div>
-    <div class="flex flex-col mh-full w-full">
-      <!-- Preview nav -->
-      <nav class="flex justify-between p-2">
-        <a class="btn-outline mr-2 flex items-center" [href]="workerUrl + href.value" target="_blank">
-          <i icon="new-tab"></i>
+    <div class="right-panel w-full">
+      <!-- Nav -->
+      <nav class="flex items-center p-2 gap-2">
+        <button class="btn-blue" (click)="activeTab = activeTab === 'preview' ? 'ai' : 'preview'">
+          {{ activeTab === 'preview' ? 'AI Assistant' : 'Preview' }}
+        </button>
+        @if (activeTab === 'ai') {
+        <button
+          class="btn-outline"
+          (click)="clearAiChat()"
+          [disabled]="!editorState.hasMessages()"
+          title="Clear conversation"
+        >
+          /clear
+        </button>
+        } @if (activeTab === 'preview') {
+        <input class="input-outline flex-1" name="value" [formControl]="href" />
+        <a class="btn-outline flex items-center" [href]="workerUrl + href.value" target="_blank">
+          <ng-icon name="heroArrowTopRightOnSquare" />
         </a>
-        <input class="input-outline w-full" name="value" [formControl]="href" />
+        }
       </nav>
-      <!-- Preview -->
-      <div class="relative bg-white flex flex-1 mx-2">
-        <!-- Overlay -->
-        <div class="absolute inset-0 bg-transparent" [ngClass]="{ 'hidden': !dragActive }"></div>
-        <ng-container>
-          <app-iframe class="w-full" [reload]="refreshPreview$"></app-iframe>
-        </ng-container>
+
+      <!-- Tab content -->
+      <div class="right-panel-content relative mx-2">
+        <!-- Overlay for drag -->
+        <div class="absolute inset-0 bg-transparent z-10" [ngClass]="{ hidden: !dragActive }"></div>
+
+        <!-- Preview tab (hidden instead of destroyed) -->
+        <div class="w-full h-full bg-white" [hidden]="activeTab !== 'preview'">
+          <app-iframe class="w-full h-full" [reload]="refreshPreview$"></app-iframe>
+        </div>
+
+        <!-- AI tab (hidden instead of destroyed) -->
+        <app-ai-chat
+          class="w-full h-full"
+          [hidden]="activeTab !== 'ai'"
+          (codeApplied)="applyAiCode($event)"
+        ></app-ai-chat>
       </div>
     </div>
   </div>

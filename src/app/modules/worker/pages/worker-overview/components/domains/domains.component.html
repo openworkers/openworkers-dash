@@ -21,12 +21,12 @@
           @switch (el.deleted) {
             @case (true) {
               <button type="button" (click)="el.rollbackDelete()">
-                <i icon="revert"></i>
+                <ng-icon name="heroArrowPath" />
               </button>
             }
             @case (false) {
               <button type="button" (click)="form.deleteAt(index)">
-                <i icon="trash"></i>
+                <ng-icon name="heroTrash" />
               </button>
             }
           }

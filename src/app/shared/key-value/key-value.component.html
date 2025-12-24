@@ -24,14 +24,14 @@
             @switch (el.controls.secret.defaultValue && el.controls.secret.value) {
               @case (true) {
                 <button type="button" (click)="resetSecret(el, $event)">
-                  <i icon="lock-close"></i>
+                  <ng-icon name="heroLockClosed" />
                 </button>
               }
               @case (false) {
                 <input #lock class="hidden" type="checkbox" [formControl]="el.controls.secret" />
                 <label class="flex items-center" (click)="lock.click()">
                   <button type="button">
-                    <i [icon]="el.controls.secret.value ? 'lock-close' : 'lock-open'"></i>
+                    <ng-icon [name]="el.controls.secret.value ? 'heroLockClosed' : 'heroLockOpen'" />
                   </button>
                 </label>
               }
@@ -40,12 +40,12 @@
             @switch (el.deleted) {
               @case (true) {
                 <button type="button" (click)="el.rollbackDelete()">
-                  <i icon="revert"></i>
+                  <ng-icon name="heroArrowPath" />
                 </button>
               }
               @case (false) {
                 <button type="button" (click)="form.deleteAt(index)">
-                  <i icon="trash"></i>
+                  <ng-icon name="heroTrash" />
                 </button>
               }
             }

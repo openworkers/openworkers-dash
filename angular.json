@@ -50,8 +50,8 @@
             "assets": [
               "src/assets",
               {
-                "glob": "**/*.wasm",
-                "input": "./node_modules/@openworkers/croner-wasm/dist",
+                "glob": "*.wasm",
+                "input": "node_modules/@openworkers/croner-wasm/dist",
                 "output": "assets/wasm"
               },
               {
@@ -84,8 +84,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "4kb",
+                  "maximumError": "8kb"
                 }
               ],
               "fileReplacements": [

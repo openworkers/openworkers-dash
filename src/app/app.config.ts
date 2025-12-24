@@ -11,6 +11,25 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { routes } from './app.routes';
 import { ThemeService } from './services/theme.service';
+import { provideIcons } from '@ng-icons/core';
+import {
+  heroClock,
+  heroArrowTopRightOnSquare,
+  heroArrowUturnLeft,
+  heroCheckCircle,
+  heroXCircle,
+  heroPencilSquare,
+  heroLockOpen,
+  heroLockClosed,
+  heroTrash,
+  heroArrowPath,
+  heroEllipsisVertical,
+  heroPower,
+  heroCog6Tooth,
+  heroChevronRight,
+  heroMicrophone,
+  heroUser
+} from '@ng-icons/heroicons/outline';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,6 +43,24 @@ export const appConfig: ApplicationConfig = {
     },
     provideZonelessChangeDetection(),
     provideRouter(routes),
-    provideHttpClient(withFetch(), withInterceptorsFromDi())
+    provideHttpClient(withFetch(), withInterceptorsFromDi()),
+    provideIcons({
+      heroClock,
+      heroArrowTopRightOnSquare,
+      heroArrowUturnLeft,
+      heroCheckCircle,
+      heroXCircle,
+      heroPencilSquare,
+      heroLockOpen,
+      heroLockClosed,
+      heroTrash,
+      heroArrowPath,
+      heroEllipsisVertical,
+      heroPower,
+      heroCog6Tooth,
+      heroChevronRight,
+      heroMicrophone,
+      heroUser
+    })
   ]
 };

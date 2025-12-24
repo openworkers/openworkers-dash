@@ -34,7 +34,7 @@
                   <a class="font-bold" [routerLink]="['/', resourceName, resource.id]"> {{ resource.name }} </a>
                   <p class="font-light" [ngClass]="{ 'italic': !resource.desc }">{{ resource.desc ?? 'No description' }}</p>
                   <div class="flex items-center mt-3 text-gray-500">
-                    <i icon="clock"></i>
+                    <ng-icon name="heroClock" />
                     <span class="ml-3">Last modified {{ resource.updatedAt | date: 'MMM d, y - HH:mm:ss' }}</span>
                   </div>
                 </div>
@@ -44,7 +44,7 @@
                       class="btn-outline hover:shadow-sm justify-between gap-2"
                       [routerLink]="['/', resourceName, resource.id]"
                       >
-                      <i icon="pencil-square" class="mr-1"></i>
+                      <ng-icon name="heroPencilSquare" class="mr-1" />
                       Edit
                     </a>
                   </ng-container>
@@ -54,7 +54,7 @@
                       [href]="getWorkerUrl(resource.name)"
                       target="_blank"
                       >
-                      <i icon="new-tab" class="mr-1"></i>
+                      <ng-icon name="heroArrowTopRightOnSquare" class="mr-1" />
                       View
                     </a>
                   }

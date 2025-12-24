@@ -9,12 +9,13 @@ import { RouterDataService } from './services/router-data.service';
 import { logger } from '~/logger';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { NgIconComponent } from '@ng-icons/core';
 import { ThemeSwitchComponent } from './shared/theme-switch/theme-switch.component';
 
 const log = logger.getLogger('AppComponent');
 
 @Component({
-  imports: [CommonModule, RouterModule, ThemeSwitchComponent],
+  imports: [CommonModule, RouterModule, NgIconComponent, ThemeSwitchComponent],
   selector: 'app-root',
   templateUrl: 'app.component.html'
 })

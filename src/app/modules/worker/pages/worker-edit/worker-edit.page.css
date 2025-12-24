@@ -1,12 +1,32 @@
+/* Shared height offset: main header (4rem + 1px border) + editor nav (~3rem) */
+:host {
+  --header-offset: 7rem;
+  display: block;
+  height: calc(100vh - 4rem); /* Full height minus main header */
+}
+
 .code-editor {
   display: block;
   width: 100%;
-  /* 100vh - (header + edit menu) */
-  height: calc(100vh - ((4rem + 1px) + (2rem + 2 * 0.5rem)));
+  height: calc(100vh - var(--header-offset));
 }
 
 .mh-full {
   min-height: 100%;
+}
+
+/* Right panel - same height as editor */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.right-panel-content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* Drag line */

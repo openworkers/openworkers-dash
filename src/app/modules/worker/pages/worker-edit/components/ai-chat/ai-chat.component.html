@@ -1,0 +1,171 @@
+<div class="cli-container">
+  <!-- Diff view overlay -->
+  @if (showDiff) {
+    <div class="diff-overlay">
+      <div class="diff-header">
+        <span class="diff-title">{{ diffExplanation || 'Code changes' }}</span>
+        <div class="diff-actions">
+          <button class="diff-btn diff-btn-reject" (click)="rejectCode()">Reject</button>
+          <button class="diff-btn diff-btn-accept" (click)="acceptCode()">Accept</button>
+        </div>
+      </div>
+      <div class="diff-editor-container">
+        <ngx-monaco-diff-editor
+          [options]="diffOptions"
+          [original]="originalCode"
+          [modified]="modifiedCode"
+        ></ngx-monaco-diff-editor>
+      </div>
+    </div>
+  }
+
+  <!-- Output area -->
+  <div #outputArea class="cli-output" [class.hidden]="showDiff">
+    <!-- Welcome message -->
+    @if (!store.hasMessages() && !store.isStreaming() && !store.streamingText()) {
+      <div class="cli-welcome">
+        <div class="cli-title">Claude Assistant</div>
+        <div class="cli-subtitle">Ask me to modify your worker code</div>
+        <div class="cli-hints">
+          @for (hint of hints; track $index) {
+            <button class="cli-hint" (click)="quickPrompt(hint)">{{ hint }}</button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Messages -->
+    @for (message of store.messages(); track $index) {
+      <div class="cli-message" [class.cli-user]="message.role === 'user'">
+        <span class="cli-prompt">{{ message.role === 'user' ? '>' : '◆' }}</span>
+        <span class="cli-content">{{ message.content }}</span>
+      </div>
+    }
+
+    <!-- Streaming text with indicator -->
+    @if (store.streamingText()) {
+      <div class="cli-message">
+        <span class="cli-prompt">◆</span>
+        <span class="cli-content">{{ store.streamingText() }}</span>
+        @if (store.isStreaming()) {
+          <span class="streaming-indicator">
+            <span></span><span></span><span></span>
+          </span>
+        }
+      </div>
+    }
+
+    <!-- Extended thinking display -->
+    @if (store.thinkingText()) {
+      <div class="cli-thinking-block" [class.collapsed]="thinkingCollapsed">
+        <button class="thinking-toggle" (click)="thinkingCollapsed = !thinkingCollapsed">
+          <span class="thinking-icon">🧠</span>
+          <span>Thinking</span>
+          <span class="thinking-arrow">{{ thinkingCollapsed ? '▶' : '▼' }}</span>
+          @if (isThinking) {
+            <span class="streaming-indicator">
+              <span></span><span></span><span></span>
+            </span>
+          }
+        </button>
+        @if (!thinkingCollapsed) {
+          <div class="thinking-content">{{ store.thinkingText() }}</div>
+        }
+      </div>
+    }
+
+    <!-- Thinking indicator (when no streaming text yet) -->
+    @if (store.isStreaming() && !store.streamingText() && !showDiff && !generatingCode && !isThinking) {
+      <div class="cli-message cli-thinking">
+        <span class="thinking-dots">
+          <span></span><span></span><span></span>
+        </span>
+      </div>
+    }
+
+    <!-- Generating code indicator -->
+    @if (generatingCode) {
+      <div class="cli-message cli-generating">
+        <span class="thinking-dots">
+          <span></span><span></span><span></span>
+        </span>
+        <span class="cli-content">Generating code</span>
+      </div>
+    }
+
+    <!-- Diagnostics -->
+    @if (store.diagnostics().length > 0 && !store.hasMessages() && !store.isStreaming()) {
+      <div class="cli-diagnostics">
+        <div class="cli-diagnostics-title">TypeScript issues detected:</div>
+        @for (diag of store.diagnostics().slice(0, 5); track $index) {
+          <div class="cli-diagnostic">{{ diag }}</div>
+        }
+        @if (store.diagnostics().length > 5) {
+          <div class="cli-diagnostic-more">... and {{ store.diagnostics().length - 5 }} more</div>
+        }
+        <button class="cli-fix-btn" (click)="askToFix()" [disabled]="store.isStreaming()">
+          Fix issues
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- Input area -->
+  <div class="cli-input-area" [class.hidden]="showDiff">
+    <!-- Usage display -->
+    @if (usage) {
+      <div class="cli-usage">
+        <span class="usage-label">Tokens:</span>
+        <span class="usage-value">{{ usage.input_tokens || 0 }} in / {{ usage.output_tokens || 0 }} out</span>
+      </div>
+    }
+
+    <div class="cli-input-row">
+      <button
+        class="cli-send-btn"
+        [class.active]="userInput.value?.trim()"
+        [disabled]="store.isStreaming() || transcribing || !userInput.value?.trim()"
+        (click)="sendMessage()"
+        title="Send message (Enter)"
+      >
+        <ng-icon name="heroChevronRight" />
+      </button>
+      <input
+        #inputField
+        type="text"
+        class="cli-input"
+        placeholder="Ask Claude..."
+        [formControl]="userInput"
+        (keydown.enter)="sendMessage()"
+        [disabled]="store.isStreaming() || transcribing"
+      />
+      <button
+        class="cli-thinking-toggle"
+        [class.active]="store.thinkingEnabled()"
+        (click)="toggleThinking()"
+        [disabled]="store.isStreaming()"
+        title="Extended Thinking"
+      >
+        🧠
+      </button>
+      <button
+        class="cli-mic-btn"
+        [class.recording]="recording"
+        [class.transcribing]="transcribing"
+        (click)="toggleRecording()"
+        [disabled]="store.isStreaming()"
+        [title]="recording ? 'Stop' : transcribing ? 'Transcribing...' : 'Record'"
+      >
+        @if (recording) {
+          <div class="audio-bars">
+            <span></span><span></span><span></span>
+          </div>
+        } @else if (transcribing) {
+          <div class="spinner"></div>
+        } @else {
+          <ng-icon name="heroMicrophone" />
+        }
+      </button>
+    </div>
+  </div>
+</div>

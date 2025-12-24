@@ -8,7 +8,7 @@ import {
   ReactiveFormsModule,
   ValidationErrors
 } from '@angular/forms';
-import { IconDirective } from '../icon.directive';
+import { NgIconComponent } from '@ng-icons/core';
 import type { IEnvironmentValueUpdateInput } from '@openworkers/api-types';
 
 const emptyString = '';
@@ -109,7 +109,7 @@ class KVSFormGroup extends FormGroup<KVSControl> {
 }
 
 @Component({
-  imports: [CommonModule, IconDirective, ReactiveFormsModule],
+  imports: [CommonModule, NgIconComponent, ReactiveFormsModule],
   selector: 'app-key-value',
   templateUrl: 'key-value.component.html',
   styleUrls: ['key-value.component.css']

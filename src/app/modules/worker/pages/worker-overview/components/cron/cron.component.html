@@ -10,8 +10,8 @@
                   <td class="font-mono px-4">{{ cron.value }}</td>
                   <td class="font-mono">{{ cron.value | cron }}</td>
                   <td class="px-4">
-                    <i icon="pencil-square" class="clickable mr-2" (click)="editCron(cron)"></i>
-                    <i icon="trash" class="clickable" (click)="deleteCron(cron)"></i>
+                    <ng-icon name="heroPencilSquare" class="clickable mr-2" (click)="editCron(cron)" />
+                    <ng-icon name="heroTrash" class="clickable" (click)="deleteCron(cron)" />
                   </td>
                 </tr>
               }
