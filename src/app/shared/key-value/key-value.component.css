@@ -22,4 +22,8 @@ li {
   &.secret {
     /* background-color: white; */
   }
+
+  &.binding {
+    opacity: 0.7;
+  }
 }

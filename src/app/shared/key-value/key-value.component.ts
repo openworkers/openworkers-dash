@@ -25,15 +25,19 @@ export function duplicateKeyValidator(control: AbstractControl): ValidationError
   return duplicateKey ? { duplicateKey } : null;
 }
 
-interface KVS<K = string, V = string, S = boolean> {
+type BindingType = 'var' | 'secret' | 'assets' | 'storage' | 'kv';
+
+const RESOURCE_BINDINGS: BindingType[] = ['assets', 'storage', 'kv'];
+
+interface KVS<K = string, V = string, T = BindingType> {
   key: K;
   value: V;
-  secret: S;
+  type: T;
 }
 
 type KVSId = KVS & { id: string };
 
-type KVSControl = KVS<SmartControl<string>, SmartControl<string>, SmartControl<boolean>>;
+type KVSControl = KVS<SmartControl<string>, SmartControl<string>, SmartControl<BindingType>>;
 
 class SmartControl<T extends string | number | boolean | null> extends FormControl {
   private markedAsChanged = false;
@@ -100,11 +104,15 @@ class KVSFormGroup extends FormGroup<KVSControl> {
   }
 
   get changed() {
-    return this.deleted || this.controls.key.changed || this.controls.value.changed || this.controls.secret.changed;
+    return this.deleted || this.controls.key.changed || this.controls.value.changed || this.controls.type.changed;
   }
 
   get created() {
     return this.controls.key.defaultValue === emptyString;
+  }
+
+  get isBinding() {
+    return RESOURCE_BINDINGS.includes(this.controls.type.value as BindingType);
   }
 }
 
@@ -169,15 +177,15 @@ export class KeyValueComponent implements OnChanges {
     group.controls.value.markAsDirty();
     group.controls.value.markAllAsTouched();
 
-    group.controls.secret = new SmartControl<boolean>(false);
-    group.controls.secret.markAsChanged();
+    group.controls.type = new SmartControl<BindingType>('var');
+    group.controls.type.markAsChanged();
   }
 
-  private createKVFormGroup({ id, key, value, secret }: Partial<KVSId> = {}) {
+  private createKVFormGroup({ id, key, value, type }: Partial<KVSId> = {}) {
     const group = new KVSFormGroup({
       key: new SmartControl<string | null>(key ?? ''),
       value: new SmartControl<string | null>(value ?? ''),
-      secret: new SmartControl<boolean>(secret ?? false)
+      type: new SmartControl<BindingType>(type ?? 'var')
     });
 
     if (id) {
@@ -188,9 +196,7 @@ export class KeyValueComponent implements OnChanges {
   }
 
   onSubmit() {
-    // const deleted = this.form.controls.filter((group) => group.deleted);
     const changed = this.form.controls.filter((group) => group.changed);
-    // const created = this.form.controls.filter((group) => group.created);
 
     const values = changed.map((group) => {
       if (group.created) {
@@ -198,21 +204,18 @@ export class KeyValueComponent implements OnChanges {
       }
 
       const id = !group.created && this.ids.get(group);
-
-      const { key, value, secret } = group.controls;
+      const { key, value, type } = group.controls;
 
       if (group.deleted) {
         return { id, value: null };
       }
 
-      const update = {
+      return {
         id,
         ...(key.changed ? { key: key.value } : null),
         ...(value.changed ? { value: value.value } : null),
-        ...(secret.changed ? { secret: secret.value } : null)
+        ...(type.changed ? { type: type.value } : null)
       };
-
-      return update;
     });
 
     this.update.emit(values as IEnvironmentValueUpdateInput[]);

@@ -211,7 +211,7 @@ export default class WorkerEditPage implements OnInit, OnDestroy {
   private environmentLibs: monaco.IDisposable[] = [];
   private setEnvironmentLib(values: readonly IEnvironmentValue[]) {
     log.debug('set env', values);
-    const lib = createEnvironmentLib(values.map((v) => v.key));
+    const lib = createEnvironmentLib(values.map((v) => ({ key: v.key, type: v.type })));
     this.environmentLibs.map((lib) => lib.dispose());
     this.environmentLibs = [
       monaco.languages.typescript.typescriptDefaults.addExtraLib(lib),
