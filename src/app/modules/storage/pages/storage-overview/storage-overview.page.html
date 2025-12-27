@@ -62,6 +62,123 @@
 
     <div class="card shadow-sm mt-8">
       <div class="inline-block p-4 w-full">
+        <h4>Upload File</h4>
+        <div class="mt-4">
+          @if (uploadState$ | async; as state) {
+            @if (state === 'success') {
+              <div class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 p-4 rounded">
+                <p class="font-medium">File uploaded successfully!</p>
+                <p class="text-sm mt-1 font-mono">{{ uploadedKey }}</p>
+                <button class="btn-light mt-2" (click)="resetUpload()">Upload another</button>
+              </div>
+            } @else if (state === 'error') {
+              <div class="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 p-4 rounded">
+                <p class="font-medium">Upload failed</p>
+                <p class="text-sm mt-1">{{ uploadError }}</p>
+                <button class="btn-light mt-2" (click)="resetUpload()">Try again</button>
+              </div>
+            } @else {
+              <div class="flex items-center gap-4">
+                <input
+                  type="file"
+                  class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900 dark:file:text-blue-300"
+                  (change)="onFileSelected($event)"
+                  [disabled]="state !== 'idle'"
+                />
+                @if (selectedFile) {
+                  <button
+                    class="btn-blue"
+                    (click)="upload()"
+                    [disabled]="state !== 'idle'"
+                  >
+                    @switch (state) {
+                      @case ('hashing') { Hashing... }
+                      @case ('signing') { Signing... }
+                      @case ('uploading') { Uploading... }
+                      @default { Upload }
+                    }
+                  </button>
+                }
+              </div>
+              @if (selectedFile) {
+                <p class="text-sm text-gray-500 mt-2">
+                  {{ selectedFile.name }} ({{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB)
+                </p>
+              }
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+    @if (filesState$ | async; as state) {
+      <div class="card shadow-sm mt-8">
+        <div class="inline-block p-4 w-full">
+          <div class="flex justify-between items-center">
+            <h4>Files</h4>
+            <button class="btn-light text-sm" (click)="refreshFiles()" [disabled]="state.loading">
+              @if (state.loading) {
+                Loading...
+              } @else {
+                Refresh
+              }
+            </button>
+          </div>
+
+          <div class="mt-4">
+            @if (state.loading && state.files.length === 0) {
+              <p class="text-gray-500 text-sm">Loading files...</p>
+            } @else if (state.error) {
+              <div class="bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 p-4 rounded">
+                {{ state.error }}
+              </div>
+            } @else if (state.files.length === 0) {
+              <p class="text-gray-500 text-sm">No files in this storage.</p>
+            } @else {
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="border-b dark:border-gray-700">
+                      <th class="text-left py-2 px-2">Key</th>
+                      <th class="text-right py-2 px-2">Size</th>
+                      <th class="text-right py-2 px-2">Modified</th>
+                      <th class="text-right py-2 px-2"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (file of state.files; track file.key) {
+                      <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
+                        <td class="py-2 px-2 font-mono text-xs">
+                          <button class="text-blue-600 hover:text-blue-800 hover:underline" (click)="openFile(file.key)">
+                            {{ file.key }}
+                          </button>
+                        </td>
+                        <td class="py-2 px-2 text-right text-gray-500">{{ formatSize(file.size) }}</td>
+                        <td class="py-2 px-2 text-right text-gray-500">{{ file.lastModified | date:'short' }}</td>
+                        <td class="py-2 px-2 text-right">
+                          <button class="text-red-600 hover:text-red-800 text-xs" (click)="deleteFile(file.key)">
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              @if (state.cursor) {
+                <div class="mt-4 text-center">
+                  <p class="text-gray-500 text-sm">More files available (pagination not yet implemented)</p>
+                </div>
+              }
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="card shadow-sm mt-8">
+      <div class="inline-block p-4 w-full">
         <h4>Binding Setup</h4>
         <div class="mt-4">
           <p class="text-sm text-gray-600 dark:text-gray-400">
