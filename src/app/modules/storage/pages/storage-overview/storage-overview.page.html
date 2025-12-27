@@ -1,0 +1,110 @@
+<div>
+  @if (storage$ | async; as storage) {
+    <div class="card shadow-sm mt-8">
+      <div class="inline-block p-4 w-full">
+        <h4>Storage Config Info</h4>
+        <div class="mt-4">
+          <label class="text-sm text-gray-500">Config ID</label>
+          <div class="font-mono text-sm bg-gray-100 dark:bg-gray-800 p-2 rounded">{{ storage.id }}</div>
+        </div>
+        <div class="mt-4">
+          <label class="text-sm text-gray-500">Mode</label>
+          <div class="text-sm">
+            @if (storage.mode === 'shared') {
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                Shared (Platform R2)
+              </span>
+            } @else {
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                Custom S3/R2
+              </span>
+            }
+          </div>
+        </div>
+        @if (storage.desc) {
+          <div class="mt-4">
+            <label class="text-sm text-gray-500">Description</label>
+            <div class="text-sm">{{ storage.desc }}</div>
+          </div>
+        }
+        @if (storage.prefix) {
+          <div class="mt-4">
+            <label class="text-sm text-gray-500">Prefix</label>
+            <div class="font-mono text-sm bg-gray-100 dark:bg-gray-800 p-2 rounded">{{ storage.prefix }}</div>
+          </div>
+        }
+        @if (storage.mode === 'custom') {
+          <div class="mt-4">
+            <label class="text-sm text-gray-500">Bucket</label>
+            <div class="font-mono text-sm">{{ storage.bucket }}</div>
+          </div>
+          @if (storage.endpoint) {
+            <div class="mt-4">
+              <label class="text-sm text-gray-500">Endpoint</label>
+              <div class="font-mono text-sm">{{ storage.endpoint }}</div>
+            </div>
+          }
+          @if (storage.region) {
+            <div class="mt-4">
+              <label class="text-sm text-gray-500">Region</label>
+              <div class="font-mono text-sm">{{ storage.region }}</div>
+            </div>
+          }
+          @if (storage.publicUrl) {
+            <div class="mt-4">
+              <label class="text-sm text-gray-500">Public URL</label>
+              <div class="font-mono text-sm">{{ storage.publicUrl }}</div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="card shadow-sm mt-8">
+      <div class="inline-block p-4 w-full">
+        <h4>Binding Setup</h4>
+        <div class="mt-4">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            To use this storage config in your worker, add a binding in your environment settings:
+          </p>
+          <ul class="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 mt-2">
+            <li><strong>Assets</strong> - Read-only access for serving static files</li>
+            <li><strong>Storage</strong> - Full read/write access for object storage</li>
+          </ul>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Use the Config ID above when creating the binding.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mt-8">
+      <div class="inline-block p-4 w-full">
+        <h4>Usage</h4>
+        <div class="mt-4">
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-2"><strong>Assets (read-only):</strong></p>
+          <pre class="text-xs bg-gray-100 dark:bg-gray-800 p-3 rounded block overflow-x-auto mb-4"><code>// Get a file
+const file = await env.ASSETS.get('images/logo.png');
+
+// List files
+const list = await env.ASSETS.list(&#123; prefix: 'images/' &#125;);</code></pre>
+
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-2"><strong>Storage (read/write):</strong></p>
+          <pre class="text-xs bg-gray-100 dark:bg-gray-800 p-3 rounded block overflow-x-auto"><code>// Get a file
+const file = await env.STORAGE.get('uploads/file.pdf');
+
+// Put a file
+await env.STORAGE.put('uploads/file.pdf', data);
+
+// Delete a file
+await env.STORAGE.delete('uploads/file.pdf');
+
+// List files
+const list = await env.STORAGE.list(&#123; prefix: 'uploads/' &#125;);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <app-debug [expand]="true">{{ storage | json }}</app-debug>
+  }
+</div>

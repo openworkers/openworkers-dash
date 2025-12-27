@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { KvService } from '~/app/services/kv.service';
 import { ResourceRootComponent } from '~/app/shared/resource-root/resource-root.component';
-import type { IKvNamespace } from '@openworkers/api-types';
+import type { IKvNamespace, IKvNamespaceUpdateInput } from '@openworkers/api-types';
 
 @Component({
   standalone: true,
@@ -13,6 +13,7 @@ import type { IKvNamespace } from '@openworkers/api-types';
       resourceName="KV Namespace"
       [resource]="kv"
       [menuLinks]="['overview']"
+      (update)="update($event)"
       (delete)="delete()"
     />
   `
@@ -26,6 +27,10 @@ export default class KvRootComponent {
     private router: Router
   ) {
     this.kv = route.snapshot.data['kv'] as IKvNamespace;
+  }
+
+  public update(data: Partial<IKvNamespaceUpdateInput>) {
+    firstValueFrom(this.kvService.update({ id: this.kv.id, ...data }));
   }
 
   public delete() {

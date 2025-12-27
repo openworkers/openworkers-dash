@@ -140,7 +140,7 @@ export abstract class ResourceService<T extends IResource, C, U extends Identifi
   }
 
   public update({ id, ...params }: U): Observable<T> {
-    return this.http.put<T>(`/api/v1/${this.base}/${id}`, params).pipe(
+    return this.http.patch<T>(`/api/v1/${this.base}/${id}`, params).pipe(
       map((data) => this.cacheAndWatch(data)),
       mergeMap((data) => data.asObservable())
     );

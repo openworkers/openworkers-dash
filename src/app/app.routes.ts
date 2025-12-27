@@ -5,6 +5,7 @@ import { WorkersService } from './services/workers.service';
 import { EnvironmentsService } from './services/environments.service';
 import { DatabasesService } from './services/databases.service';
 import { KvService } from './services/kv.service';
+import { StorageService } from './services/storage.service';
 
 export const routes: Routes = [
   {
@@ -79,6 +80,21 @@ export const routes: Routes = [
     path: 'kv',
     data: { menuActive: 'kv' },
     loadChildren: () => import('~/modules/kv/kv.module'),
+    canLoad: [LoggedAuthGuard],
+    canActivate: [LoggedAuthGuard]
+  },
+  {
+    path: 'storage-configs',
+    resolve: { resourceList: () => inject(StorageService).findAll() },
+    data: { menuActive: 'storage', resourceName: 'storage' },
+    loadComponent: () => import('~/modules/resource-list/resource-list.page'),
+    canLoad: [LoggedAuthGuard],
+    canActivate: [LoggedAuthGuard]
+  },
+  {
+    path: 'storage',
+    data: { menuActive: 'storage' },
+    loadChildren: () => import('~/modules/storage/storage.module'),
     canLoad: [LoggedAuthGuard],
     canActivate: [LoggedAuthGuard]
   },

@@ -1,35 +1,119 @@
 <div>
-  @if (environment$ | async; as environment) {
-    <div class="card shadow-sm mt-8">
-      <div class="inline-block p-4 w-full">
-        <h4>Variables</h4>
-        <app-key-value [kv]="environment.values ?? []" (update)="update(environment.id, $event)" />
-      </div>
+  @if (vm$ | async; as vm) {
+  <div class="card shadow-sm mt-8">
+    <div class="inline-block p-4 w-full">
+      <h4>Variables & Bindings</h4>
+      <app-key-value
+        [kv]="vm.environment.values ?? []"
+        [storageConfigs]="vm.storageConfigs"
+        [kvNamespaces]="vm.kvNamespaces"
+        (update)="update(vm.environment.id, $event)"
+        (addStorage)="openStorageModal()"
+        (addKv)="openKvModal()"
+      />
     </div>
-    <div class="card shadow-sm mt-8">
-      <div class="inline-block p-4 w-full">
-        <h4 class="mb-2">Related workers</h4>
-        @if (environment.workers?.length) {
-          <div>
-            @for (worker of environment.workers; track worker) {
-              <div class="flex">
-                <a class="btn-light flex-1 text-left justify-start" [routerLink]="['/worker', worker.id]">
-                  {{ worker.name }}
-                </a>
-              </div>
-            }
-          </div>
-        } @else {
-          <div class="text-center p-4">
-            <p class="text-gray-500">No related workers</p>
-            <p>
-              <a routerLink="/workers">Go to workers</a>
-            </p>
-          </div>
+  </div>
+
+  <div class="card shadow-sm mt-8">
+    <div class="inline-block p-4 w-full">
+      <h4 class="mb-2">Related workers</h4>
+      @if (vm.environment.workers?.length) {
+      <div>
+        @for (worker of vm.environment.workers; track worker) {
+        <div class="flex">
+          <a class="btn-light flex-1 text-left justify-start" [routerLink]="['/worker', worker.id]">
+            {{ worker.name }}
+          </a>
+        </div>
         }
       </div>
+      } @else {
+      <div class="text-center p-4">
+        <p class="text-gray-500">No related workers</p>
+        <p>
+          <a routerLink="/workers">Go to workers</a>
+        </p>
+      </div>
+      }
     </div>
-    <app-debug [expand]="true">{{ environment | json }}</app-debug>
-  }
-</div>
+  </div>
 
+  <app-debug [expand]="true">{{ vm.environment | json }}</app-debug>
+  }
+
+  <!-- Storage Binding Modal -->
+  <app-modal [open]="showStorageModal" (openChange)="showStorageModal = $event">
+    <h4 role="header">Add Storage Binding</h4>
+
+    <form role="body" class="my-4" [formGroup]="storageForm" (ngSubmit)="addStorageBinding()">
+      <fieldset class="mb-3">
+        <label>Binding Name *</label>
+        <input type="text" class="input-outline w-full" formControlName="key" placeholder="ASSETS" />
+      </fieldset>
+
+      @if (storageConfigs$ | async; as storageConfigs) {
+      <fieldset class="mb-3">
+        <label>Storage Config *</label>
+        <select class="input-outline w-full" formControlName="configId">
+          <option value="">Select a storage config...</option>
+          @for (config of storageConfigs; track config.id) {
+          <option [value]="config.id">{{ config.name }}</option>
+          }
+        </select>
+        @if (storageConfigs.length === 0) {
+        <p class="text-xs text-gray-500 mt-1">
+          No storage configs. <a routerLink="/storage/create" class="text-blue-600">Create one</a>
+        </p>
+        }
+      </fieldset>
+      }
+
+      <fieldset class="mb-4">
+        <label>Binding Type *</label>
+        <select class="input-outline w-full" formControlName="type">
+          <option value="assets">Assets (read-only)</option>
+          <option value="storage">Storage (read/write)</option>
+        </select>
+      </fieldset>
+    </form>
+
+    <div role="footer" class="flex justify-end gap-2">
+      <button type="button" class="btn-light" (click)="showStorageModal = false">Cancel</button>
+      <button type="button" class="btn-blue" [disabled]="storageForm.invalid" (click)="addStorageBinding()">Add</button>
+    </div>
+  </app-modal>
+
+  <!-- KV Binding Modal -->
+  <app-modal [open]="showKvModal" (openChange)="showKvModal = $event">
+    <h4 role="header">Add KV Binding</h4>
+
+    <form role="body" class="my-4" [formGroup]="kvForm" (ngSubmit)="addKvBinding()">
+      <fieldset class="mb-3">
+        <label>Binding Name *</label>
+        <input type="text" class="input-outline w-full" formControlName="key" placeholder="KV" />
+      </fieldset>
+
+      @if (kvNamespaces$ | async; as kvNamespaces) {
+      <fieldset class="mb-4">
+        <label>KV Namespace *</label>
+        <select class="input-outline w-full" formControlName="namespaceId">
+          <option value="">Select a namespace...</option>
+          @for (ns of kvNamespaces; track ns.id) {
+          <option [value]="ns.id">{{ ns.name }}</option>
+          }
+        </select>
+        @if (kvNamespaces.length === 0) {
+        <p class="text-xs text-gray-500 mt-1">
+          No KV namespaces. <a routerLink="/kv/create" class="text-blue-600">Create one</a>
+        </p>
+        }
+      </fieldset>
+      }
+    </form>
+
+    <div role="footer" class="flex justify-end gap-2">
+      <button type="button" class="btn-light" (click)="showKvModal = false">Cancel</button>
+      <button type="button" class="btn-blue" [disabled]="kvForm.invalid" (click)="addKvBinding()">Add</button>
+    </div>
+  </app-modal>
+</div>

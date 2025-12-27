@@ -28,7 +28,8 @@ import {
   heroCog6Tooth,
   heroChevronRight,
   heroMicrophone,
-  heroUser
+  heroUser,
+  heroCube
 } from '@ng-icons/heroicons/outline';
 
 export const appConfig: ApplicationConfig = {
@@ -60,7 +61,8 @@ export const appConfig: ApplicationConfig = {
       heroCog6Tooth,
       heroChevronRight,
       heroMicrophone,
-      heroUser
+      heroUser,
+      heroCube
     })
   ]
 };

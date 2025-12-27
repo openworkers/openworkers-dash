@@ -8,8 +8,9 @@ import {
   ReactiveFormsModule,
   ValidationErrors
 } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { NgIconComponent } from '@ng-icons/core';
-import type { IEnvironmentValueUpdateInput } from '@openworkers/api-types';
+import type { IEnvironmentValueUpdateInput, IStorageConfig, IKvNamespace } from '@openworkers/api-types';
 
 const emptyString = '';
 
@@ -117,7 +118,7 @@ class KVSFormGroup extends FormGroup<KVSControl> {
 }
 
 @Component({
-  imports: [CommonModule, NgIconComponent, ReactiveFormsModule],
+  imports: [CommonModule, NgIconComponent, ReactiveFormsModule, RouterLink],
   selector: 'app-key-value',
   templateUrl: 'key-value.component.html',
   styleUrls: ['key-value.component.css']
@@ -137,6 +138,30 @@ export class KeyValueComponent implements OnChanges {
    */
   @Output()
   public readonly update: EventEmitter<IEnvironmentValueUpdateInput[]> = new EventEmitter();
+
+  /**
+   * Request to add a storage binding
+   */
+  @Output()
+  public readonly addStorage: EventEmitter<void> = new EventEmitter();
+
+  /**
+   * Request to add a KV binding
+   */
+  @Output()
+  public readonly addKv: EventEmitter<void> = new EventEmitter();
+
+  /**
+   * Storage configs for resolving binding names
+   */
+  @Input()
+  public storageConfigs: IStorageConfig[] = [];
+
+  /**
+   * KV namespaces for resolving binding names
+   */
+  @Input()
+  public kvNamespaces: IKvNamespace[] = [];
 
   private initialValues: KVSId[] = [];
 
@@ -193,6 +218,44 @@ export class KeyValueComponent implements OnChanges {
     }
 
     return group;
+  }
+
+  getBindingLink(group: KVSFormGroup): string[] | null {
+    const type = group.controls.type.value;
+    const value = group.controls.value.value;
+
+    if (!value) return null;
+
+    switch (type) {
+      case 'assets':
+      case 'storage':
+        return ['/storage', value];
+      case 'kv':
+        return ['/kv', value];
+      default:
+        return null;
+    }
+  }
+
+  getBindingDisplayName(group: KVSFormGroup): string {
+    const type = group.controls.type.value;
+    const value = group.controls.value.value;
+
+    if (!value) return type;
+
+    let name: string | undefined;
+
+    switch (type) {
+      case 'assets':
+      case 'storage':
+        name = this.storageConfigs.find((c) => c.id === value)?.name;
+        break;
+      case 'kv':
+        name = this.kvNamespaces.find((ns) => ns.id === value)?.name;
+        break;
+    }
+
+    return name ? `${name} (${type})` : type;
   }
 
   onSubmit() {

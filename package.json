@@ -23,6 +23,7 @@
     "@materia-ui/ngx-monaco-editor": "^6.0.0",
     "@ng-icons/core": "^33.0.0",
     "@ng-icons/heroicons": "^33.0.0",
+    "@openworkers/api-types": "../openworkers-api/dist",
     "@openworkers/croner-wasm": "^0.3.0",
     "dexie": "^4.2.1",
     "monaco-editor": "0.55.1",

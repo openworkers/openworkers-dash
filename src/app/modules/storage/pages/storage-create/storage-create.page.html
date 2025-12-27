@@ -1,0 +1,126 @@
+<div class="flex justify-center">
+  <div class="card shadow-sm mt-8">
+    <h4>Create Storage Config</h4>
+    <p class="text-sm text-gray-500 mt-1">
+      Storage configs can be used as either <strong>assets</strong> (read-only) or <strong>storage</strong> (read/write) bindings.
+    </p>
+
+    <form class="mt-3" [formGroup]="form" (ngSubmit)="submitForm()">
+      <fieldset>
+        <label>Name *</label>
+        <input
+          focus
+          type="text"
+          class="input-outline w-full"
+          formControlName="name"
+          placeholder="My Storage"
+          required
+        />
+        <div class="text-xs pb-2 text-red">
+          <form-error [control]="form.get('name')"></form-error>
+        </div>
+      </fieldset>
+
+      <fieldset class="mt-3">
+        <label>Description</label>
+        <textarea class="input-outline w-full" formControlName="desc" placeholder="Description"> </textarea>
+        <div class="text-xs pb-2 text-red">
+          <form-error [control]="form.get('desc')"></form-error>
+        </div>
+      </fieldset>
+
+      <fieldset class="mt-3">
+        <label>Mode *</label>
+        <select class="input-outline w-full" formControlName="mode">
+          <option value="shared">Shared (Platform R2)</option>
+          <option value="custom">Custom (Your S3/R2)</option>
+        </select>
+        <p class="text-xs text-gray-500 mt-1">
+          @if (isCustomMode) {
+            Provide your own S3/R2 credentials
+          } @else {
+            Use the platform's shared R2 storage with automatic isolation
+          }
+        </p>
+      </fieldset>
+
+      @if (isCustomMode) {
+        <div class="mt-4 p-3 bg-gray-50 rounded border">
+          <h5 class="text-sm font-medium mb-3">S3/R2 Credentials</h5>
+
+          <fieldset>
+            <label>Bucket *</label>
+            <input type="text" class="input-outline w-full" formControlName="bucket" placeholder="my-bucket" />
+            <div class="text-xs pb-2 text-red">
+              <form-error [control]="form.get('bucket')"></form-error>
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-2">
+            <label>Prefix</label>
+            <input type="text" class="input-outline w-full" formControlName="prefix" placeholder="optional/path/prefix" />
+            <p class="text-xs text-gray-500">Optional path prefix within the bucket</p>
+          </fieldset>
+
+          <fieldset class="mt-2">
+            <label>Access Key ID *</label>
+            <input type="text" class="input-outline w-full" formControlName="accessKeyId" placeholder="Access Key ID" />
+            <div class="text-xs pb-2 text-red">
+              <form-error [control]="form.get('accessKeyId')"></form-error>
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-2">
+            <label>Secret Access Key *</label>
+            <input
+              type="password"
+              class="input-outline w-full"
+              formControlName="secretAccessKey"
+              placeholder="Secret Access Key"
+            />
+            <div class="text-xs pb-2 text-red">
+              <form-error [control]="form.get('secretAccessKey')"></form-error>
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-2">
+            <label>Endpoint</label>
+            <input
+              type="text"
+              class="input-outline w-full"
+              formControlName="endpoint"
+              placeholder="https://account.r2.cloudflarestorage.com"
+            />
+            <p class="text-xs text-gray-500">S3-compatible endpoint URL (leave empty for AWS S3)</p>
+          </fieldset>
+
+          <fieldset class="mt-2">
+            <label>Region</label>
+            <input
+              type="text"
+              class="input-outline w-full"
+              formControlName="region"
+              placeholder="us-east-1"
+            />
+            <p class="text-xs text-gray-500">AWS region (not needed for R2)</p>
+          </fieldset>
+
+          <fieldset class="mt-2">
+            <label>Public URL</label>
+            <input
+              type="text"
+              class="input-outline w-full"
+              formControlName="publicUrl"
+              placeholder="https://cdn.example.com"
+            />
+            <p class="text-xs text-gray-500">Optional CDN or public URL for serving files</p>
+          </fieldset>
+        </div>
+      }
+
+      <fieldset class="mt-5">
+        <button class="btn-outline" type="submit" [disabled]="form.touched && form.invalid">Create</button>
+      </fieldset>
+    </form>
+  </div>
+</div>

@@ -7,12 +7,13 @@ import { SharedModule } from '~/app/shared/shared.module';
 import { getWorkerUrl } from '~/app/utils/url';
 import type { IResourceLimits } from '@openworkers/api-types';
 
-// Map resource name to limit key (most just add 's', but 'kv' stays 'kv')
+// Map resource name to limit key (most just add 's', but 'kv' and 'storage' stay as-is)
 const LIMIT_KEY_MAP: Record<string, keyof IResourceLimits> = {
   worker: 'workers',
   environment: 'environments',
   database: 'databases',
-  kv: 'kv'
+  kv: 'kv',
+  storage: 'storage'
 };
 
 @Component({
