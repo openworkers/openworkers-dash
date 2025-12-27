@@ -1,0 +1,33 @@
+<div class="flex justify-center">
+  <div class="card shadow-sm mt-8">
+    <h4>Create KV Namespace</h4>
+    <form class="mt-3" [formGroup]="form" (ngSubmit)="submitForm()">
+      <fieldset>
+        <label>Name *</label>
+        <input
+          focus
+          type="text"
+          class="input-outline w-full"
+          formControlName="name"
+          placeholder="My KV Namespace"
+          required
+        />
+        <div class="text-xs pb-2 text-red">
+          <form-error [control]="form.get('name')"></form-error>
+        </div>
+      </fieldset>
+
+      <fieldset class="mt-3">
+        <label>Description</label>
+        <textarea class="input-outline w-full" formControlName="desc" placeholder="Description"> </textarea>
+        <div class="text-xs pb-2 text-red">
+          <form-error [control]="form.get('desc')"></form-error>
+        </div>
+      </fieldset>
+
+      <fieldset class="mt-5">
+        <button class="btn-outline" type="submit" [disabled]="form.touched && form.invalid">Create</button>
+      </fieldset>
+    </form>
+  </div>
+</div>

@@ -21,8 +21,10 @@ import type { ISelf } from '@openworkers/api-types';
           <div class="mt-4">
             <div class="text-gray-500">Resources limits:</div>
             <ul class="text-gray-900 dark:text-stone-200 ml-2">
-              <li>Workers: {{ user.resourceLimits.workers }}</li>
-              <li>Environments: {{ user.resourceLimits.environments }}</li>
+              <li>Workers: {{ user.limits.workers }}</li>
+              <li>Environments: {{ user.limits.environments }}</li>
+              <li>Databases: {{ user.limits.databases }}</li>
+              <li>KV Namespaces: {{ user.limits.kv }}</li>
             </ul>
           </div>
         }

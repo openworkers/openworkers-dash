@@ -84,9 +84,9 @@ export class CronComponent {
         throw new Error('Unreachable');
       }
 
-      console.log('Change validators', user.resourceLimits);
+      console.log('Change validators', user.limits);
 
-      if (user.resourceLimits.secondPrecision) {
+      if (user.limits.secondPrecision) {
         this.cron.setValidators([cronExpressionValidator]);
       } else {
         this.cron.setValidators([cronExpressionValidator, minutePrecisionValidator]);

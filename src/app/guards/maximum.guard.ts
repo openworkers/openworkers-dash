@@ -19,7 +19,7 @@ export class MaximumGuard implements CanActivate {
 
     return this.authService.user$.pipe(
       // biome-ignore lint/complexity/useOptionalChain: <explanation>
-      map((user) => (user?.resourceLimits ?? {})[resourceName] ?? -1),
+      map((user) => (user?.limits ?? {})[resourceName] ?? -1),
       tap((limit) => {
         console.log('MaximumGuard: limit for', resourceName, 'is', limit);
       }),

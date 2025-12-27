@@ -1,0 +1,58 @@
+<div>
+  @if (kv$ | async; as kv) {
+    <div class="card shadow-sm mt-8">
+      <div class="inline-block p-4 w-full">
+        <h4>Namespace Info</h4>
+        <div class="mt-4">
+          <label class="text-sm text-gray-500">Namespace ID</label>
+          <div class="font-mono text-sm bg-gray-100 dark:bg-gray-800 p-2 rounded">{{ kv.id }}</div>
+        </div>
+        @if (kv.desc) {
+          <div class="mt-4">
+            <label class="text-sm text-gray-500">Description</label>
+            <div class="text-sm">{{ kv.desc }}</div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="card shadow-sm mt-8">
+      <div class="inline-block p-4 w-full">
+        <h4>Binding Setup</h4>
+        <div class="mt-4">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            To use this KV namespace in your worker, add a KV binding in your environment settings with the namespace ID above.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mt-8">
+      <div class="inline-block p-4 w-full">
+        <h4>Usage</h4>
+        <div class="mt-4">
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Once bound to your environment, you can access the KV store like this:
+          </p>
+          <pre class="text-xs bg-gray-100 dark:bg-gray-800 p-3 rounded block overflow-x-auto"><code>// Get a value
+const value = await env.KV.get('myKey');
+
+// Set a value
+await env.KV.put('myKey', 'myValue');
+
+// Set with expiration (seconds)
+await env.KV.put('session', token, &#123; expiresIn: 3600 &#125;);
+
+// Delete a key
+await env.KV.delete('myKey');
+
+// List keys
+const keys = await env.KV.list();
+const filtered = await env.KV.list(&#123; prefix: 'user:' &#125;);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <app-debug [expand]="true">{{ kv | json }}</app-debug>
+  }
+</div>

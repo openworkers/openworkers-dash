@@ -4,6 +4,7 @@ import { inject } from '@angular/core';
 import { WorkersService } from './services/workers.service';
 import { EnvironmentsService } from './services/environments.service';
 import { DatabasesService } from './services/databases.service';
+import { KvService } from './services/kv.service';
 
 export const routes: Routes = [
   {
@@ -63,6 +64,21 @@ export const routes: Routes = [
     path: 'database',
     data: { menuActive: 'databases' },
     loadChildren: () => import('~/modules/database/database.module'),
+    canLoad: [LoggedAuthGuard],
+    canActivate: [LoggedAuthGuard]
+  },
+  {
+    path: 'kv-namespaces',
+    resolve: { resourceList: () => inject(KvService).findAll() },
+    data: { menuActive: 'kv', resourceName: 'kv' },
+    loadComponent: () => import('~/modules/resource-list/resource-list.page'),
+    canLoad: [LoggedAuthGuard],
+    canActivate: [LoggedAuthGuard]
+  },
+  {
+    path: 'kv',
+    data: { menuActive: 'kv' },
+    loadChildren: () => import('~/modules/kv/kv.module'),
     canLoad: [LoggedAuthGuard],
     canActivate: [LoggedAuthGuard]
   },
