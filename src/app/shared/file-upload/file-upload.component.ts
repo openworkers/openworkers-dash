@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 
 interface PresignResponse {
   url: string;
@@ -34,10 +34,14 @@ export class FileUploadComponent {
 
   files: File[] = [];
   isDragging = false;
-  isUploading = false;
-  uploadedCount = 0;
-  currentFile = '';
   error: string | null = null;
+
+  readonly uploadState$ = new BehaviorSubject<{
+    uploading: boolean;
+    current: number;
+    total: number;
+    currentFile: string;
+  }>({ uploading: false, current: 0, total: 0, currentFile: '' });
 
   constructor(private http: HttpClient) {}
 
@@ -114,15 +118,24 @@ export class FileUploadComponent {
     return [];
   }
 
-  onFileSelected(event: Event) {
+  onFileSelected(event: Event, append = false) {
     const input = event.target as HTMLInputElement;
 
     if (input.files) {
-      this.files = Array.from(input.files).map((file) => {
+      const newFiles = Array.from(input.files).map((file) => {
         // Use webkitRelativePath for folder uploads, otherwise just the name
         const path = (file as any).webkitRelativePath || file.name;
         return new File([file], path, { type: file.type });
       });
+
+      if (append) {
+        this.files = [...this.files, ...newFiles];
+      } else {
+        this.files = newFiles;
+      }
+
+      // Reset input so the same file can be selected again
+      input.value = '';
     }
   }
 
@@ -138,15 +151,16 @@ export class FileUploadComponent {
   async upload() {
     if (this.files.length === 0) return;
 
-    this.isUploading = true;
-    this.uploadedCount = 0;
+    const total = this.files.length;
+    this.uploadState$.next({ uploading: true, current: 0, total, currentFile: '' });
     this.error = null;
 
     const uploadedFiles: UploadedFile[] = [];
 
     try {
-      for (const file of this.files) {
-        this.currentFile = file.name;
+      for (let i = 0; i < this.files.length; i++) {
+        const file = this.files[i];
+        this.uploadState$.next({ uploading: true, current: i, total, currentFile: file.name });
 
         // 100MB limit per file
         if (file.size > 100 * 1024 * 1024) {
@@ -176,17 +190,15 @@ export class FileUploadComponent {
         );
 
         uploadedFiles.push({ key: presignResponse.key, name: file.name });
-        this.uploadedCount++;
       }
 
+      this.uploadState$.next({ uploading: false, current: total, total, currentFile: '' });
       this.uploaded.emit(uploadedFiles);
       this.files = [];
-      this.currentFile = '';
     } catch (err) {
       console.error('Upload failed:', err);
       this.error = err instanceof Error ? err.message : 'Upload failed';
-    } finally {
-      this.isUploading = false;
+      this.uploadState$.next({ uploading: false, current: 0, total: 0, currentFile: '' });
     }
   }
 

@@ -29,6 +29,7 @@ export default class StorageOverviewPage {
 
   // File browser state
   private readonly refreshFiles$ = new BehaviorSubject<void>(undefined);
+  public selectedFiles = new Set<string>();
   public readonly filesState$: Observable<{
     files: StorageFile[];
     loading: boolean;
@@ -69,7 +70,45 @@ export default class StorageOverviewPage {
   }
 
   refreshFiles() {
+    this.selectedFiles.clear();
     this.refreshFiles$.next();
+  }
+
+  toggleSelect(key: string) {
+    if (this.selectedFiles.has(key)) {
+      this.selectedFiles.delete(key);
+    } else {
+      this.selectedFiles.add(key);
+    }
+  }
+
+  toggleSelectAll(files: StorageFile[]) {
+    if (this.selectedFiles.size === files.length) {
+      this.selectedFiles.clear();
+    } else {
+      this.selectedFiles = new Set(files.map((f) => f.key));
+    }
+  }
+
+  async deleteSelected() {
+    const keys = Array.from(this.selectedFiles);
+
+    if (!confirm(`Delete ${keys.length} file(s)?`)) return;
+
+    try {
+      await Promise.all(
+        keys.map((key) =>
+          firstValueFrom(
+            this.http.delete(`/api/v1/storage/${this.storageId}/files/${encodeURIComponent(key)}`)
+          )
+        )
+      );
+      this.selectedFiles.clear();
+      this.refreshFiles$.next();
+    } catch (err) {
+      console.error('Failed to delete files:', err);
+      alert('Failed to delete some files');
+    }
   }
 
   async openFile(key: string) {

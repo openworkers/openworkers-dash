@@ -9,20 +9,21 @@
   (dragleave)="onDragLeave($event)"
   (drop)="onDrop($event)"
 >
-  @if (isUploading) {
-    <div class="py-4">
-      <p class="text-sm text-gray-600 dark:text-gray-400">
-        Uploading {{ uploadedCount + 1 }} / {{ files.length + uploadedCount }}
-      </p>
-      <p class="text-xs text-gray-500 mt-1 font-mono truncate">{{ currentFile }}</p>
-      <div class="mt-2 h-2 bg-gray-200 dark:bg-gray-700 rounded overflow-hidden">
-        <div
-          class="h-full bg-blue-500 transition-all"
-          [style.width.%]="(uploadedCount / (files.length + uploadedCount)) * 100"
-        ></div>
+  @if (uploadState$ | async; as state) {
+    @if (state.uploading) {
+      <div class="py-4">
+        <p class="text-sm text-gray-600 dark:text-gray-400">
+          Uploading {{ state.current + 1 }} / {{ state.total }}
+        </p>
+        <p class="text-xs text-gray-500 mt-1 font-mono truncate">{{ state.currentFile }}</p>
+        <div class="mt-2 h-2 bg-gray-200 dark:bg-gray-700 rounded overflow-hidden">
+          <div
+            class="h-full bg-blue-500 transition-all"
+            [style.width.%]="(state.current / state.total) * 100"
+          ></div>
+        </div>
       </div>
-    </div>
-  } @else if (files.length === 0) {
+    } @else if (files.length === 0) {
     <div class="py-4">
       <p class="text-gray-600 dark:text-gray-400 mb-2">
         Drag & drop files or folders here
@@ -30,11 +31,11 @@
       <p class="text-sm text-gray-500 mb-4">or</p>
       <div class="flex justify-center gap-2">
         <label class="btn-light cursor-pointer">
-          Select files
+          Browse files
           <input type="file" class="hidden" multiple (change)="onFileSelected($event)" />
         </label>
         <label class="btn-light cursor-pointer">
-          Select folder
+          Browse folder
           <input type="file" class="hidden" webkitdirectory (change)="onFileSelected($event)" />
         </label>
       </div>
@@ -45,7 +46,17 @@
         <span class="text-sm text-gray-600 dark:text-gray-400">
           {{ files.length }} file(s) selected
         </span>
-        <button class="text-sm text-gray-500 hover:text-gray-700" (click)="clearFiles()">Clear</button>
+        <div class="flex gap-2">
+          <label class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer">
+            + Files
+            <input type="file" class="hidden" multiple (change)="onFileSelected($event, true)" />
+          </label>
+          <label class="text-sm text-blue-600 hover:text-blue-800 cursor-pointer">
+            + Folder
+            <input type="file" class="hidden" webkitdirectory (change)="onFileSelected($event, true)" />
+          </label>
+          <button class="text-sm text-gray-500 hover:text-gray-700" (click)="clearFiles()">Clear</button>
+        </div>
       </div>
 
       <div class="max-h-48 overflow-y-auto border rounded dark:border-gray-700">
@@ -70,5 +81,6 @@
         </button>
       </div>
     </div>
+    }
   }
 </div>
