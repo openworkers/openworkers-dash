@@ -1,0 +1,110 @@
+<app-modal [open]="open" (openChange)="close()" variant="large">
+  <div role="header">
+    <h4>Create Table</h4>
+  </div>
+
+  <div role="body" class="space-y-4">
+    @if (error()) {
+      <div class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-md text-sm">
+        {{ error() }}
+      </div>
+    }
+
+    <div>
+      <label class="block text-sm font-medium mb-1">Table Name</label>
+      <input
+        type="text"
+        class="input-outline w-full font-mono"
+        [(ngModel)]="tableName"
+        placeholder="users"
+        pattern="^[a-zA-Z_][a-zA-Z0-9_]*$"
+      />
+    </div>
+
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <label class="block text-sm font-medium">Columns</label>
+        <button type="button" class="text-sm text-blue-600 hover:text-blue-800" (click)="addColumn()">
+          + Add Column
+        </button>
+      </div>
+
+      <div class="space-y-2 max-h-64 overflow-y-auto">
+        @for (col of columns(); track $index; let i = $index) {
+          <div class="flex gap-2 items-start p-2 bg-gray-50 dark:bg-gray-800 rounded-md">
+            <div class="flex-1">
+              <input
+                type="text"
+                class="input-outline w-full text-sm font-mono"
+                [ngModel]="col.name"
+                (ngModelChange)="updateColumn(i, 'name', $event)"
+                placeholder="column_name"
+              />
+            </div>
+
+            <div class="w-32">
+              <select
+                class="input-outline w-full text-sm"
+                [ngModel]="col.type"
+                (ngModelChange)="updateColumn(i, 'type', $event)"
+              >
+                @for (type of commonTypes; track type) {
+                  <option [value]="type">{{ type }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="flex items-center gap-2 text-xs">
+              <label class="flex items-center gap-1 cursor-pointer">
+                <input
+                  type="checkbox"
+                  [ngModel]="col.primaryKey"
+                  (ngModelChange)="updateColumn(i, 'primaryKey', $event)"
+                />
+                PK
+              </label>
+
+              <label class="flex items-center gap-1 cursor-pointer">
+                <input
+                  type="checkbox"
+                  [ngModel]="col.notNull"
+                  (ngModelChange)="updateColumn(i, 'notNull', $event)"
+                />
+                NN
+              </label>
+
+              <label class="flex items-center gap-1 cursor-pointer">
+                <input
+                  type="checkbox"
+                  [ngModel]="col.unique"
+                  (ngModelChange)="updateColumn(i, 'unique', $event)"
+                />
+                UQ
+              </label>
+            </div>
+
+            <button
+              type="button"
+              class="text-red-500 hover:text-red-700 px-2"
+              (click)="removeColumn(i)"
+              [disabled]="columns().length <= 1"
+            >
+              ×
+            </button>
+          </div>
+        }
+      </div>
+
+      <p class="text-xs text-gray-500 mt-2">
+        PK = Primary Key, NN = Not Null, UQ = Unique
+      </p>
+    </div>
+  </div>
+
+  <div role="footer" class="flex gap-2 justify-end">
+    <button class="btn-outline" (click)="close()" [disabled]="isCreating()">Cancel</button>
+    <button class="btn-primary" (click)="createTable()" [disabled]="isCreating() || !tableName.trim()">
+      {{ isCreating() ? 'Creating...' : 'Create Table' }}
+    </button>
+  </div>
+</app-modal>

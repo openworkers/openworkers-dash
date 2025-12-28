@@ -2,7 +2,7 @@
 
 interface EnvValue {
   key: string;
-  type: 'var' | 'secret' | 'assets' | 'storage' | 'kv';
+  type: 'var' | 'secret' | 'assets' | 'storage' | 'kv' | 'database';
 }
 
 export function createEnvironmentLib(values: EnvValue[]) {
@@ -18,6 +18,8 @@ export function createEnvironmentLib(values: EnvValue[]) {
         return `readonly ${v.key}: BindingStorage`;
       case 'kv':
         return `readonly ${v.key}: BindingKV`;
+      case 'database':
+        return `readonly ${v.key}: BindingDatabase`;
       default:
         return `readonly ${v.key}: string`;
     }
@@ -65,6 +67,15 @@ interface BindingKV {
   put(key: string, value: string, options?: KVPutOptions): Promise<void>;
   delete(key: string): Promise<void>;
   list(options?: KVListOptions): Promise<string[]>;
+}
+
+interface QueryResult<T = Record<string, unknown>> {
+  rows: T[];
+  rowCount: number;
+}
+
+interface BindingDatabase {
+  query<T = Record<string, unknown>>(sql: string, params?: unknown[]): Promise<QueryResult<T>>;
 }
 
 interface Environment {

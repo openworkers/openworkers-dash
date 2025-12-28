@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -7,6 +7,8 @@ import { visibleBlockValidator } from '~/app/utils/validators';
 import { DatabasesService } from '~/services/databases.service';
 import { SharedModule } from '~/app/shared/shared.module';
 
+type DatabaseProvider = 'platform' | 'postgres';
+
 @Component({
   standalone: true,
   imports: [SharedModule, FormErrorComponent],
@@ -14,6 +16,7 @@ import { SharedModule } from '~/app/shared/shared.module';
 })
 export default class DatabaseCreatePage {
   public readonly form: FormGroup;
+  public readonly provider = signal<DatabaseProvider>('platform');
 
   constructor(
     private readonly dbs: DatabasesService,
@@ -21,8 +24,21 @@ export default class DatabaseCreatePage {
   ) {
     this.form = new FormGroup({
       name: new FormControl('', [Validators.required, Validators.maxLength(100)]),
-      desc: new FormControl('', [visibleBlockValidator, Validators.maxLength(255)])
+      desc: new FormControl('', [visibleBlockValidator, Validators.maxLength(255)]),
+      connectionString: new FormControl('', [Validators.maxLength(500)])
     });
+  }
+
+  public setProvider(p: DatabaseProvider): void {
+    this.provider.set(p);
+
+    if (p === 'postgres') {
+      this.form.get('connectionString')?.setValidators([Validators.required, Validators.maxLength(500)]);
+    } else {
+      this.form.get('connectionString')?.clearValidators();
+    }
+
+    this.form.get('connectionString')?.updateValueAndValidity();
   }
 
   public async submitForm(): Promise<void> {
@@ -30,11 +46,20 @@ export default class DatabaseCreatePage {
       return;
     }
 
-    const { name, desc } = this.form.value;
+    const { name, desc, connectionString } = this.form.value;
 
-    const db = await firstValueFrom(this.dbs.create({ name, desc: desc || null }));
+    const input: any = {
+      name,
+      desc: desc || undefined,
+      provider: this.provider()
+    };
 
-    // Navigate to database edit page to generate token
+    if (this.provider() === 'postgres') {
+      input.connectionString = connectionString;
+    }
+
+    const db = await firstValueFrom(this.dbs.create(input));
+
     await this.router.navigate(['/database', db.id]);
   }
 }

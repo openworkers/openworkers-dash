@@ -1,0 +1,170 @@
+@if (provider !== 'platform') {
+  <div class="text-sm text-gray-500">
+    Table management is only available for Platform databases.
+  </div>
+} @else {
+  <div class="flex justify-between items-center mb-4">
+    <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300">Tables</h5>
+    <button class="btn-outline text-sm" (click)="openCreateModal()">
+      + New Table
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="text-sm text-gray-500">Loading...</div>
+  } @else if (error()) {
+    <div class="text-sm text-red-500">{{ error() }}</div>
+  } @else if (tables().length === 0) {
+    <div class="text-sm text-gray-500">No tables yet. Create your first table to get started.</div>
+  } @else {
+    <div class="space-y-2">
+      @for (table of tables(); track table.name) {
+        <div
+          class="border rounded-lg overflow-hidden dark:border-gray-700"
+          [class.border-blue-500]="selectedTable() === table.name"
+        >
+          <div
+            class="flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+            (click)="selectTable(table.name)"
+          >
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-sm">{{ table.name }}</span>
+              <span class="text-xs text-gray-500">({{ table.rowCount }} rows)</span>
+            </div>
+            <button
+              class="text-red-500 hover:text-red-700 text-sm px-2"
+              (click)="confirmDelete(table.name, $event)"
+              title="Delete table"
+            >
+              ×
+            </button>
+          </div>
+
+          @if (selectedTable() === table.name && selectedColumns().length > 0) {
+            <div class="border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800 px-3 py-2">
+              <table class="w-full text-xs">
+                <thead>
+                  <tr class="text-left text-gray-500">
+                    <th class="pb-1">Column</th>
+                    <th class="pb-1">Type</th>
+                    <th class="pb-1">Nullable</th>
+                    <th class="pb-1">Default</th>
+                    <th class="pb-1 w-8"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (col of selectedColumns(); track col.name) {
+                    <tr class="group">
+                      <td class="py-0.5 font-mono">
+                        {{ col.name }}
+                        @if (col.primaryKey) {
+                          <span class="text-yellow-600 ml-1" title="Primary Key">🔑</span>
+                        }
+                      </td>
+                      <td class="py-0.5 text-gray-600 dark:text-gray-400">{{ col.type }}</td>
+                      <td class="py-0.5">{{ col.nullable ? 'Yes' : 'No' }}</td>
+                      <td class="py-0.5 text-gray-500 font-mono max-w-[120px] truncate" [title]="col.defaultValue || ''">{{ col.defaultValue || '-' }}</td>
+                      <td class="py-0.5 text-right">
+                        @if (!col.primaryKey) {
+                          <button
+                            class="text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                            (click)="confirmDeleteColumn(col.name, $event)"
+                            title="Drop column"
+                          >
+                            ×
+                          </button>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+              <button class="text-xs text-blue-600 hover:text-blue-800 mt-2" (click)="openAddColumnModal()">
+                + Add Column
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+}
+
+<!-- Create Table Modal -->
+<app-create-table-modal
+  [open]="showCreateModal()"
+  [databaseId]="databaseId"
+  (openChange)="showCreateModal.set($event)"
+  (created)="onTableCreated()"
+/>
+
+<!-- Delete Table Confirmation Modal -->
+<app-modal [open]="showDeleteConfirm()" (openChange)="showDeleteConfirm.set($event)" variant="small">
+  <div role="header">
+    <h4>Delete Table</h4>
+  </div>
+  <div role="body">
+    <p>Are you sure you want to delete table <strong class="font-mono">{{ tableToDelete() }}</strong>?</p>
+    <p class="text-sm text-red-600 mt-2">This action cannot be undone. All data will be permanently deleted.</p>
+  </div>
+  <div role="footer" class="flex gap-2 justify-end">
+    <button class="btn-outline" (click)="showDeleteConfirm.set(false)">Cancel</button>
+    <button class="btn-primary bg-red-600 hover:bg-red-700" (click)="deleteTable()">Delete</button>
+  </div>
+</app-modal>
+
+<!-- Add Column Modal -->
+<app-modal [open]="showAddColumnModal()" (openChange)="showAddColumnModal.set($event)" variant="small">
+  <div role="header">
+    <h4>Add Column to {{ selectedTable() }}</h4>
+  </div>
+  <div role="body" class="space-y-3">
+    <div>
+      <label class="block text-sm font-medium mb-1">Column Name</label>
+      <input
+        type="text"
+        class="input-outline w-full font-mono"
+        [(ngModel)]="newColumn.name"
+        placeholder="column_name"
+        pattern="^[a-zA-Z_][a-zA-Z0-9_]*$"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Type</label>
+      <select class="input-outline w-full" [(ngModel)]="newColumn.type">
+        @for (type of commonTypes; track type) {
+          <option [value]="type">{{ type }}</option>
+        }
+      </select>
+    </div>
+    <div class="flex gap-4 text-sm">
+      <label class="flex items-center gap-1 cursor-pointer">
+        <input type="checkbox" [(ngModel)]="newColumn.notNull" />
+        NOT NULL
+      </label>
+      <label class="flex items-center gap-1 cursor-pointer">
+        <input type="checkbox" [(ngModel)]="newColumn.unique" />
+        UNIQUE
+      </label>
+    </div>
+  </div>
+  <div role="footer" class="flex gap-2 justify-end">
+    <button class="btn-outline" (click)="showAddColumnModal.set(false)">Cancel</button>
+    <button class="btn-primary" [disabled]="!newColumn.name.trim()" (click)="addColumn()">Add Column</button>
+  </div>
+</app-modal>
+
+<!-- Delete Column Confirmation Modal -->
+<app-modal [open]="showDeleteColumnConfirm()" (openChange)="showDeleteColumnConfirm.set($event)" variant="small">
+  <div role="header">
+    <h4>Drop Column</h4>
+  </div>
+  <div role="body">
+    <p>Are you sure you want to drop column <strong class="font-mono">{{ columnToDelete() }}</strong>?</p>
+    <p class="text-sm text-red-600 mt-2">This action cannot be undone. All data in this column will be permanently deleted.</p>
+  </div>
+  <div role="footer" class="flex gap-2 justify-end">
+    <button class="btn-outline" (click)="showDeleteColumnConfirm.set(false)">Cancel</button>
+    <button class="btn-primary bg-red-600 hover:bg-red-700" (click)="deleteColumn()">Drop Column</button>
+  </div>
+</app-modal>

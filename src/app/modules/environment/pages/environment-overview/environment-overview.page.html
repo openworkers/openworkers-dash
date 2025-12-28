@@ -7,9 +7,11 @@
         [kv]="vm.environment.values ?? []"
         [storageConfigs]="vm.storageConfigs"
         [kvNamespaces]="vm.kvNamespaces"
+        [databases]="vm.databases"
         (update)="update(vm.environment.id, $event)"
         (addStorage)="openStorageModal()"
         (addKv)="openKvModal()"
+        (addDatabase)="openDatabaseModal()"
       />
     </div>
   </div>
@@ -114,6 +116,40 @@
     <div role="footer" class="flex justify-end gap-2">
       <button type="button" class="btn-light" (click)="showKvModal = false">Cancel</button>
       <button type="button" class="btn-blue" [disabled]="kvForm.invalid" (click)="addKvBinding()">Add</button>
+    </div>
+  </app-modal>
+
+  <!-- Database Binding Modal -->
+  <app-modal [open]="showDatabaseModal" (openChange)="showDatabaseModal = $event">
+    <h4 role="header">Add Database Binding</h4>
+
+    <form role="body" class="my-4" [formGroup]="databaseForm" (ngSubmit)="addDatabaseBinding()">
+      <fieldset class="mb-3">
+        <label>Binding Name *</label>
+        <input type="text" class="input-outline w-full" formControlName="key" placeholder="DB" />
+      </fieldset>
+
+      @if (databases$ | async; as databases) {
+      <fieldset class="mb-4">
+        <label>Database *</label>
+        <select class="input-outline w-full" formControlName="databaseId">
+          <option value="">Select a database...</option>
+          @for (db of databases; track db.id) {
+          <option [value]="db.id">{{ db.name }}</option>
+          }
+        </select>
+        @if (databases.length === 0) {
+        <p class="text-xs text-gray-500 mt-1">
+          No databases. <a routerLink="/database/create" class="text-blue-600">Create one</a>
+        </p>
+        }
+      </fieldset>
+      }
+    </form>
+
+    <div role="footer" class="flex justify-end gap-2">
+      <button type="button" class="btn-light" (click)="showDatabaseModal = false">Cancel</button>
+      <button type="button" class="btn-blue" [disabled]="databaseForm.invalid" (click)="addDatabaseBinding()">Add</button>
     </div>
   </app-modal>
 </div>

@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIconComponent } from '@ng-icons/core';
-import type { IEnvironmentValueUpdateInput, IStorageConfig, IKvNamespace } from '@openworkers/api-types';
+import type { IEnvironmentValueUpdateInput, IStorageConfig, IKvNamespace, IDatabase } from '@openworkers/api-types';
 
 const emptyString = '';
 
@@ -26,9 +26,9 @@ export function duplicateKeyValidator(control: AbstractControl): ValidationError
   return duplicateKey ? { duplicateKey } : null;
 }
 
-type BindingType = 'var' | 'secret' | 'assets' | 'storage' | 'kv';
+type BindingType = 'var' | 'secret' | 'assets' | 'storage' | 'kv' | 'database';
 
-const RESOURCE_BINDINGS: BindingType[] = ['assets', 'storage', 'kv'];
+const RESOURCE_BINDINGS: BindingType[] = ['assets', 'storage', 'kv', 'database'];
 
 interface KVS<K = string, V = string, T = BindingType> {
   key: K;
@@ -152,6 +152,12 @@ export class KeyValueComponent implements OnChanges {
   public readonly addKv: EventEmitter<void> = new EventEmitter();
 
   /**
+   * Request to add a Database binding
+   */
+  @Output()
+  public readonly addDatabase: EventEmitter<void> = new EventEmitter();
+
+  /**
    * Storage configs for resolving binding names
    */
   @Input()
@@ -162,6 +168,12 @@ export class KeyValueComponent implements OnChanges {
    */
   @Input()
   public kvNamespaces: IKvNamespace[] = [];
+
+  /**
+   * Databases for resolving binding names
+   */
+  @Input()
+  public databases: IDatabase[] = [];
 
   private initialValues: KVSId[] = [];
 
@@ -232,6 +244,8 @@ export class KeyValueComponent implements OnChanges {
         return ['/storage', value];
       case 'kv':
         return ['/kv', value];
+      case 'database':
+        return ['/database', value];
       default:
         return null;
     }
@@ -252,6 +266,9 @@ export class KeyValueComponent implements OnChanges {
         break;
       case 'kv':
         name = this.kvNamespaces.find((ns) => ns.id === value)?.name;
+        break;
+      case 'database':
+        name = this.databases.find((db) => db.id === value)?.name;
         break;
     }
 

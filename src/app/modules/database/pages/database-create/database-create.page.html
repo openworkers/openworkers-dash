@@ -3,6 +3,43 @@
     <h4>Create database</h4>
     <form class="mt-3" [formGroup]="form" (ngSubmit)="submitForm()">
       <fieldset>
+        <label>Provider *</label>
+        <div class="flex gap-2 mt-1">
+          <button
+            type="button"
+            class="px-4 py-2 rounded-md border transition-colors"
+            [class.bg-blue-500]="provider() === 'platform'"
+            [class.text-white]="provider() === 'platform'"
+            [class.border-blue-500]="provider() === 'platform'"
+            [class.border-gray-300]="provider() !== 'platform'"
+            [class.dark:border-gray-600]="provider() !== 'platform'"
+            (click)="setProvider('platform')"
+          >
+            Platform
+          </button>
+          <button
+            type="button"
+            class="px-4 py-2 rounded-md border transition-colors"
+            [class.bg-blue-500]="provider() === 'postgres'"
+            [class.text-white]="provider() === 'postgres'"
+            [class.border-blue-500]="provider() === 'postgres'"
+            [class.border-gray-300]="provider() !== 'postgres'"
+            [class.dark:border-gray-600]="provider() !== 'postgres'"
+            (click)="setProvider('postgres')"
+          >
+            PostgreSQL
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">
+          @if (provider() === 'platform') {
+            Shared multi-tenant database on OpenWorkers infrastructure.
+          } @else {
+            Connect your own PostgreSQL database (Supabase, Neon, etc.).
+          }
+        </p>
+      </fieldset>
+
+      <fieldset class="mt-4">
         <label>Name *</label>
         <input
           focus
@@ -24,6 +61,25 @@
           <form-error [control]="form.get('desc')"></form-error>
         </div>
       </fieldset>
+
+      @if (provider() === 'postgres') {
+        <fieldset class="mt-3">
+          <label>Connection String *</label>
+          <input
+            type="password"
+            class="input-outline w-full font-mono text-sm"
+            formControlName="connectionString"
+            placeholder="postgresql://user:password@host:5432/database"
+            required
+          />
+          <div class="text-xs pb-2 text-red">
+            <form-error [control]="form.get('connectionString')"></form-error>
+          </div>
+          <p class="text-xs text-gray-500">
+            Your connection string is encrypted and stored securely.
+          </p>
+        </fieldset>
+      }
 
       <fieldset class="mt-5">
         <button class="btn-outline" type="submit" [disabled]="form.touched && form.invalid">Create</button>

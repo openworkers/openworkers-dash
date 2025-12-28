@@ -10,7 +10,8 @@ import { ModalComponent } from '~/app/shared/modal/modal.component';
 import { EnvironmentsService } from '~/services/environments.service';
 import { StorageService } from '~/services/storage.service';
 import { KvService } from '~/services/kv.service';
-import type { IEnvironment, IEnvironmentValueUpdateInput, IStorageConfig, IKvNamespace } from '@openworkers/api-types';
+import { DatabasesService } from '~/app/services/databases.service';
+import type { IEnvironment, IEnvironmentValueUpdateInput, IStorageConfig, IKvNamespace, IDatabase } from '@openworkers/api-types';
 
 @Component({
   imports: [CommonModule, RouterLink, ReactiveFormsModule, DebugComponent, KeyValueComponent, ModalComponent],
@@ -20,16 +21,19 @@ export default class EnvironmentOverviewPage {
   public readonly environment$: Observable<IEnvironment>;
   public readonly storageConfigs$: Observable<IStorageConfig[]>;
   public readonly kvNamespaces$: Observable<IKvNamespace[]>;
+  public readonly databases$: Observable<IDatabase[]>;
 
   public readonly vm$: Observable<{
     environment: IEnvironment;
     storageConfigs: IStorageConfig[];
     kvNamespaces: IKvNamespace[];
+    databases: IDatabase[];
   }>;
 
   // Modal state
   public showStorageModal = false;
   public showKvModal = false;
+  public showDatabaseModal = false;
 
   public storageForm = new FormGroup({
     key: new FormControl('', [Validators.required]),
@@ -42,13 +46,19 @@ export default class EnvironmentOverviewPage {
     namespaceId: new FormControl('', [Validators.required])
   });
 
+  public databaseForm = new FormGroup({
+    key: new FormControl('', [Validators.required]),
+    databaseId: new FormControl('', [Validators.required])
+  });
+
   private environmentId!: string;
 
   constructor(
     route: ActivatedRoute,
     private envs: EnvironmentsService,
     private storageService: StorageService,
-    private kvService: KvService
+    private kvService: KvService,
+    private databasesService: DatabasesService
   ) {
     const env = route.parent?.snapshot.data['environment'] as Resolved<IEnvironment>;
     this.environmentId = env.id;
@@ -67,16 +77,23 @@ export default class EnvironmentOverviewPage {
       shareReplay(1)
     );
 
+    this.databases$ = this.databasesService.findAll().pipe(
+      startWith([] as IDatabase[]),
+      shareReplay(1)
+    );
+
     // Combine all data into a single view model
     this.vm$ = combineLatest([
       this.environment$,
       this.storageConfigs$,
-      this.kvNamespaces$
+      this.kvNamespaces$,
+      this.databases$
     ]).pipe(
-      map(([environment, storageConfigs, kvNamespaces]) => ({
+      map(([environment, storageConfigs, kvNamespaces, databases]) => ({
         environment,
         storageConfigs,
-        kvNamespaces
+        kvNamespaces,
+        databases
       }))
     );
   }
@@ -119,5 +136,23 @@ export default class EnvironmentOverviewPage {
     }));
 
     this.showKvModal = false;
+  }
+
+  openDatabaseModal() {
+    this.databaseForm.reset();
+    this.showDatabaseModal = true;
+  }
+
+  async addDatabaseBinding() {
+    if (this.databaseForm.invalid) return;
+
+    const { key, databaseId } = this.databaseForm.value;
+
+    await firstValueFrom(this.envs.update({
+      id: this.environmentId,
+      values: [{ key: key!, value: databaseId!, type: 'database' }]
+    }));
+
+    this.showDatabaseModal = false;
   }
 }
