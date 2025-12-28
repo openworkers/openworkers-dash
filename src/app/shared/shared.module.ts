@@ -10,6 +10,7 @@ import { PluralPipe } from './plural.pipe';
 import { FocusDirective } from './focus.directive';
 import { TooltipDirective } from './tooltip.directive';
 import { ThemeSwitchComponent } from './theme-switch/theme-switch.component';
+import { FileUploadComponent } from './file-upload/file-upload.component';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { ThemeSwitchComponent } from './theme-switch/theme-switch.component';
     PluralPipe,
     FocusDirective,
     TooltipDirective,
-    ThemeSwitchComponent
+    ThemeSwitchComponent,
+    FileUploadComponent
   ],
   exports: [
     CommonModule,
@@ -36,7 +38,8 @@ import { ThemeSwitchComponent } from './theme-switch/theme-switch.component';
     CronPipe,
     FocusDirective,
     TooltipDirective,
-    ThemeSwitchComponent
+    ThemeSwitchComponent,
+    FileUploadComponent
   ]
 })
 export class SharedModule {}
