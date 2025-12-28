@@ -1,5 +1,14 @@
 <div>
   @if (kv$ | async; as kv) {
+    <!-- Data Browser -->
+    <div class="card shadow-sm mt-8">
+      <div class="p-4">
+        <h4 class="mb-4">Data Browser</h4>
+        <app-kv-data-browser [namespaceId]="kvId" />
+      </div>
+    </div>
+
+    <!-- Namespace Info -->
     <div class="card shadow-sm mt-8">
       <div class="inline-block p-4 w-full">
         <h4>Namespace Info</h4>
@@ -16,17 +25,7 @@
       </div>
     </div>
 
-    <div class="card shadow-sm mt-8">
-      <div class="inline-block p-4 w-full">
-        <h4>Binding Setup</h4>
-        <div class="mt-4">
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            To use this KV namespace in your worker, add a KV binding in your environment settings with the namespace ID above.
-          </p>
-        </div>
-      </div>
-    </div>
-
+    <!-- Usage -->
     <div class="card shadow-sm mt-8">
       <div class="inline-block p-4 w-full">
         <h4>Usage</h4>

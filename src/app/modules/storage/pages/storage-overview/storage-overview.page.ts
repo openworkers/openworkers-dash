@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, firstValueFrom, Observable, switchMap, startWith, catchError, of, map } from 'rxjs';
 import { Resolved } from '~/app/interfaces/resolved';
 import { SharedModule } from '~/app/shared/shared.module';
 import { StorageService } from '~/services/storage.service';
-import type { IStorageConfig } from '@openworkers/api-types';
+import type { IStorageConfig, IStorageConfigUpdateInput } from '@openworkers/api-types';
 
 interface StorageFile {
   key: string;
@@ -20,12 +21,16 @@ interface FilesResponse {
 
 @Component({
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule, FormsModule],
   templateUrl: './storage-overview.page.html'
 })
 export default class StorageOverviewPage {
   public readonly storage$: Observable<IStorageConfig>;
   public storageId: string;
+
+  // Edit state
+  public editing = false;
+  public editForm: IStorageConfigUpdateInput = {};
 
   // File browser state
   private readonly refreshFiles$ = new BehaviorSubject<void>(undefined);
@@ -141,5 +146,43 @@ export default class StorageOverviewPage {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+  }
+
+  openEdit(storage: IStorageConfig) {
+    this.editForm = {
+      bucket: storage.bucket ?? '',
+      prefix: storage.prefix ?? '',
+      endpoint: storage.endpoint ?? '',
+      region: storage.region ?? '',
+      publicUrl: storage.publicUrl ?? '',
+      accessKeyId: '',
+      secretAccessKey: ''
+    };
+    this.editing = true;
+  }
+
+  closeEdit() {
+    this.editing = false;
+  }
+
+  async saveEdit() {
+    const input: IStorageConfigUpdateInput = {};
+
+    // Only include non-empty values
+    if (this.editForm.bucket) input.bucket = this.editForm.bucket;
+    if (this.editForm.prefix !== undefined) input.prefix = this.editForm.prefix || null;
+    if (this.editForm.endpoint !== undefined) input.endpoint = this.editForm.endpoint || null;
+    if (this.editForm.region !== undefined) input.region = this.editForm.region || null;
+    if (this.editForm.publicUrl !== undefined) input.publicUrl = this.editForm.publicUrl || null;
+    if (this.editForm.accessKeyId) input.accessKeyId = this.editForm.accessKeyId;
+    if (this.editForm.secretAccessKey) input.secretAccessKey = this.editForm.secretAccessKey;
+
+    try {
+      await firstValueFrom(this.storageService.update({ id: this.storageId, ...input }));
+      this.editing = false;
+    } catch (err) {
+      console.error('Failed to save:', err);
+      alert('Failed to save configuration');
+    }
   }
 }

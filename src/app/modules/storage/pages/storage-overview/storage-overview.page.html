@@ -38,6 +38,12 @@
             <label class="text-sm text-gray-500">Bucket</label>
             <div class="font-mono text-sm">{{ storage.bucket }}</div>
           </div>
+          @if (storage.prefix) {
+            <div class="mt-4">
+              <label class="text-sm text-gray-500">Prefix</label>
+              <div class="font-mono text-sm">{{ storage.prefix }}</div>
+            </div>
+          }
           @if (storage.endpoint) {
             <div class="mt-4">
               <label class="text-sm text-gray-500">Endpoint</label>
@@ -56,6 +62,17 @@
               <div class="font-mono text-sm">{{ storage.publicUrl }}</div>
             </div>
           }
+          <div class="mt-4">
+            <label class="text-sm text-gray-500">Access Key ID</label>
+            <div class="font-mono text-sm">{{ storage.accessKeyId }}</div>
+          </div>
+          <div class="mt-4">
+            <label class="text-sm text-gray-500">Secret Access Key</label>
+            <div class="font-mono text-sm">{{ storage.secretAccessKey }}</div>
+          </div>
+          <div class="mt-4">
+            <button (click)="openEdit(storage)" class="btn-outline">Edit Configuration</button>
+          </div>
         }
       </div>
     </div>
@@ -195,3 +212,85 @@ const list = await env.STORAGE.list(&#123; prefix: 'uploads/' &#125;);</code></p
     <app-debug [expand]="true">{{ storage | json }}</app-debug>
   }
 </div>
+
+<!-- Edit Configuration Modal -->
+@if (editing) {
+  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" (click)="closeEdit()">
+    <div class="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-lg mx-4" (click)="$event.stopPropagation()">
+      <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-semibold">Edit S3/R2 Configuration</h3>
+      </div>
+      <div class="p-4 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bucket</label>
+          <input
+            type="text"
+            [(ngModel)]="editForm.bucket"
+            class="input-outline w-full font-mono"
+            placeholder="my-bucket"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Prefix (optional)</label>
+          <input
+            type="text"
+            [(ngModel)]="editForm.prefix"
+            class="input-outline w-full font-mono"
+            placeholder="path/prefix"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Endpoint (optional)</label>
+          <input
+            type="text"
+            [(ngModel)]="editForm.endpoint"
+            class="input-outline w-full font-mono"
+            placeholder="https://s3.region.amazonaws.com"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Region (optional)</label>
+          <input
+            type="text"
+            [(ngModel)]="editForm.region"
+            class="input-outline w-full font-mono"
+            placeholder="us-east-1"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Public URL (optional)</label>
+          <input
+            type="text"
+            [(ngModel)]="editForm.publicUrl"
+            class="input-outline w-full font-mono"
+            placeholder="https://cdn.example.com"
+          />
+        </div>
+        <hr class="border-gray-200 dark:border-gray-700" />
+        <p class="text-sm text-gray-500">Leave empty to keep existing credentials:</p>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Access Key ID</label>
+          <input
+            type="text"
+            [(ngModel)]="editForm.accessKeyId"
+            class="input-outline w-full font-mono"
+            placeholder="••••••••"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Secret Access Key</label>
+          <input
+            type="password"
+            [(ngModel)]="editForm.secretAccessKey"
+            class="input-outline w-full font-mono"
+            placeholder="••••••••"
+          />
+        </div>
+      </div>
+      <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
+        <button (click)="closeEdit()" class="btn-light">Cancel</button>
+        <button (click)="saveEdit()" class="btn-blue">Save</button>
+      </div>
+    </div>
+  </div>
+}

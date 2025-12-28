@@ -1,0 +1,117 @@
+@if (data$ | async; as data) {
+<div>
+  <!-- Header with search and add button -->
+  <div class="flex items-center justify-between gap-2 mb-4">
+    <input
+      type="text"
+      [(ngModel)]="searchPrefix"
+      (ngModelChange)="onSearchChange($event)"
+      placeholder="Search by prefix..."
+      class="input-outline flex-1 max-w-md"
+    />
+    <button (click)="openNew()" class="btn-blue">Add Key</button>
+  </div>
+
+  <!-- Data table -->
+  <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+    <table class="w-full">
+      <thead class="bg-gray-50 dark:bg-gray-800">
+        <tr>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400">Key</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400">Value</th>
+          <th class="px-4 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-400">Expires</th>
+          <th class="px-4 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        @if (items.length === 0) {
+        <tr>
+          <td colspan="4" class="px-4 py-8 text-center text-gray-500">No keys found. Click "Add Key" to create one.</td>
+        </tr>
+        } @else { @for (item of items; track item.key) {
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+          <td class="px-4 py-3 font-mono text-sm">{{ item.key }}</td>
+          <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 max-w-md truncate">
+            {{ truncate(item.value) }}
+          </td>
+          <td class="px-4 py-3 text-sm text-gray-500">{{ formatDate(item.expiresAt) }}</td>
+          <td class="px-4 py-3 text-right">
+            <button (click)="openEdit(item)" class="text-blue-600 hover:underline text-sm mr-3">Edit</button>
+            <button (click)="confirmDelete(item.key)" class="text-red-600 hover:underline text-sm">Delete</button>
+          </td>
+        </tr>
+        } }
+      </tbody>
+    </table>
+
+    <!-- Load more -->
+    @if (hasMore) {
+    <div class="p-4 border-t border-gray-200 dark:border-gray-700 text-center">
+      <button (click)="loadMore()" class="btn-light">Load More</button>
+    </div>
+    }
+  </div>
+</div>
+} @else {
+<div class="text-center py-8 text-gray-500">Loading...</div>
+}
+
+<!-- Edit Modal -->
+@if (editingItem) {
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" (click)="closeEdit()">
+  <div class="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-lg mx-4" (click)="$event.stopPropagation()">
+    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+      <h3 class="text-lg font-semibold">{{ editingItem.isNew ? 'Add Key' : 'Edit Key' }}</h3>
+    </div>
+    <div class="p-4 space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Key</label>
+        <input
+          type="text"
+          [(ngModel)]="editingItem.key"
+          [disabled]="!editingItem.isNew"
+          class="input-outline w-full font-mono"
+          placeholder="my-key"
+        />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Value</label>
+        <textarea [(ngModel)]="editingItem.value" class="input-outline w-full font-mono h-32" placeholder="value..."></textarea>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Expires in (seconds)</label>
+        <input
+          type="number"
+          [(ngModel)]="editingItem.expiresIn"
+          class="input-outline w-full font-mono"
+          placeholder="Leave empty for no expiration"
+        />
+      </div>
+    </div>
+    <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
+      <button (click)="closeEdit()" class="btn-light">Cancel</button>
+      <button (click)="save()" class="btn-blue">Save</button>
+    </div>
+  </div>
+</div>
+}
+
+<!-- Delete Confirmation Modal -->
+@if (deleteConfirm) {
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" (click)="cancelDelete()">
+  <div class="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-sm mx-4" (click)="$event.stopPropagation()">
+    <div class="p-4">
+      <h3 class="text-lg font-semibold mb-2">Delete Key?</h3>
+      <p class="text-gray-600 dark:text-gray-400">
+        Are you sure you want to delete
+        <code class="font-mono bg-gray-100 dark:bg-gray-800 px-1 rounded">{{ deleteConfirm }}</code
+        >?
+      </p>
+    </div>
+    <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-2">
+      <button (click)="cancelDelete()" class="btn-light">Cancel</button>
+      <button (click)="doDelete()" class="btn-outline-red">Delete</button>
+    </div>
+  </div>
+</div>
+}
