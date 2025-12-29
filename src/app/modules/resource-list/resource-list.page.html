@@ -33,9 +33,9 @@
                 <div>
                   <div class="flex items-center gap-2">
                     <a class="font-bold" [routerLink]="['/', resourceName, resource.id]"> {{ resource.name }} </a>
-                    @if (resourceName === 'storage' && $any(resource).mode) {
-                      <span class="text-xs px-2 py-0.5 rounded" [ngClass]="$any(resource).mode === 'shared' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300'">
-                        {{ $any(resource).mode }}
+                    @if ((resourceName === 'storage' || resourceName === 'database') && $any(resource).provider) {
+                      <span class="text-xs px-2 py-0.5 rounded" [ngClass]="$any(resource).provider === 'platform' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'">
+                        {{ $any(resource).provider }}
                       </span>
                     }
                   </div>

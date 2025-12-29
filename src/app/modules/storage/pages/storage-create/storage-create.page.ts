@@ -23,8 +23,8 @@ export default class StorageCreatePage {
     this.form = new FormGroup({
       name: new FormControl('', [Validators.required, Validators.maxLength(100)]),
       desc: new FormControl('', [visibleBlockValidator, Validators.maxLength(255)]),
-      mode: new FormControl<'shared' | 'custom'>('shared', [Validators.required]),
-      // Custom mode fields
+      provider: new FormControl<'platform' | 's3'>('platform', [Validators.required]),
+      // S3 provider fields
       bucket: new FormControl(''),
       prefix: new FormControl(''),
       accessKeyId: new FormControl(''),
@@ -34,17 +34,17 @@ export default class StorageCreatePage {
       publicUrl: new FormControl('')
     });
 
-    // Update validators when mode changes
-    this.form.get('mode')?.valueChanges.subscribe((mode) => {
-      const customFields = ['bucket', 'accessKeyId', 'secretAccessKey'];
+    // Update validators when provider changes
+    this.form.get('provider')?.valueChanges.subscribe((provider) => {
+      const s3Fields = ['bucket', 'accessKeyId', 'secretAccessKey'];
 
-      if (mode === 'custom') {
-        customFields.forEach((field) => {
+      if (provider === 's3') {
+        s3Fields.forEach((field) => {
           this.form.get(field)?.setValidators([Validators.required]);
           this.form.get(field)?.updateValueAndValidity();
         });
       } else {
-        customFields.forEach((field) => {
+        s3Fields.forEach((field) => {
           this.form.get(field)?.clearValidators();
           this.form.get(field)?.updateValueAndValidity();
         });
@@ -52,8 +52,8 @@ export default class StorageCreatePage {
     });
   }
 
-  public get isCustomMode(): boolean {
-    return this.form.get('mode')?.value === 'custom';
+  public get isS3Provider(): boolean {
+    return this.form.get('provider')?.value === 's3';
   }
 
   public async submitForm(): Promise<void> {
@@ -61,17 +61,18 @@ export default class StorageCreatePage {
       return;
     }
 
-    const { name, desc, mode, bucket, prefix, accessKeyId, secretAccessKey, endpoint, region, publicUrl } = this.form.value;
+    const { name, desc, provider, bucket, prefix, accessKeyId, secretAccessKey, endpoint, region, publicUrl } =
+      this.form.value;
 
     let input: IStorageConfigCreateInput;
 
-    if (mode === 'shared') {
-      input = { name, desc: desc || undefined, mode: 'shared' };
+    if (provider === 'platform') {
+      input = { name, desc: desc || undefined, provider: 'platform' };
     } else {
       input = {
         name,
         desc: desc || undefined,
-        mode: 'custom',
+        provider: 's3',
         bucket,
         prefix: prefix || undefined,
         accessKeyId,
