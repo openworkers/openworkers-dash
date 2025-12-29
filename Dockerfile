@@ -17,12 +17,6 @@ FROM nginx:1.25-alpine
 # Copy built assets
 COPY --from=builder /app/dist/browser /usr/share/nginx/html
 
-# Copy wasm manually (Angular asset config doesn't work reliably)
-COPY --from=builder /app/node_modules/@openworkers/croner-wasm/dist/*.wasm /usr/share/nginx/html/assets/wasm/
-
-# Add wasm MIME type
-RUN echo 'types { application/wasm wasm; }' >> /etc/nginx/mime.types
-
 # SPA routing config
 RUN cat <<'EOF' > /etc/nginx/conf.d/default.conf
 server {
