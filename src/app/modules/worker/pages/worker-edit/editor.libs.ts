@@ -87,9 +87,43 @@ declare var env: Environment;`;
 
 export const scheduledLib = `
 interface ScheduledEvent {
-  waitUntil: (handler: Promise<any>) => void;
   scheduledTime: number;
+  waitUntil(promise: Promise<any>): void;
 }
 
 declare function addEventListener(type: 'scheduled', listener: (event: ScheduledEvent) => void);
 `;
+
+export const executionContextLib = `
+interface ExecutionContext {
+  waitUntil(promise: Promise<any>): void;
+  passThroughOnException(): void;
+}
+`;
+
+export function createEnvType(values: EnvValue[]) {
+  if (!values.length) {
+    return `type Env = {};`;
+  }
+
+  const members = values.map((v) => {
+    switch (v.type) {
+      case 'assets':
+        return `readonly ${v.key}: BindingAssets`;
+      case 'storage':
+        return `readonly ${v.key}: BindingStorage`;
+      case 'kv':
+        return `readonly ${v.key}: BindingKV`;
+      case 'database':
+        return `readonly ${v.key}: BindingDatabase`;
+      default:
+        return `readonly ${v.key}: string`;
+    }
+  });
+
+  // Note: Binding interfaces are defined in createEnvironmentLib which is added first
+  return `
+type Env = {
+  ${members.join(';\n  ')}
+};`;
+}

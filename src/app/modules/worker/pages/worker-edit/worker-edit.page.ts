@@ -17,7 +17,7 @@ const log = logger.getLogger('WorkerEditPage');
 // Monaco
 import { MonacoEditorConstructionOptions } from '@materia-ui/ngx-monaco-editor';
 import { FormControl } from '@angular/forms';
-import { createEnvironmentLib, scheduledLib } from './editor.libs';
+import { createEnvironmentLib, createEnvType, scheduledLib, executionContextLib } from './editor.libs';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '~/app/shared/shared.module';
 import { IframeComponent } from './components/iframe/iframe.component';
@@ -172,6 +172,10 @@ export default class WorkerEditPage implements OnInit, OnDestroy {
     monaco.languages.typescript.typescriptDefaults.addExtraLib(scheduledLib);
     monaco.languages.typescript.javascriptDefaults.addExtraLib(scheduledLib);
 
+    // ExecutionContext lib (for ES Modules ctx parameter)
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(executionContextLib);
+    monaco.languages.typescript.javascriptDefaults.addExtraLib(executionContextLib);
+
     // On save (CTRL + S)
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => this.updateWorker());
 
@@ -211,11 +215,15 @@ export default class WorkerEditPage implements OnInit, OnDestroy {
   private environmentLibs: monaco.IDisposable[] = [];
   private setEnvironmentLib(values: readonly IEnvironmentValue[]) {
     log.debug('set env', values);
-    const lib = createEnvironmentLib(values.map((v) => ({ key: v.key, type: v.type })));
+    const envValues = values.map((v) => ({ key: v.key, type: v.type }));
+    const lib = createEnvironmentLib(envValues);
+    const envType = createEnvType(envValues);
     this.environmentLibs.map((lib) => lib.dispose());
     this.environmentLibs = [
       monaco.languages.typescript.typescriptDefaults.addExtraLib(lib),
-      monaco.languages.typescript.javascriptDefaults.addExtraLib(lib)
+      monaco.languages.typescript.javascriptDefaults.addExtraLib(lib),
+      monaco.languages.typescript.typescriptDefaults.addExtraLib(envType),
+      monaco.languages.typescript.javascriptDefaults.addExtraLib(envType)
     ];
   }
 
