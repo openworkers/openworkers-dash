@@ -5,7 +5,6 @@
     "": {
       "name": "app",
       "dependencies": {
-        "@openworkers/api-types": "../openworkers-api/dist",
         "@angular/animations": "^21.0.0",
         "@angular/common": "^21.0.0",
         "@angular/compiler": "^21.0.0",
@@ -17,7 +16,6 @@
         "@materia-ui/ngx-monaco-editor": "^6.0.0",
         "@ng-icons/core": "^33.0.0",
         "@ng-icons/heroicons": "^33.0.0",
-        "@openworkers/api-types": "../openworkers-api/dist",
         "@openworkers/croner-wasm": "^0.3.0",
         "dexie": "^4.2.1",
         "monaco-editor": "0.55.1",
@@ -28,7 +26,7 @@
         "@angular/build": "^21.0.0",
         "@angular/cli": "~21.0.0",
         "@angular/compiler-cli": "^21.0.0",
-        "@openworkers/api-types": "^1.0.6",
+        "@openworkers/api-types": "1.1.0",
         "@tailwindcss/postcss": "4.1.17",
         "@types/jasmine": "5.1.5",
         "ansi_up": "^6.0.2",
@@ -336,11 +334,7 @@
 
     "@npmcli/run-script": ["@npmcli/run-script@10.0.3", "", { "dependencies": { "@npmcli/node-gyp": "^5.0.0", "@npmcli/package-json": "^7.0.0", "@npmcli/promise-spawn": "^9.0.0", "node-gyp": "^12.1.0", "proc-log": "^6.0.0", "which": "^6.0.0" } }, "sha512-ER2N6itRkzWbbtVmZ9WKaWxVlKlOeBFF1/7xx+KA5J1xKa4JjUwBdb6tDpk0v1qA+d+VDwHI9qmLcXSWcmi+Rw=="],
 
-    "@openworkers/api-types": ["@openworkers/api-types@file:../openworkers-api/dist", {}],
-
-    "@openworkers/api-types": ["@openworkers/api-types@file:../openworkers-api/dist", {}],
-
-    "@openworkers/api-types": ["@openworkers/api-types@1.0.8", "", {}, "sha512-/GLE9s9vTs0f1+DeXrj0wNCe5cpf4F66nKYGiDVGN8+7+acDg8o8gAasHFrVI/KYxDRX5tSrUQvtPZcBP08sjQ=="],
+    "@openworkers/api-types": ["@openworkers/api-types@1.1.0", "", {}, "sha512-wwaFm1QegZk70uK6aY6mwroImum2SKlwZCOtQgeJqnhCLf0cY6+A+P2STCGiLwqAJUFR2a6Bwu/ClO10I2AzDw=="],
 
     "@openworkers/croner-wasm": ["@openworkers/croner-wasm@0.3.1", "", {}, "sha512-03yc9hYWt4Fhu3K9kWw7cV3ig3aefMFMp3ylkqa1t/wWHSwelwzmepHRXlvKL8ZsegnDWK1yQuzS2oruspmLiA=="],
 
@@ -1105,8 +1099,6 @@
     "@babel/helper-compilation-targets/semver": ["semver@6.3.1", "", { "bin": { "semver": "bin/semver.js" } }, "sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA=="],
 
     "@inquirer/core/wrap-ansi": ["wrap-ansi@6.2.0", "", { "dependencies": { "ansi-styles": "^4.0.0", "string-width": "^4.1.0", "strip-ansi": "^6.0.0" } }, "sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA=="],
-
-    "@inquirer/prompts/@inquirer/confirm": ["@inquirer/confirm@5.1.21", "", { "dependencies": { "@inquirer/core": "^10.3.2", "@inquirer/type": "^3.0.10" }, "peerDependencies": { "@types/node": ">=18" }, "optionalPeers": ["@types/node"] }, "sha512-KR8edRkIsUayMXV+o3Gv+q4jlhENF9nMYUZs9PA2HzrXeHI8M5uDag70U7RJn9yyiMZSbtF5/UexBtAVtZGSbQ=="],
 
     "@npmcli/agent/lru-cache": ["lru-cache@11.2.4", "", {}, "sha512-B5Y16Jr9LB9dHVkh6ZevG+vAbOsNOYCX+sXvFWFu7B3Iz5mijW3zdbMyhsh8ANd2mSWBYdJgnqi+mL7/LrOPYg=="],
 
