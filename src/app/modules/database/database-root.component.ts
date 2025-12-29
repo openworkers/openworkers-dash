@@ -13,6 +13,7 @@ import type { IDatabase } from '@openworkers/api-types';
       resourceName="Database"
       [resource]="database"
       [menuLinks]="['overview']"
+      (update)="update($event)"
       (delete)="delete()"
     />
   `
@@ -26,6 +27,10 @@ export default class DatabaseRootComponent {
     private router: Router
   ) {
     this.database = route.snapshot.data['database'] as IDatabase;
+  }
+
+  public update(changes: Partial<IDatabase>) {
+    firstValueFrom(this.dbs.update({ id: this.database.id, ...changes }));
   }
 
   public delete() {
