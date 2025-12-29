@@ -37,10 +37,10 @@ export default class WorkerLogsPage {
   constructor(route: ActivatedRoute, sse: SSEService) {
     this.worker = route.parent?.snapshot.data['worker'] as IWorker;
 
-    log.debug('Init Websocket service');
+    log.debug('Init WebSocket service');
 
     const subscriber = sse
-      .openEventSource(`/api/v1/workers/${this.worker.id}/logs`)
+      .openWebSocket(`/api/v1/workers/${this.worker.id}/ws-logs`)
       .pipe(retry({ count: 5, delay: 3000 }));
 
     this.logs$ = subscriber.pipe(lastEvent(50));

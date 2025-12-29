@@ -39,6 +39,38 @@ export class SSEService {
   }
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  public openWebSocket<T extends IEvent>(url: string): Observable<any> {
+    return new Observable<T | IOpen | IError | ITimeout>((subscriber) => {
+      const wsUrl = url.replace(/^http/, 'ws').replace(/^\//, `wss://${location.host}/`);
+      const ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        subscriber.next({ type: 'open', date: Date.now() });
+      };
+
+      ws.onmessage = (event: MessageEvent) => {
+        subscriber.next({ type: 'log', ...this.parseLogData(event.data) });
+      };
+
+      ws.onerror = (event) => {
+        console.warn('WebSocket error', event);
+        subscriber.next({ type: 'error', date: Date.now(), message: 'WebSocket error' });
+      };
+
+      ws.onclose = (event) => {
+        if (event.wasClean) {
+          subscriber.complete();
+        } else {
+          subscriber.next({ type: 'timeout', date: Date.now() });
+          subscriber.complete();
+        }
+      };
+
+      return () => ws.close();
+    });
+  }
+
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   public openEventSource<T extends IEvent>(url: string): Observable<any> {
     return new Observable<T | IOpen | IError | ITimeout>((subscriber) => {
       const eventSource = new EventSource(url);
