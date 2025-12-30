@@ -23,6 +23,9 @@ import { SharedModule } from '~/app/shared/shared.module';
 import { IframeComponent } from './components/iframe/iframe.component';
 import { AiChatComponent } from './components/ai-chat/ai-chat.component';
 
+// Store workers types disposables globally (only load once)
+let workersTypesDisposables: monaco.IDisposable[] = [];
+
 const EDITOR_OPTIONS: MonacoEditorConstructionOptions = {
   language: 'typescript',
   minimap: {
@@ -43,7 +46,6 @@ const EDITOR_OPTIONS: MonacoEditorConstructionOptions = {
   styleUrls: ['./worker-edit.page.css']
 })
 export default class WorkerEditPage implements OnInit, OnDestroy {
-
   private subscriptions: Subscription[] = [];
   public readonly worker: Resolved<IWorker>;
   public readonly worker$: Observable<IWorker>;
@@ -163,15 +165,29 @@ export default class WorkerEditPage implements OnInit, OnDestroy {
     this.editor = editor;
 
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-      target: monaco.languages.typescript.ScriptTarget.ES2020,
-      lib: ['es2020'],
-      allowNonTsExtensions: true
+      target: monaco.languages.typescript.ScriptTarget.ESNext,
+      lib: ['esnext'],
+      allowNonTsExtensions: true,
+      types: []
+    });
+
+    monaco.languages.typescript.javascriptDefaults.setCompilerOptions({
+      target: monaco.languages.typescript.ScriptTarget.ESNext,
+      lib: ['esnext'],
+      allowNonTsExtensions: true,
+      types: []
     });
 
     // Workers runtime types (Request, Response, fetch, crypto, bindings, etc.)
-    const workersTypesLib = await loadWorkersTypes();
-    monaco.languages.typescript.typescriptDefaults.addExtraLib(workersTypesLib);
-    monaco.languages.typescript.javascriptDefaults.addExtraLib(workersTypesLib);
+    // Only load once globally to avoid conflicts when switching workers
+    if (workersTypesDisposables.length === 0) {
+      const workersTypesLib = await loadWorkersTypes();
+
+      workersTypesDisposables = [
+        monaco.languages.typescript.typescriptDefaults.addExtraLib(workersTypesLib),
+        monaco.languages.typescript.javascriptDefaults.addExtraLib(workersTypesLib)
+      ];
+    }
 
     // On save (CTRL + S)
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => this.updateWorker());
@@ -183,8 +199,8 @@ export default class WorkerEditPage implements OnInit, OnDestroy {
       monaco.editor.onDidChangeMarkers(() => {
         const markers = monaco.editor.getModelMarkers({ resource: model.uri });
         const diagnostics = markers
-          .filter(m => m.severity >= monaco.MarkerSeverity.Warning)
-          .map(m => `Line ${m.startLineNumber}: ${m.message}`);
+          .filter((m) => m.severity >= monaco.MarkerSeverity.Warning)
+          .map((m) => `Line ${m.startLineNumber}: ${m.message}`);
         this.editorState.updateDiagnostics(diagnostics);
       });
     }
@@ -215,7 +231,11 @@ export default class WorkerEditPage implements OnInit, OnDestroy {
     const envValues = values.map((v) => ({ key: v.key, type: v.type }));
     const lib = createEnvironmentLib(envValues);
     const envType = createEnvType(envValues);
-    this.environmentLibs.map((lib) => lib.dispose());
+
+    for (const lib of this.environmentLibs) {
+      lib.dispose();
+    }
+
     this.environmentLibs = [
       monaco.languages.typescript.typescriptDefaults.addExtraLib(lib),
       monaco.languages.typescript.javascriptDefaults.addExtraLib(lib),
