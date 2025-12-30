@@ -27,7 +27,7 @@
         "@angular/cli": "~21.0.0",
         "@angular/compiler-cli": "^21.0.0",
         "@openworkers/api-types": "1.1.4",
-        "@openworkers/workers-types": "0.1.1",
+        "@openworkers/workers-types": "0.1.2",
         "@tailwindcss/postcss": "4.1.17",
         "@types/jasmine": "5.1.5",
         "ansi_up": "^6.0.2",
@@ -339,7 +339,7 @@
 
     "@openworkers/croner-wasm": ["@openworkers/croner-wasm@0.3.1", "", {}, "sha512-03yc9hYWt4Fhu3K9kWw7cV3ig3aefMFMp3ylkqa1t/wWHSwelwzmepHRXlvKL8ZsegnDWK1yQuzS2oruspmLiA=="],
 
-    "@openworkers/workers-types": ["@openworkers/workers-types@0.1.1", "", { "peerDependencies": { "typescript": "^5" } }, "sha512-CL9zix7YswUlhwJE8a9Bgd/ftKySzSVx3pe1cJ38UJdRDOPvF4hZ5CqFfMms2bTb99P339w2EMzcn932Ri2GPw=="],
+    "@openworkers/workers-types": ["@openworkers/workers-types@0.1.2", "", { "peerDependencies": { "typescript": "^5" } }, "sha512-rrw9IG7QGXlXbxYDIYYsTr+LMynktL5stFqgI3IXEnqbwLyuo8TihpJA6I+YLn2P1BIJSLph7cKh3+xkRpTl7w=="],
 
     "@oxc-project/types": ["@oxc-project/types@0.96.0", "", {}, "sha512-r/xkmoXA0xEpU6UGtn18CNVjXH6erU3KCpCDbpLmbVxBFor1U9MqN5Z2uMmCHJuXjJzlnDR+hWY+yPoLo8oHDw=="],
 
