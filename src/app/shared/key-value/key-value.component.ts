@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIconComponent } from '@ng-icons/core';
-import type { IEnvironmentValueUpdateInput, IStorageConfig, IKvNamespace, IDatabase } from '@openworkers/api-types';
+import type { IEnvironmentValueUpdateInput, IStorageConfig, IKvNamespace, IDatabase, IWorker } from '@openworkers/api-types';
 
 const emptyString = '';
 
@@ -26,9 +26,9 @@ export function duplicateKeyValidator(control: AbstractControl): ValidationError
   return duplicateKey ? { duplicateKey } : null;
 }
 
-type BindingType = 'var' | 'secret' | 'assets' | 'storage' | 'kv' | 'database';
+type BindingType = 'var' | 'secret' | 'assets' | 'storage' | 'kv' | 'database' | 'worker';
 
-const RESOURCE_BINDINGS: BindingType[] = ['assets', 'storage', 'kv', 'database'];
+const RESOURCE_BINDINGS: BindingType[] = ['assets', 'storage', 'kv', 'database', 'worker'];
 
 interface KVS<K = string, V = string, T = BindingType> {
   key: K;
@@ -158,6 +158,12 @@ export class KeyValueComponent implements OnChanges {
   public readonly addDatabase: EventEmitter<void> = new EventEmitter();
 
   /**
+   * Request to add a Worker binding
+   */
+  @Output()
+  public readonly addWorker: EventEmitter<void> = new EventEmitter();
+
+  /**
    * Storage configs for resolving binding names
    */
   @Input()
@@ -174,6 +180,12 @@ export class KeyValueComponent implements OnChanges {
    */
   @Input()
   public databases: IDatabase[] = [];
+
+  /**
+   * Workers for resolving binding names
+   */
+  @Input()
+  public workers: IWorker[] = [];
 
   private initialValues: KVSId[] = [];
 
@@ -246,6 +258,8 @@ export class KeyValueComponent implements OnChanges {
         return ['/kv', value];
       case 'database':
         return ['/database', value];
+      case 'worker':
+        return ['/worker', value];
       default:
         return null;
     }
@@ -269,6 +283,9 @@ export class KeyValueComponent implements OnChanges {
         break;
       case 'database':
         name = this.databases.find((db) => db.id === value)?.name;
+        break;
+      case 'worker':
+        name = this.workers.find((w) => w.id === value)?.name;
         break;
     }
 

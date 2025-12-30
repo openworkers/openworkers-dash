@@ -8,10 +8,12 @@
         [storageConfigs]="vm.storageConfigs"
         [kvNamespaces]="vm.kvNamespaces"
         [databases]="vm.databases"
+        [workers]="vm.workers"
         (update)="update(vm.environment.id, $event)"
         (addStorage)="openStorageModal()"
         (addKv)="openKvModal()"
         (addDatabase)="openDatabaseModal()"
+        (addWorker)="openWorkerModal()"
       />
     </div>
   </div>
@@ -150,6 +152,40 @@
     <div role="footer" class="flex justify-end gap-2">
       <button type="button" class="btn-light" (click)="showDatabaseModal = false">Cancel</button>
       <button type="button" class="btn-blue" [disabled]="databaseForm.invalid" (click)="addDatabaseBinding()">Add</button>
+    </div>
+  </app-modal>
+
+  <!-- Worker Binding Modal -->
+  <app-modal [open]="showWorkerModal" (openChange)="showWorkerModal = $event">
+    <h4 role="header">Add Worker Binding</h4>
+
+    <form role="body" class="my-4" [formGroup]="workerForm" (ngSubmit)="addWorkerBinding()">
+      <fieldset class="mb-3">
+        <label>Binding Name *</label>
+        <input type="text" class="input-outline w-full" formControlName="key" placeholder="API" />
+      </fieldset>
+
+      @if (workers$ | async; as workers) {
+      <fieldset class="mb-4">
+        <label>Worker *</label>
+        <select class="input-outline w-full" formControlName="workerId">
+          <option value="">Select a worker...</option>
+          @for (worker of workers; track worker.id) {
+          <option [value]="worker.id">{{ worker.name }}</option>
+          }
+        </select>
+        @if (workers.length === 0) {
+        <p class="text-xs text-gray-500 mt-1">
+          No workers. <a routerLink="/workers" class="text-blue-600">Create one</a>
+        </p>
+        }
+      </fieldset>
+      }
+    </form>
+
+    <div role="footer" class="flex justify-end gap-2">
+      <button type="button" class="btn-light" (click)="showWorkerModal = false">Cancel</button>
+      <button type="button" class="btn-blue" [disabled]="workerForm.invalid" (click)="addWorkerBinding()">Add</button>
     </div>
   </app-modal>
 </div>

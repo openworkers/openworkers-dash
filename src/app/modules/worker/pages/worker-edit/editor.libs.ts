@@ -2,7 +2,7 @@
 
 interface EnvValue {
   key: string;
-  type: 'var' | 'secret' | 'assets' | 'storage' | 'kv' | 'database';
+  type: 'var' | 'secret' | 'assets' | 'storage' | 'kv' | 'database' | 'worker';
 }
 
 export function createEnvironmentLib(values: EnvValue[]) {
@@ -20,6 +20,8 @@ export function createEnvironmentLib(values: EnvValue[]) {
         return `readonly ${v.key}: BindingKV`;
       case 'database':
         return `readonly ${v.key}: BindingDatabase`;
+      case 'worker':
+        return `readonly ${v.key}: BindingWorker`;
       default:
         return `readonly ${v.key}: string`;
     }
@@ -78,6 +80,10 @@ interface BindingDatabase {
   query<T = Record<string, unknown>>(sql: string, params?: unknown[]): Promise<QueryResult<T>>;
 }
 
+interface BindingWorker {
+  fetch(request: Request | string, init?: RequestInit): Promise<Response>;
+}
+
 interface Environment {
   ${members.join(';\n  ')}
 }
@@ -116,6 +122,8 @@ export function createEnvType(values: EnvValue[]) {
         return `readonly ${v.key}: BindingKV`;
       case 'database':
         return `readonly ${v.key}: BindingDatabase`;
+      case 'worker':
+        return `readonly ${v.key}: BindingWorker`;
       default:
         return `readonly ${v.key}: string`;
     }

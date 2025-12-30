@@ -11,7 +11,8 @@ import { EnvironmentsService } from '~/services/environments.service';
 import { StorageService } from '~/services/storage.service';
 import { KvService } from '~/services/kv.service';
 import { DatabasesService } from '~/app/services/databases.service';
-import type { IEnvironment, IEnvironmentValueUpdateInput, IStorageConfig, IKvNamespace, IDatabase } from '@openworkers/api-types';
+import { WorkersService } from '~/app/services/workers.service';
+import type { IEnvironment, IEnvironmentValueUpdateInput, IStorageConfig, IKvNamespace, IDatabase, IWorker } from '@openworkers/api-types';
 
 @Component({
   imports: [CommonModule, RouterLink, ReactiveFormsModule, DebugComponent, KeyValueComponent, ModalComponent],
@@ -22,18 +23,21 @@ export default class EnvironmentOverviewPage {
   public readonly storageConfigs$: Observable<IStorageConfig[]>;
   public readonly kvNamespaces$: Observable<IKvNamespace[]>;
   public readonly databases$: Observable<IDatabase[]>;
+  public readonly workers$: Observable<IWorker[]>;
 
   public readonly vm$: Observable<{
     environment: IEnvironment;
     storageConfigs: IStorageConfig[];
     kvNamespaces: IKvNamespace[];
     databases: IDatabase[];
+    workers: IWorker[];
   }>;
 
   // Modal state
   public showStorageModal = false;
   public showKvModal = false;
   public showDatabaseModal = false;
+  public showWorkerModal = false;
 
   public storageForm = new FormGroup({
     key: new FormControl('', [Validators.required]),
@@ -51,6 +55,11 @@ export default class EnvironmentOverviewPage {
     databaseId: new FormControl('', [Validators.required])
   });
 
+  public workerForm = new FormGroup({
+    key: new FormControl('', [Validators.required]),
+    workerId: new FormControl('', [Validators.required])
+  });
+
   private environmentId!: string;
 
   constructor(
@@ -58,7 +67,8 @@ export default class EnvironmentOverviewPage {
     private envs: EnvironmentsService,
     private storageService: StorageService,
     private kvService: KvService,
-    private databasesService: DatabasesService
+    private databasesService: DatabasesService,
+    private workersService: WorkersService
   ) {
     const env = route.parent?.snapshot.data['environment'] as Resolved<IEnvironment>;
     this.environmentId = env.id;
@@ -82,18 +92,25 @@ export default class EnvironmentOverviewPage {
       shareReplay(1)
     );
 
+    this.workers$ = this.workersService.findAll().pipe(
+      startWith([] as IWorker[]),
+      shareReplay(1)
+    );
+
     // Combine all data into a single view model
     this.vm$ = combineLatest([
       this.environment$,
       this.storageConfigs$,
       this.kvNamespaces$,
-      this.databases$
+      this.databases$,
+      this.workers$
     ]).pipe(
-      map(([environment, storageConfigs, kvNamespaces, databases]) => ({
+      map(([environment, storageConfigs, kvNamespaces, databases, workers]) => ({
         environment,
         storageConfigs,
         kvNamespaces,
-        databases
+        databases,
+        workers
       }))
     );
   }
@@ -154,5 +171,23 @@ export default class EnvironmentOverviewPage {
     }));
 
     this.showDatabaseModal = false;
+  }
+
+  openWorkerModal() {
+    this.workerForm.reset();
+    this.showWorkerModal = true;
+  }
+
+  async addWorkerBinding() {
+    if (this.workerForm.invalid) return;
+
+    const { key, workerId } = this.workerForm.value;
+
+    await firstValueFrom(this.envs.update({
+      id: this.environmentId,
+      values: [{ key: key!, value: workerId!, type: 'worker' }]
+    }));
+
+    this.showWorkerModal = false;
   }
 }
