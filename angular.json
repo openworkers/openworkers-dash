@@ -68,6 +68,11 @@
                 "glob": "**/*",
                 "input": "./node_modules/monaco-editor/min-maps",
                 "output": "min-maps"
+              },
+              {
+                "glob": "*.d.ts",
+                "input": "./node_modules/@openworkers/workers-types/types",
+                "output": "assets/workers-types"
               }
             ],
             "styles": ["src/styles.css"],
@@ -110,8 +115,13 @@
                 },
                 {
                   "glob": "*.wasm",
-                  "input": "node_modules/@openworkers/croner-wasm/dist",
+                  "input": "./node_modules/@openworkers/croner-wasm/dist",
                   "output": "assets/wasm"
+                },
+                {
+                  "glob": "*.d.ts",
+                  "input": "./node_modules/@openworkers/workers-types/types",
+                  "output": "assets/workers-types"
                 }
               ]
             },

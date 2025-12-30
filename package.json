@@ -1,6 +1,6 @@
 {
   "name": "openworkers-dash",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "scripts": {
     "ng": "ng",
     "dev": "ng serve --host 127.0.0.1",
@@ -34,6 +34,7 @@
     "@angular/cli": "~21.0.0",
     "@angular/compiler-cli": "^21.0.0",
     "@openworkers/api-types": "1.1.4",
+    "@openworkers/workers-types": "0.1.1",
     "@tailwindcss/postcss": "4.1.17",
     "@types/jasmine": "5.1.5",
     "ansi_up": "^6.0.2",

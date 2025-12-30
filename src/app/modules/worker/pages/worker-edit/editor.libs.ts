@@ -1,8 +1,36 @@
-// Keep spacing in this file
+// OpenWorkers Monaco Editor Type Libraries
 
 interface EnvValue {
   key: string;
   type: 'var' | 'secret' | 'assets' | 'storage' | 'kv' | 'database' | 'worker';
+}
+
+// Type files to load from assets/workers-types/
+const TYPE_FILES = [
+  'events.d.ts',
+  'abort.d.ts',
+  'streams.d.ts',
+  'blob.d.ts',
+  'url.d.ts',
+  'fetch.d.ts',
+  'encoding.d.ts',
+  'crypto.d.ts',
+  'console.d.ts',
+  'timers.d.ts',
+  'workers.d.ts',
+  'bindings.d.ts'
+];
+
+// Fetch and combine all worker types
+export async function loadWorkersTypes(): Promise<string> {
+  const contents = await Promise.all(
+    TYPE_FILES.map(async (file) => {
+      const res = await fetch(`/assets/workers-types/${file}`);
+      return res.text();
+    })
+  );
+
+  return contents.join('\n');
 }
 
 export function createEnvironmentLib(values: EnvValue[]) {
@@ -28,84 +56,12 @@ export function createEnvironmentLib(values: EnvValue[]) {
   });
 
   return `
-interface BindingAssets {
-  fetch(path: string, options?: RequestInit): Promise<Response>;
-}
-
-interface StorageHeadResult {
-  size: number;
-  etag?: string;
-}
-
-interface StorageListOptions {
-  prefix?: string;
-  limit?: number;
-}
-
-interface StorageListResult {
-  keys: string[];
-  truncated: boolean;
-}
-
-interface BindingStorage {
-  get(key: string): Promise<string | null>;
-  put(key: string, value: string | Uint8Array): Promise<void>;
-  head(key: string): Promise<StorageHeadResult>;
-  list(options?: StorageListOptions): Promise<StorageListResult>;
-  delete(key: string): Promise<void>;
-}
-
-interface KVPutOptions {
-  expiresIn?: number;
-}
-
-interface KVListOptions {
-  prefix?: string;
-  limit?: number;
-}
-
-interface BindingKV {
-  get(key: string): Promise<string | null>;
-  put(key: string, value: string, options?: KVPutOptions): Promise<void>;
-  delete(key: string): Promise<void>;
-  list(options?: KVListOptions): Promise<string[]>;
-}
-
-interface QueryResult<T = Record<string, unknown>> {
-  rows: T[];
-  rowCount: number;
-}
-
-interface BindingDatabase {
-  query<T = Record<string, unknown>>(sql: string, params?: unknown[]): Promise<QueryResult<T>>;
-}
-
-interface BindingWorker {
-  fetch(request: Request | string, init?: RequestInit): Promise<Response>;
-}
-
 interface Environment {
   ${members.join(';\n  ')}
 }
 
 declare var env: Environment;`;
 }
-
-export const scheduledLib = `
-interface ScheduledEvent {
-  scheduledTime: number;
-  waitUntil(promise: Promise<any>): void;
-}
-
-declare function addEventListener(type: 'scheduled', listener: (event: ScheduledEvent) => void);
-`;
-
-export const executionContextLib = `
-interface ExecutionContext {
-  waitUntil(promise: Promise<any>): void;
-  passThroughOnException(): void;
-}
-`;
 
 export function createEnvType(values: EnvValue[]) {
   if (!values.length) {
@@ -129,7 +85,6 @@ export function createEnvType(values: EnvValue[]) {
     }
   });
 
-  // Note: Binding interfaces are defined in createEnvironmentLib which is added first
   return `
 type Env = {
   ${members.join(';\n  ')}

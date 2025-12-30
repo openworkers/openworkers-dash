@@ -17,7 +17,7 @@ const log = logger.getLogger('WorkerEditPage');
 // Monaco
 import { MonacoEditorConstructionOptions } from '@materia-ui/ngx-monaco-editor';
 import { FormControl } from '@angular/forms';
-import { createEnvironmentLib, createEnvType, scheduledLib, executionContextLib } from './editor.libs';
+import { createEnvironmentLib, createEnvType, loadWorkersTypes } from './editor.libs';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '~/app/shared/shared.module';
 import { IframeComponent } from './components/iframe/iframe.component';
@@ -159,22 +159,19 @@ export default class WorkerEditPage implements OnInit, OnDestroy {
 
   private editor?: monaco.editor.IStandaloneCodeEditor;
 
-  public onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
+  public async onEditorInit(editor: monaco.editor.IStandaloneCodeEditor) {
     this.editor = editor;
 
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
       target: monaco.languages.typescript.ScriptTarget.ES2020,
-      lib: ['es2020', 'webworker', 'dom.iterable'],
+      lib: ['es2020'],
       allowNonTsExtensions: true
     });
 
-    // Scheduled lib
-    monaco.languages.typescript.typescriptDefaults.addExtraLib(scheduledLib);
-    monaco.languages.typescript.javascriptDefaults.addExtraLib(scheduledLib);
-
-    // ExecutionContext lib (for ES Modules ctx parameter)
-    monaco.languages.typescript.typescriptDefaults.addExtraLib(executionContextLib);
-    monaco.languages.typescript.javascriptDefaults.addExtraLib(executionContextLib);
+    // Workers runtime types (Request, Response, fetch, crypto, bindings, etc.)
+    const workersTypesLib = await loadWorkersTypes();
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(workersTypesLib);
+    monaco.languages.typescript.javascriptDefaults.addExtraLib(workersTypesLib);
 
     // On save (CTRL + S)
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => this.updateWorker());
