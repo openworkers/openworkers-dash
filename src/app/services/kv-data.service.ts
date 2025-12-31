@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 export interface KvDataItem {
   key: string;
-  value: string;
+  value: unknown;
   expiresAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -46,7 +46,7 @@ export class KvDataService {
   put(
     namespaceId: string,
     key: string,
-    value: string,
+    value: unknown,
     expiresIn?: number
   ): Observable<KvDataItem> {
     return this.http.put<KvDataItem>(

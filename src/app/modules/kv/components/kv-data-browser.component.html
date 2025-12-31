@@ -31,8 +31,8 @@
         } @else { @for (item of items; track item.key) {
         <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
           <td class="px-4 py-3 font-mono text-sm">{{ item.key }}</td>
-          <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 max-w-md truncate">
-            {{ truncate(item.value) }}
+          <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 max-w-md truncate font-mono">
+            {{ formatValue(item.value) }}
           </td>
           <td class="px-4 py-3 text-sm text-gray-500">{{ formatDate(item.expiresAt) }}</td>
           <td class="px-4 py-3 text-right">

@@ -80,7 +80,8 @@ export class KvDataBrowserComponent implements OnInit {
   }
 
   openEdit(item: KvDataItem) {
-    this.editingItem = { key: item.key, value: item.value, expiresIn: null, isNew: false };
+    const valueStr = typeof item.value === 'string' ? item.value : JSON.stringify(item.value, null, 2);
+    this.editingItem = { key: item.key, value: valueStr, expiresIn: null, isNew: false };
   }
 
   closeEdit() {
@@ -90,10 +91,19 @@ export class KvDataBrowserComponent implements OnInit {
   save() {
     if (!this.editingItem) return;
 
+    // Try to parse as JSON, fallback to string
+    let value: unknown = this.editingItem.value;
+
+    try {
+      value = JSON.parse(this.editingItem.value);
+    } catch {
+      // Keep as string if not valid JSON
+    }
+
     this.kvDataService.put(
       this.namespaceId,
       this.editingItem.key,
-      this.editingItem.value,
+      value,
       this.editingItem.expiresIn ?? undefined
     ).subscribe({
       next: () => {
@@ -130,9 +140,12 @@ export class KvDataBrowserComponent implements OnInit {
     });
   }
 
-  truncate(value: string, maxLength = 100): string {
-    if (value.length <= maxLength) return value;
-    return value.slice(0, maxLength) + '...';
+  formatValue(value: unknown, maxLength = 100): string {
+    const str = typeof value === 'string' ? value : JSON.stringify(value);
+
+    if (str.length <= maxLength) return str;
+
+    return str.slice(0, maxLength) + '...';
   }
 
   formatDate(date: string | null): string {
