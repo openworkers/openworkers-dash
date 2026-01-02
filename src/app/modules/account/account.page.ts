@@ -1,49 +1,71 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { AuthService } from '~/services/auth.service';
+import { ApiKeysService, type ApiKey } from '~/services/api-keys.service';
 import type { ISelf } from '@openworkers/api-types';
 
 @Component({
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <div class="page">
-      <h3 class="title">Account</h3>
-
-      <div>
-        @if (user$ | async; as user) {
-          <div class="mt-4">
-            <div class="text-gray-500">Username:</div>
-            <div class="text-gray-900 dark:text-stone-200 ml-2">{{ user.username }}</div>
-          </div>
-          <div class="mt-4">
-            <div class="text-gray-500">Resources limits:</div>
-            <ul class="text-gray-900 dark:text-stone-200 ml-2">
-              <li>Workers: {{ user.limits.workers }}</li>
-              <li>Environments: {{ user.limits.environments }}</li>
-              <li>Databases: {{ user.limits.databases }}</li>
-              <li>KV Namespaces: {{ user.limits.kv }}</li>
-            </ul>
-          </div>
-        }
-      </div>
-
-      <div class="mt-8">
-        <button class="btn-outline" (click)="logout()">Logout</button>
-      </div>
-    </div>
-  `
+  imports: [CommonModule, FormsModule],
+  templateUrl: './account.page.html'
 })
-export default class AccountPage {
+export default class AccountPage implements OnInit {
   user$: Observable<ISelf | null>;
+  keys$: Observable<ApiKey[]>;
+  creating$ = new BehaviorSubject<boolean>(false);
+
+  showCreateKey = false;
+  newKeyName = '';
+  newKeyToken: string | null = null;
 
   constructor(
     private router: Router,
-    private auth: AuthService
+    private auth: AuthService,
+    private apiKeys: ApiKeysService
   ) {
     this.user$ = auth.user$;
+    this.keys$ = apiKeys.keys$;
+  }
+
+  ngOnInit() {
+    this.apiKeys.loadKeys().subscribe();
+  }
+
+  createKey() {
+    if (!this.newKeyName) return;
+
+    this.creating$.next(true);
+    this.apiKeys.createKey(this.newKeyName).subscribe({
+      next: (key) => {
+        this.newKeyToken = key.token;
+        this.showCreateKey = false;
+        this.newKeyName = '';
+        this.creating$.next(false);
+      },
+      error: () => {
+        this.creating$.next(false);
+      }
+    });
+  }
+
+  cancelCreate() {
+    this.showCreateKey = false;
+    this.newKeyName = '';
+  }
+
+  copyToken() {
+    if (this.newKeyToken) {
+      navigator.clipboard.writeText(this.newKeyToken);
+    }
+  }
+
+  deleteKey(id: string) {
+    if (confirm('Are you sure you want to delete this API key?')) {
+      this.apiKeys.deleteKey(id).subscribe();
+    }
   }
 
   logout() {

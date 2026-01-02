@@ -1,0 +1,145 @@
+<div class="page">
+  <h3 class="title">Account</h3>
+
+  @if (user$ | async; as user) {
+  <!-- Profile Card -->
+  <div class="card shadow-sm mt-6">
+    <div class="p-4">
+      <h4 class="mb-4">Profile</h4>
+      <div class="flex flex-col gap-2">
+        @if (user.avatarUrl) {
+        <div class="flex items-center gap-3">
+          <img [src]="user.avatarUrl" class="w-12 h-12 rounded-full" alt="Avatar" />
+        </div>
+        }
+        <div>
+          <label class="text-sm text-gray-500">Username</label>
+          <div class="font-mono text-sm bg-gray-100 dark:bg-gray-800 p-2 rounded mt-1">
+            {{ user.username }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Limits Card -->
+  <div class="card shadow-sm mt-6">
+    <div class="p-4">
+      <h4 class="mb-4">Resource Limits</h4>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded">
+          <div class="text-2xl font-bold text-blue">{{ user.limits.workers }}</div>
+          <div class="text-sm text-gray-500">Workers</div>
+        </div>
+        <div class="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded">
+          <div class="text-2xl font-bold text-blue">{{ user.limits.environments }}</div>
+          <div class="text-sm text-gray-500">Environments</div>
+        </div>
+        <div class="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded">
+          <div class="text-2xl font-bold text-blue">{{ user.limits.databases }}</div>
+          <div class="text-sm text-gray-500">Databases</div>
+        </div>
+        <div class="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded">
+          <div class="text-2xl font-bold text-blue">{{ user.limits.kv }}</div>
+          <div class="text-sm text-gray-500">KV Namespaces</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Keys Card -->
+  <div class="card shadow-sm mt-6">
+    <div class="p-4">
+      <div class="flex justify-between items-center mb-4">
+        <h4>API Keys</h4>
+        <button class="btn-blue text-sm" (click)="showCreateKey = true" [disabled]="showCreateKey">Create Key</button>
+      </div>
+
+      <!-- Create Key Form -->
+      @if (showCreateKey) {
+      <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded mb-4">
+        <form (ngSubmit)="createKey()">
+          <div class="flex gap-2">
+            <input
+              type="text"
+              [(ngModel)]="newKeyName"
+              name="keyName"
+              placeholder="Key name (e.g., CLI, CI/CD)"
+              class="input-outline flex-1"
+              required
+            />
+            <button type="submit" class="btn-blue" [disabled]="!newKeyName || (creating$ | async)">
+              @if (creating$ | async) { Creating... } @else { Create }
+            </button>
+            <button type="button" class="btn-outline" (click)="cancelCreate()">Cancel</button>
+          </div>
+        </form>
+      </div>
+      }
+
+      <!-- New Key Display -->
+      @if (newKeyToken) {
+      <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-4 rounded mb-4">
+        <p class="text-sm text-green-800 dark:text-green-200 mb-2">
+          Copy your API key now. You won't be able to see it again!
+        </p>
+        <div class="flex gap-2">
+          <code class="flex-1 bg-white dark:bg-gray-900 p-2 rounded text-sm font-mono break-all">
+            {{ newKeyToken }}
+          </code>
+          <button class="btn-outline text-sm" (click)="copyToken()">Copy</button>
+        </div>
+        <button class="text-sm text-green-700 dark:text-green-300 mt-2" (click)="newKeyToken = null">Done</button>
+      </div>
+      }
+
+      <!-- Usage Example -->
+      <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded mb-4">
+        <p class="text-xs text-gray-500 mb-2">Usage example:</p>
+        <code class="text-xs font-mono break-all">
+          curl -H "Authorization: Bearer $OW_TOKEN" https://dash.openworkers.com/api/v1/profile | jq
+        </code>
+      </div>
+
+      <!-- Keys List -->
+      @if (keys$ | async; as keys) { @if (keys.length === 0 && !showCreateKey) {
+      <p class="text-gray-500 text-sm">No API keys yet. Create one to access the API programmatically.</p>
+      } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="text-left text-gray-500 border-b dark:border-gray-700">
+              <th class="pb-2">Name</th>
+              <th class="pb-2">Key</th>
+              <th class="pb-2">Last Used</th>
+              <th class="pb-2">Created</th>
+              <th class="pb-2"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (key of keys; track key.id) {
+            <tr class="border-b dark:border-gray-700">
+              <td class="py-2">{{ key.name }}</td>
+              <td class="py-2 font-mono text-gray-500">{{ key.tokenPrefix }}...</td>
+              <td class="py-2 text-gray-500">
+                {{ key.lastUsedAt ? (key.lastUsedAt | date : 'short') : 'Never' }}
+              </td>
+              <td class="py-2 text-gray-500">{{ key.createdAt | date : 'short' }}</td>
+              <td class="py-2">
+                <button class="text-red hover:underline text-sm" (click)="deleteKey(key.id)">Delete</button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      } }
+    </div>
+  </div>
+
+  <!-- Logout -->
+  <div class="mt-8">
+    <button class="btn-outline" (click)="logout()">Logout</button>
+  </div>
+  }
+</div>
