@@ -29,7 +29,7 @@ export default class ResourceListPage {
   constructor(route: ActivatedRoute, { user$ }: AuthService) {
     this.resourceName$ = route.data.pipe(map((data) => data['resourceName']));
     this.resourceLimit$ = this.resourceName$.pipe(
-      map((name: string) => LIMIT_KEY_MAP[name] ?? `${name}s` as keyof IResourceLimits),
+      map((name: string) => LIMIT_KEY_MAP[name] ?? (`${name}s` as keyof IResourceLimits)),
       // biome-ignore lint/complexity/useOptionalChain: <explanation>
       mergeMap((name) => user$.pipe(map((user) => (user?.limits ?? {})[name] ?? -1))),
       mergeMap((limit) => (typeof limit === 'number' ? [limit] : throwError(() => new Error('Unreachable'))))

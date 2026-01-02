@@ -103,9 +103,7 @@ export default class StorageOverviewPage {
     try {
       await Promise.all(
         keys.map((key) =>
-          firstValueFrom(
-            this.http.delete(`/api/v1/storage/${this.storageId}/files/${encodeURIComponent(key)}`)
-          )
+          firstValueFrom(this.http.delete(`/api/v1/storage/${this.storageId}/files/${encodeURIComponent(key)}`))
         )
       );
       this.selectedFiles.clear();
@@ -132,9 +130,7 @@ export default class StorageOverviewPage {
     if (!confirm(`Delete ${key}?`)) return;
 
     try {
-      await firstValueFrom(
-        this.http.delete(`/api/v1/storage/${this.storageId}/files/${encodeURIComponent(key)}`)
-      );
+      await firstValueFrom(this.http.delete(`/api/v1/storage/${this.storageId}/files/${encodeURIComponent(key)}`));
       this.refreshFiles$.next();
     } catch (err) {
       console.error('Failed to delete file:', err);

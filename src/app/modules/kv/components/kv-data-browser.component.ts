@@ -30,33 +30,29 @@ export class KvDataBrowserComponent implements OnInit {
     private kvDataService: KvDataService,
     private cdr: ChangeDetectorRef
   ) {
-    const debouncedSearch$ = this.search$.pipe(
-      debounceTime(300),
-      distinctUntilChanged()
-    );
+    const debouncedSearch$ = this.search$.pipe(debounceTime(300), distinctUntilChanged());
 
-    this.data$ = merge(
-      this.refresh$,
-      debouncedSearch$.pipe(tap(() => this.cursor = null))
-    ).pipe(
+    this.data$ = merge(this.refresh$, debouncedSearch$.pipe(tap(() => (this.cursor = null)))).pipe(
       switchMap(() =>
-        this.kvDataService.list(this.namespaceId, {
-          prefix: this.searchPrefix || undefined,
-          cursor: this.cursor ?? undefined,
-          limit: 50
-        }).pipe(
-          tap((res) => {
-            if (!this.cursor) {
-              this.items = res.items;
-            } else {
-              this.items = [...this.items, ...res.items];
-            }
-
-            this.cursor = res.cursor;
-            this.hasMore = res.hasMore;
-            this.cdr.markForCheck();
+        this.kvDataService
+          .list(this.namespaceId, {
+            prefix: this.searchPrefix || undefined,
+            cursor: this.cursor ?? undefined,
+            limit: 50
           })
-        )
+          .pipe(
+            tap((res) => {
+              if (!this.cursor) {
+                this.items = res.items;
+              } else {
+                this.items = [...this.items, ...res.items];
+              }
+
+              this.cursor = res.cursor;
+              this.hasMore = res.hasMore;
+              this.cdr.markForCheck();
+            })
+          )
       )
     );
   }
@@ -100,21 +96,18 @@ export class KvDataBrowserComponent implements OnInit {
       // Keep as string if not valid JSON
     }
 
-    this.kvDataService.put(
-      this.namespaceId,
-      this.editingItem.key,
-      value,
-      this.editingItem.expiresIn ?? undefined
-    ).subscribe({
-      next: () => {
-        this.closeEdit();
-        this.cursor = null;
-        this.refresh$.next({});
-      },
-      error: (err) => {
-        console.error('Failed to save:', err);
-      }
-    });
+    this.kvDataService
+      .put(this.namespaceId, this.editingItem.key, value, this.editingItem.expiresIn ?? undefined)
+      .subscribe({
+        next: () => {
+          this.closeEdit();
+          this.cursor = null;
+          this.refresh$.next({});
+        },
+        error: (err) => {
+          console.error('Failed to save:', err);
+        }
+      });
   }
 
   confirmDelete(key: string) {

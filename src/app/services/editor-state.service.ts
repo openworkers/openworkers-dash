@@ -87,10 +87,7 @@ export class EditorStateService {
 
   // Load conversation from Dexie
   private async loadConversation(workerId: string): Promise<void> {
-    const conversation = await this.db.conversations
-      .where('workerId')
-      .equals(workerId)
-      .first();
+    const conversation = await this.db.conversations.where('workerId').equals(workerId).first();
 
     if (conversation) {
       this._conversationId.set(conversation.id!);
@@ -137,7 +134,7 @@ export class EditorStateService {
 
   // Toggle thinking mode
   toggleThinking(): void {
-    this._thinkingEnabled.update(v => !v);
+    this._thinkingEnabled.update((v) => !v);
     this.saveConversation();
   }
 
@@ -148,12 +145,12 @@ export class EditorStateService {
 
   // Add user message
   addUserMessage(content: string): void {
-    this._messages.update(msgs => [...msgs, { role: 'user' as const, content }]);
+    this._messages.update((msgs) => [...msgs, { role: 'user' as const, content }]);
   }
 
   // Add assistant message
   addAssistantMessage(content: string): void {
-    this._messages.update(msgs => [...msgs, { role: 'assistant' as const, content }]);
+    this._messages.update((msgs) => [...msgs, { role: 'assistant' as const, content }]);
   }
 
   // Start streaming
@@ -165,12 +162,12 @@ export class EditorStateService {
 
   // Append to streaming text
   appendStreamingText(text: string): void {
-    this._streamingText.update(current => current + text);
+    this._streamingText.update((current) => current + text);
   }
 
   // Append to thinking text
   appendThinkingText(text: string): void {
-    this._thinkingText.update(current => current + text);
+    this._thinkingText.update((current) => current + text);
   }
 
   // Finalize streaming (convert to message)
@@ -203,7 +200,7 @@ export class EditorStateService {
 
   // Get messages for API call (filter out system messages if any)
   getMessagesForApi(): ChatMessage[] {
-    return this._messages().filter(m => m.role === 'user' || m.role === 'assistant');
+    return this._messages().filter((m) => m.role === 'user' || m.role === 'assistant');
   }
 
   // Cleanup on destroy

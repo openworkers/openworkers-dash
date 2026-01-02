@@ -6,7 +6,18 @@ import { ModalComponent } from '~/app/shared/modal/modal.component';
 import { TablesService } from '~/app/services/tables.service';
 import type { IColumnDefinition } from '@openworkers/api-types';
 
-const COMMON_TYPES = ['TEXT', 'INTEGER', 'BIGINT', 'SERIAL', 'BOOLEAN', 'TIMESTAMPTZ', 'UUID', 'JSONB', 'NUMERIC', 'REAL'];
+const COMMON_TYPES = [
+  'TEXT',
+  'INTEGER',
+  'BIGINT',
+  'SERIAL',
+  'BOOLEAN',
+  'TIMESTAMPTZ',
+  'UUID',
+  'JSONB',
+  'NUMERIC',
+  'REAL'
+];
 
 @Component({
   standalone: true,

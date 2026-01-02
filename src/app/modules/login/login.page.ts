@@ -25,7 +25,10 @@ export class LoginPage {
   public readonly success$ = new BehaviorSubject<string | null>(null);
   public readonly loading$ = new BehaviorSubject<boolean>(false);
 
-  constructor(private readonly auth: AuthService, private router: Router) {
+  constructor(
+    private readonly auth: AuthService,
+    private router: Router
+  ) {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required])

@@ -1,88 +1,89 @@
 @if (worker) {
-<div class="h-full flex" [ngClass]="'theme-' + (theme$ | async)">
-  <div class="flex flex-1 h-full">
-    <div class="mh-full">
-      <!-- Editor nav -->
-      <nav class="flex justify-between py-2 px-2">
-        <div class="flex items-center h-8 gap-4">
-          <a [routerLink]="['/worker', worker.id]" class="font-bold">
-            <div class="flex items-center font-size-1">
-              <ng-icon name="heroArrowUturnLeft" class="mr-2" />
-              Return to worker&nbsp;<span>({{ worker.name }})</span>
-            </div>
-          </a>
-          @if (!script.pristine) {
-          <button
-            class="btn-blue mr-2"
-            type="button"
-            (click)="updateWorker()"
-            [disabled]="script.value === worker.script"
-          >
-            Update
+  <div class="h-full flex" [ngClass]="'theme-' + (theme$ | async)">
+    <div class="flex flex-1 h-full">
+      <div class="mh-full">
+        <!-- Editor nav -->
+        <nav class="flex justify-between py-2 px-2">
+          <div class="flex items-center h-8 gap-4">
+            <a [routerLink]="['/worker', worker.id]" class="font-bold">
+              <div class="flex items-center font-size-1">
+                <ng-icon name="heroArrowUturnLeft" class="mr-2" />
+                Return to worker&nbsp;<span>({{ worker.name }})</span>
+              </div>
+            </a>
+            @if (!script.pristine) {
+              <button
+                class="btn-blue mr-2"
+                type="button"
+                (click)="updateWorker()"
+                [disabled]="script.value === worker.script"
+              >
+                Update
+              </button>
+            }
+          </div>
+        </nav>
+        <!-- Editor -->
+        <ngx-monaco-editor
+          class="code-editor"
+          [style.width.px]="splitPosition$ | async"
+          [options]="options"
+          [formControl]="script"
+          (init)="onEditorInit($event)"
+        ></ngx-monaco-editor>
+      </div>
+      <div
+        [ngClass]="{ dragActive: dragActive }"
+        class="bg-white w-1"
+        draggable="true"
+        (drag)="splitPosition.next($event.x)"
+        (dragend)="dragActive = false"
+        (dragstart)="onDragStart($event)"
+      >
+        <div class="absolute cursor-ew-resize w-1 border-l h-full"></div>
+      </div>
+      <div class="right-panel w-full">
+        <!-- Nav -->
+        <nav class="flex items-center p-2 gap-2">
+          <button class="btn-blue" (click)="activeTab = activeTab === 'preview' ? 'ai' : 'preview'">
+            {{ activeTab === 'preview' ? 'AI Assistant' : 'Preview' }}
           </button>
+          @if (activeTab === 'ai') {
+            <button
+              class="btn-outline"
+              (click)="clearAiChat()"
+              [disabled]="!editorState.hasMessages()"
+              title="Clear conversation"
+            >
+              /clear
+            </button>
           }
+          @if (activeTab === 'preview') {
+            <input class="input-outline flex-1" name="value" [formControl]="href" />
+            <a class="btn-outline flex items-center" [href]="workerUrl + href.value" target="_blank">
+              <ng-icon name="heroArrowTopRightOnSquare" />
+            </a>
+          }
+        </nav>
+
+        <!-- Tab content -->
+        <div class="right-panel-content relative mx-2">
+          <!-- Overlay for drag -->
+          <div class="absolute inset-0 bg-transparent z-10" [ngClass]="{ hidden: !dragActive }"></div>
+
+          <!-- Preview tab (hidden instead of destroyed) -->
+          <div class="w-full h-full bg-white" [hidden]="activeTab !== 'preview'">
+            <app-iframe class="w-full h-full" [reload]="refreshPreview$"></app-iframe>
+          </div>
+
+          <!-- AI tab (hidden instead of destroyed) -->
+          <app-ai-chat
+            class="w-full h-full"
+            [hidden]="activeTab !== 'ai'"
+            (codeApplied)="applyAiCode($event)"
+          ></app-ai-chat>
         </div>
-      </nav>
-      <!-- Editor -->
-      <ngx-monaco-editor
-        class="code-editor"
-        [style.width.px]="splitPosition$ | async"
-        [options]="options"
-        [formControl]="script"
-        (init)="onEditorInit($event)"
-      ></ngx-monaco-editor>
-    </div>
-    <div
-      [ngClass]="{ dragActive: dragActive }"
-      class="bg-white w-1"
-      draggable="true"
-      (drag)="splitPosition.next($event.x)"
-      (dragend)="dragActive = false"
-      (dragstart)="onDragStart($event)"
-    >
-      <div class="absolute cursor-ew-resize w-1 border-l h-full"></div>
-    </div>
-    <div class="right-panel w-full">
-      <!-- Nav -->
-      <nav class="flex items-center p-2 gap-2">
-        <button class="btn-blue" (click)="activeTab = activeTab === 'preview' ? 'ai' : 'preview'">
-          {{ activeTab === 'preview' ? 'AI Assistant' : 'Preview' }}
-        </button>
-        @if (activeTab === 'ai') {
-        <button
-          class="btn-outline"
-          (click)="clearAiChat()"
-          [disabled]="!editorState.hasMessages()"
-          title="Clear conversation"
-        >
-          /clear
-        </button>
-        } @if (activeTab === 'preview') {
-        <input class="input-outline flex-1" name="value" [formControl]="href" />
-        <a class="btn-outline flex items-center" [href]="workerUrl + href.value" target="_blank">
-          <ng-icon name="heroArrowTopRightOnSquare" />
-        </a>
-        }
-      </nav>
-
-      <!-- Tab content -->
-      <div class="right-panel-content relative mx-2">
-        <!-- Overlay for drag -->
-        <div class="absolute inset-0 bg-transparent z-10" [ngClass]="{ hidden: !dragActive }"></div>
-
-        <!-- Preview tab (hidden instead of destroyed) -->
-        <div class="w-full h-full bg-white" [hidden]="activeTab !== 'preview'">
-          <app-iframe class="w-full h-full" [reload]="refreshPreview$"></app-iframe>
-        </div>
-
-        <!-- AI tab (hidden instead of destroyed) -->
-        <app-ai-chat
-          class="w-full h-full"
-          [hidden]="activeTab !== 'ai'"
-          (codeApplied)="applyAiCode($event)"
-        ></app-ai-chat>
       </div>
     </div>
   </div>
-</div>
 }

@@ -43,21 +43,14 @@ export class KvDataService {
     return this.http.get<KvDataListResponse>(`${this.baseUrl}/${namespaceId}/data`, { params });
   }
 
-  put(
-    namespaceId: string,
-    key: string,
-    value: unknown,
-    expiresIn?: number
-  ): Observable<KvDataItem> {
-    return this.http.put<KvDataItem>(
-      `${this.baseUrl}/${namespaceId}/data/${encodeURIComponent(key)}`,
-      { value, expiresIn }
-    );
+  put(namespaceId: string, key: string, value: unknown, expiresIn?: number): Observable<KvDataItem> {
+    return this.http.put<KvDataItem>(`${this.baseUrl}/${namespaceId}/data/${encodeURIComponent(key)}`, {
+      value,
+      expiresIn
+    });
   }
 
   delete(namespaceId: string, key: string): Observable<{ deleted: boolean }> {
-    return this.http.delete<{ deleted: boolean }>(
-      `${this.baseUrl}/${namespaceId}/data/${encodeURIComponent(key)}`
-    );
+    return this.http.delete<{ deleted: boolean }>(`${this.baseUrl}/${namespaceId}/data/${encodeURIComponent(key)}`);
   }
 }

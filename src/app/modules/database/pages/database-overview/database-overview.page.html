@@ -12,12 +12,16 @@
           <label class="text-sm text-gray-500">Provider</label>
           <div class="text-sm">
             @if (database.provider === 'platform') {
-              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+              >
                 Platform
               </span>
               <span class="text-gray-500 ml-2">Shared multi-tenant database</span>
             } @else {
-              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+              >
                 PostgreSQL
               </span>
               <span class="text-gray-500 ml-2">Direct connection</span>
@@ -61,7 +65,9 @@
           <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
             Once bound to your environment, you can query the database like this:
           </p>
-          <pre class="text-xs bg-gray-100 dark:bg-gray-800 p-3 rounded block overflow-x-auto"><code>// Query the database
+          <pre
+            class="text-xs bg-gray-100 dark:bg-gray-800 p-3 rounded block overflow-x-auto"
+          ><code>// Query the database
 const result = await env.DB.query(
   'SELECT * FROM users WHERE id = $1',
   [userId]

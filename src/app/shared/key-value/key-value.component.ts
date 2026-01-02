@@ -10,7 +10,13 @@ import {
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { NgIconComponent } from '@ng-icons/core';
-import type { IEnvironmentValueUpdateInput, IStorageConfig, IKvNamespace, IDatabase, IWorker } from '@openworkers/api-types';
+import type {
+  IEnvironmentValueUpdateInput,
+  IStorageConfig,
+  IKvNamespace,
+  IDatabase,
+  IWorker
+} from '@openworkers/api-types';
 
 const emptyString = '';
 

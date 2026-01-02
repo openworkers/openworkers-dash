@@ -59,7 +59,7 @@
 
                   <button
                     class="btn-blue shadow w-64 mt-2"
-                    [disabled]="loginForm.touched && loginForm.invalid || (loading$ | async)"
+                    [disabled]="(loginForm.touched && loginForm.invalid) || (loading$ | async)"
                     type="submit"
                   >
                     @if (loading$ | async) {
@@ -73,15 +73,9 @@
                     <p class="text-red text-sm mt-2">{{ error }}</p>
                   }
 
-                  <a routerLink="/sign-in/forgot-password" class="text-sm text-blue mt-4">
-                    Forgot password?
-                  </a>
+                  <a routerLink="/sign-in/forgot-password" class="text-sm text-blue mt-4"> Forgot password? </a>
 
-                  <button
-                    type="button"
-                    class="text-sm text-gray-500 mt-4 text-left"
-                    (click)="toggleMode()"
-                  >
+                  <button type="button" class="text-sm text-gray-500 mt-4 text-left" (click)="toggleMode()">
                     Don't have an account? Sign up
                   </button>
                 </form>
@@ -93,11 +87,7 @@
                   @if (success$ | async; as success) {
                     <div class="text-center">
                       <p class="text-green-600 mb-4">{{ success }}</p>
-                      <button
-                        type="button"
-                        class="text-sm text-gray-500"
-                        (click)="toggleMode()"
-                      >
+                      <button type="button" class="text-sm text-gray-500" (click)="toggleMode()">
                         Back to sign in
                       </button>
                     </div>
@@ -117,13 +107,11 @@
                         </span>
                       </div>
 
-                      <p class="text-xs text-gray-500 mb-4">
-                        We'll send you an email to set your password.
-                      </p>
+                      <p class="text-xs text-gray-500 mb-4">We'll send you an email to set your password.</p>
 
                       <button
                         class="btn-blue shadow w-64 mt-2"
-                        [disabled]="registerForm.touched && registerForm.invalid || (loading$ | async)"
+                        [disabled]="(registerForm.touched && registerForm.invalid) || (loading$ | async)"
                         type="submit"
                       >
                         @if (loading$ | async) {
@@ -137,11 +125,7 @@
                         <p class="text-red text-sm mt-2">{{ error }}</p>
                       }
 
-                      <button
-                        type="button"
-                        class="text-sm text-gray-500 mt-4 text-left"
-                        (click)="toggleMode()"
-                      >
+                      <button type="button" class="text-sm text-gray-500 mt-4 text-left" (click)="toggleMode()">
                         Already have an account? Sign in
                       </button>
                     </form>

@@ -5,7 +5,11 @@ import type { IKvNamespace, IKvNamespaceCreateInput, IKvNamespaceUpdateInput } f
 import { ResourceService } from './resource.service';
 
 @Injectable({ providedIn: 'root' })
-export class KvService extends ResourceService<IKvNamespace, IKvNamespaceCreateInput, IKvNamespaceUpdateInput & { id: string }> {
+export class KvService extends ResourceService<
+  IKvNamespace,
+  IKvNamespaceCreateInput,
+  IKvNamespaceUpdateInput & { id: string }
+> {
   constructor(http: HttpClient) {
     super(http, 'kv');
   }

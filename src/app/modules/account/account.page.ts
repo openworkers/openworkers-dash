@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AuthService } from '~/services/auth.service';
-import { ApiKeysService, type ApiKey } from '~/services/api-keys.service';
-import type { ISelf } from '@openworkers/api-types';
+import { ApiKeysService } from '~/services/api-keys.service';
+import type { ISelf, IApiKey } from '@openworkers/api-types';
 
 @Component({
   standalone: true,
@@ -14,7 +14,7 @@ import type { ISelf } from '@openworkers/api-types';
 })
 export default class AccountPage implements OnInit {
   user$: Observable<ISelf | null>;
-  keys$: Observable<ApiKey[]>;
+  keys$: Observable<IApiKey[]>;
   creating$ = new BehaviorSubject<boolean>(false);
 
   showCreateKey = false;

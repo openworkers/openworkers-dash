@@ -48,9 +48,7 @@
         <span class="cli-prompt">◆</span>
         <span class="cli-content">{{ store.streamingText() }}</span>
         @if (store.isStreaming()) {
-          <span class="streaming-indicator">
-            <span></span><span></span><span></span>
-          </span>
+          <span class="streaming-indicator"> <span></span><span></span><span></span> </span>
         }
       </div>
     }
@@ -63,9 +61,7 @@
           <span>Thinking</span>
           <span class="thinking-arrow">{{ thinkingCollapsed ? '▶' : '▼' }}</span>
           @if (isThinking) {
-            <span class="streaming-indicator">
-              <span></span><span></span><span></span>
-            </span>
+            <span class="streaming-indicator"> <span></span><span></span><span></span> </span>
           }
         </button>
         @if (!thinkingCollapsed) {
@@ -77,18 +73,14 @@
     <!-- Thinking indicator (when no streaming text yet) -->
     @if (store.isStreaming() && !store.streamingText() && !showDiff && !generatingCode && !isThinking) {
       <div class="cli-message cli-thinking">
-        <span class="thinking-dots">
-          <span></span><span></span><span></span>
-        </span>
+        <span class="thinking-dots"> <span></span><span></span><span></span> </span>
       </div>
     }
 
     <!-- Generating code indicator -->
     @if (generatingCode) {
       <div class="cli-message cli-generating">
-        <span class="thinking-dots">
-          <span></span><span></span><span></span>
-        </span>
+        <span class="thinking-dots"> <span></span><span></span><span></span> </span>
         <span class="cli-content">Generating code</span>
       </div>
     }
@@ -103,9 +95,7 @@
         @if (store.diagnostics().length > 5) {
           <div class="cli-diagnostic-more">... and {{ store.diagnostics().length - 5 }} more</div>
         }
-        <button class="cli-fix-btn" (click)="askToFix()" [disabled]="store.isStreaming()">
-          Fix issues
-        </button>
+        <button class="cli-fix-btn" (click)="askToFix()" [disabled]="store.isStreaming()">Fix issues</button>
       </div>
     }
   </div>
@@ -157,9 +147,7 @@
         [title]="recording ? 'Stop' : transcribing ? 'Transcribing...' : 'Record'"
       >
         @if (recording) {
-          <div class="audio-bars">
-            <span></span><span></span><span></span>
-          </div>
+          <div class="audio-bars"><span></span><span></span><span></span></div>
         } @else if (transcribing) {
           <div class="spinner"></div>
         } @else {

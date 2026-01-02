@@ -168,7 +168,10 @@ export class AuthService {
       map((res) => ({ success: true, message: res.message })),
       catchError((err) => {
         log.error('Forgot password error:', err);
-        return of({ success: true, message: 'If an account exists with this email, you will receive a password reset link.' });
+        return of({
+          success: true,
+          message: 'If an account exists with this email, you will receive a password reset link.'
+        });
       })
     );
   }

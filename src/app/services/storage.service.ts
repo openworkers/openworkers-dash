@@ -5,7 +5,11 @@ import type { IStorageConfig, IStorageConfigCreateInput, IStorageConfigUpdateInp
 import { ResourceService } from './resource.service';
 
 @Injectable({ providedIn: 'root' })
-export class StorageService extends ResourceService<IStorageConfig, IStorageConfigCreateInput, IStorageConfigUpdateInput & { id: string }> {
+export class StorageService extends ResourceService<
+  IStorageConfig,
+  IStorageConfigCreateInput,
+  IStorageConfigUpdateInput & { id: string }
+> {
   constructor(http: HttpClient) {
     super(http, 'storage');
   }

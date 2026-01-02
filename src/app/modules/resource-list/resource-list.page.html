@@ -18,7 +18,7 @@
                     </a>
                   </div>
                 } @else {
-                  <div [tooltip]="'Maximum of '+ resourceLimit + ' ' + resourceName + 's reached'" placement="left">
+                  <div [tooltip]="'Maximum of ' + resourceLimit + ' ' + resourceName + 's reached'" placement="left">
                     <button class="btn-outline big shadow-sm" disabled>Create {{ resourceName }}</button>
                   </div>
                 }
@@ -34,12 +34,21 @@
                   <div class="flex items-center gap-2">
                     <a class="font-bold" [routerLink]="['/', resourceName, resource.id]"> {{ resource.name }} </a>
                     @if ((resourceName === 'storage' || resourceName === 'database') && $any(resource).provider) {
-                      <span class="text-xs px-2 py-0.5 rounded" [ngClass]="$any(resource).provider === 'platform' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'">
+                      <span
+                        class="text-xs px-2 py-0.5 rounded"
+                        [ngClass]="
+                          $any(resource).provider === 'platform'
+                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                            : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+                        "
+                      >
                         {{ $any(resource).provider }}
                       </span>
                     }
                   </div>
-                  <p class="font-light" [ngClass]="{ 'italic': !resource.desc }">{{ resource.desc ?? 'No description' }}</p>
+                  <p class="font-light" [ngClass]="{ italic: !resource.desc }">
+                    {{ resource.desc ?? 'No description' }}
+                  </p>
                   <div class="flex items-center mt-3 text-gray-500">
                     <ng-icon name="heroClock" />
                     <span class="ml-3">Last modified {{ resource.updatedAt | date: 'MMM d, y - HH:mm:ss' }}</span>
@@ -50,7 +59,7 @@
                     <a
                       class="btn-outline hover:shadow-sm justify-between gap-2"
                       [routerLink]="['/', resourceName, resource.id]"
-                      >
+                    >
                       <ng-icon name="heroPencilSquare" class="mr-1" />
                       Edit
                     </a>
@@ -60,7 +69,7 @@
                       class="btn-outline hover:shadow-sm justify-between gap-2"
                       [href]="getWorkerUrl(resource.name)"
                       target="_blank"
-                      >
+                    >
                       <ng-icon name="heroArrowTopRightOnSquare" class="mr-1" />
                       View
                     </a>

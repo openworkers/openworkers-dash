@@ -1,88 +1,94 @@
 @if (kv && form) {
-<form (submit)="$event.preventDefault(); onSubmit()">
-  <ul class="rounded mt-2 px-2 w-full empty:hidden">
-    @for (el of form.controls; track el; let index = $index) {
-    <li
-      class="input-group flex px-1 py-0 items-center"
-      [ngClass]="{ deleted: el.deleted, secret: el.controls.type.value === 'secret', binding: el.isBinding }"
-    >
-      @if (el.isBinding) {
-      <!-- Resource binding (assets, storage, kv) - read-only with link -->
-      <div class="input flex-1 w-0 flex items-center px-3">{{ el.controls.key.value }}</div>
-      <a
-        class="input flex-1 w-0 flex items-center px-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-        [routerLink]="getBindingLink(el)"
-      >
-        <ng-icon name="heroCube" class="mr-1" />
-        {{ getBindingDisplayName(el) }}
-      </a>
-      } @else {
-      <!-- Variable (var, secret) - editable -->
-      <input class="input flex-1 w-0" type="text" [formControl]="el.controls.key" placeholder="KEY" required />
-      <input
-        [ngClass]="{ hidden: el.controls.type.value === 'secret' }"
-        class="input flex-1 w-0"
-        type="text"
-        [formControl]="el.controls.value"
-        placeholder="VALUE"
-        required
-      />
-      <div class="flex-1 w-0" [ngClass]="el.controls.type.value === 'secret' ? 'inline' : 'hidden'">
-        <span class="text-gray-500">************</span>
-      </div>
-      }
-      <!-- Controls -->
-      <div class="flex gap-2 min-w-10">
-        @if (!el.isBinding) {
-        <!-- Button lock -->
-        @switch (el.controls.type.defaultValue === 'secret' && el.controls.type.value === 'secret') { @case (true) {
-        <button type="button" (click)="resetSecret(el, $event)">
-          <ng-icon name="heroLockClosed" />
-        </button>
-        } @case (false) {
-        <button
-          type="button"
-          (click)="el.controls.type.setValue(el.controls.type.value === 'secret' ? 'var' : 'secret')"
+  <form (submit)="$event.preventDefault(); onSubmit()">
+    <ul class="rounded mt-2 px-2 w-full empty:hidden">
+      @for (el of form.controls; track el; let index = $index) {
+        <li
+          class="input-group flex px-1 py-0 items-center"
+          [ngClass]="{ deleted: el.deleted, secret: el.controls.type.value === 'secret', binding: el.isBinding }"
         >
-          <ng-icon [name]="el.controls.type.value === 'secret' ? 'heroLockClosed' : 'heroLockOpen'" />
-        </button>
-        } }
-        }
-        <!-- Button trash/undo -->
-        @switch (el.deleted) { @case (true) {
-        <button type="button" (click)="el.rollbackDelete()">
-          <ng-icon name="heroArrowPath" />
-        </button>
-        } @case (false) {
-        <button type="button" (click)="form.deleteAt(index)">
-          <ng-icon name="heroTrash" />
-        </button>
-        } }
+          @if (el.isBinding) {
+            <!-- Resource binding (assets, storage, kv) - read-only with link -->
+            <div class="input flex-1 w-0 flex items-center px-3">{{ el.controls.key.value }}</div>
+            <a
+              class="input flex-1 w-0 flex items-center px-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+              [routerLink]="getBindingLink(el)"
+            >
+              <ng-icon name="heroCube" class="mr-1" />
+              {{ getBindingDisplayName(el) }}
+            </a>
+          } @else {
+            <!-- Variable (var, secret) - editable -->
+            <input class="input flex-1 w-0" type="text" [formControl]="el.controls.key" placeholder="KEY" required />
+            <input
+              [ngClass]="{ hidden: el.controls.type.value === 'secret' }"
+              class="input flex-1 w-0"
+              type="text"
+              [formControl]="el.controls.value"
+              placeholder="VALUE"
+              required
+            />
+            <div class="flex-1 w-0" [ngClass]="el.controls.type.value === 'secret' ? 'inline' : 'hidden'">
+              <span class="text-gray-500">************</span>
+            </div>
+          }
+          <!-- Controls -->
+          <div class="flex gap-2 min-w-10">
+            @if (!el.isBinding) {
+              <!-- Button lock -->
+              @switch (el.controls.type.defaultValue === 'secret' && el.controls.type.value === 'secret') {
+                @case (true) {
+                  <button type="button" (click)="resetSecret(el, $event)">
+                    <ng-icon name="heroLockClosed" />
+                  </button>
+                }
+                @case (false) {
+                  <button
+                    type="button"
+                    (click)="el.controls.type.setValue(el.controls.type.value === 'secret' ? 'var' : 'secret')"
+                  >
+                    <ng-icon [name]="el.controls.type.value === 'secret' ? 'heroLockClosed' : 'heroLockOpen'" />
+                  </button>
+                }
+              }
+            }
+            <!-- Button trash/undo -->
+            @switch (el.deleted) {
+              @case (true) {
+                <button type="button" (click)="el.rollbackDelete()">
+                  <ng-icon name="heroArrowPath" />
+                </button>
+              }
+              @case (false) {
+                <button type="button" (click)="form.deleteAt(index)">
+                  <ng-icon name="heroTrash" />
+                </button>
+              }
+            }
+          </div>
+        </li>
+      }
+    </ul>
+    <div class="mt-2 flex justify-between">
+      <div class="flex gap-2">
+        <button type="button" class="btn-light" (click)="addKeyValue()">+ Variable</button>
+        <button type="button" class="btn-light" (click)="addStorage.emit()">+ Storage</button>
+        <button type="button" class="btn-light" (click)="addKv.emit()">+ KV</button>
+        <button type="button" class="btn-light" (click)="addDatabase.emit()">+ Database</button>
+        <button type="button" class="btn-light" (click)="addWorker.emit()">+ Worker</button>
       </div>
-    </li>
-    }
-  </ul>
-  <div class="mt-2 flex justify-between">
-    <div class="flex gap-2">
-      <button type="button" class="btn-light" (click)="addKeyValue()">+ Variable</button>
-      <button type="button" class="btn-light" (click)="addStorage.emit()">+ Storage</button>
-      <button type="button" class="btn-light" (click)="addKv.emit()">+ KV</button>
-      <button type="button" class="btn-light" (click)="addDatabase.emit()">+ Database</button>
-      <button type="button" class="btn-light" (click)="addWorker.emit()">+ Worker</button>
+      @if (form.changed) {
+        <div class="flex">
+          <button type="button" class="btn-light mr-2" (click)="resetForm()">Reset</button>
+          <button type="submit" class="btn-blue" [disabled]="form.invalid">Save</button>
+        </div>
+      }
     </div>
-    @if (form.changed) {
-    <div class="flex">
-      <button type="button" class="btn-light mr-2" (click)="resetForm()">Reset</button>
-      <button type="submit" class="btn-blue" [disabled]="form.invalid">Save</button>
+    <div class="mt-2">
+      @if (form.getError('duplicateKey'); as err) {
+        <div class="text-xs pb-2 text-red">
+          <div>Duplicate key {{ err | json }}</div>
+        </div>
+      }
     </div>
-    }
-  </div>
-  <div class="mt-2">
-    @if (form.getError('duplicateKey'); as err) {
-    <div class="text-xs pb-2 text-red">
-      <div>Duplicate key {{ err | json }}</div>
-    </div>
-    }
-  </div>
-</form>
+  </form>
 }

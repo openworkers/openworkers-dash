@@ -15,9 +15,7 @@ import { FormErrorComponent } from '../form-error/form-error.component';
         <h2 class="text-xl font-semibold mb-4">Reset your password</h2>
 
         @if (!(submitted$ | async)) {
-          <p class="text-gray-500 mb-6">
-            Enter your email address and we'll send you a link to reset your password.
-          </p>
+          <p class="text-gray-500 mb-6">Enter your email address and we'll send you a link to reset your password.</p>
 
           <form [formGroup]="form" (ngSubmit)="submitForm()" class="flex flex-col">
             <div class="flex flex-col mb-4">
@@ -34,11 +32,7 @@ import { FormErrorComponent } from '../form-error/form-error.component';
               </span>
             </div>
 
-            <button
-              class="btn-blue shadow w-full"
-              [disabled]="form.invalid || (loading$ | async)"
-              type="submit"
-            >
+            <button class="btn-blue shadow w-full" [disabled]="form.invalid || (loading$ | async)" type="submit">
               @if (loading$ | async) {
                 <span>Sending...</span>
               } @else {
@@ -52,9 +46,7 @@ import { FormErrorComponent } from '../form-error/form-error.component';
           </p>
         }
 
-        <a routerLink="/sign-in" class="text-sm text-blue mt-4 block">
-          Back to Sign in
-        </a>
+        <a routerLink="/sign-in" class="text-sm text-blue mt-4 block"> Back to Sign in </a>
       </div>
     </div>
   `

@@ -2,10 +2,7 @@
   <form (submit)="$event.preventDefault(); onSubmit()">
     <ul class="rounded mt-2 px-2 w-full empty:hidden">
       @for (el of form.controls; track el; let index = $index) {
-        <li
-          class="input-group flex px-1 py-0 items-center"
-          [ngClass]="{ deleted: el.deleted }"
-          >
+        <li class="input-group flex px-1 py-0 items-center" [ngClass]="{ deleted: el.deleted }">
           @switch (el.disabled) {
             @case (true) {
               <a class="btn-link flex-1 w-0 text-left text-blue" [href]="'//' + el.value" target="_blank">

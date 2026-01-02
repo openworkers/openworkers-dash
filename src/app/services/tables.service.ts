@@ -1,12 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import type {
-  ITableInfo,
-  ITableDetails,
-  IColumnDefinition,
-  ICreateTableInput
-} from '@openworkers/api-types';
+import type { ITableInfo, ITableDetails, IColumnDefinition, ICreateTableInput } from '@openworkers/api-types';
 
 @Injectable({ providedIn: 'root' })
 export class TablesService {
@@ -28,7 +23,11 @@ export class TablesService {
     return this.http.delete<{ deleted: boolean }>(`/api/v1/databases/${databaseId}/tables/${tableName}`);
   }
 
-  addColumn(databaseId: string, tableName: string, column: IColumnDefinition): Observable<{ created: boolean; name: string }> {
+  addColumn(
+    databaseId: string,
+    tableName: string,
+    column: IColumnDefinition
+  ): Observable<{ created: boolean; name: string }> {
     return this.http.post<{ created: boolean; name: string }>(
       `/api/v1/databases/${databaseId}/tables/${tableName}/columns`,
       column

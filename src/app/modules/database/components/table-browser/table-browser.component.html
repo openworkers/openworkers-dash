@@ -1,13 +1,9 @@
 @if (provider !== 'platform') {
-  <div class="text-sm text-gray-500">
-    Table management is only available for Platform databases.
-  </div>
+  <div class="text-sm text-gray-500">Table management is only available for Platform databases.</div>
 } @else {
   <div class="flex justify-between items-center mb-4">
     <h5 class="text-sm font-medium text-gray-700 dark:text-gray-300">Tables</h5>
-    <button class="btn-outline text-sm" (click)="openCreateModal()">
-      + New Table
-    </button>
+    <button class="btn-outline text-sm" (click)="openCreateModal()">+ New Table</button>
   </div>
 
   @if (isLoading()) {
@@ -63,7 +59,12 @@
                       </td>
                       <td class="py-0.5 text-gray-600 dark:text-gray-400">{{ col.type }}</td>
                       <td class="py-0.5">{{ col.nullable ? 'Yes' : 'No' }}</td>
-                      <td class="py-0.5 text-gray-500 font-mono max-w-[120px] truncate" [title]="col.defaultValue || ''">{{ col.defaultValue || '-' }}</td>
+                      <td
+                        class="py-0.5 text-gray-500 font-mono max-w-[120px] truncate"
+                        [title]="col.defaultValue || ''"
+                      >
+                        {{ col.defaultValue || '-' }}
+                      </td>
                       <td class="py-0.5 text-right">
                         @if (!col.primaryKey) {
                           <button
@@ -104,7 +105,10 @@
     <h4>Delete Table</h4>
   </div>
   <div role="body">
-    <p>Are you sure you want to delete table <strong class="font-mono">{{ tableToDelete() }}</strong>?</p>
+    <p>
+      Are you sure you want to delete table <strong class="font-mono">{{ tableToDelete() }}</strong
+      >?
+    </p>
     <p class="text-sm text-red-600 mt-2">This action cannot be undone. All data will be permanently deleted.</p>
   </div>
   <div role="footer" class="flex gap-2 justify-end">
@@ -160,8 +164,13 @@
     <h4>Drop Column</h4>
   </div>
   <div role="body">
-    <p>Are you sure you want to drop column <strong class="font-mono">{{ columnToDelete() }}</strong>?</p>
-    <p class="text-sm text-red-600 mt-2">This action cannot be undone. All data in this column will be permanently deleted.</p>
+    <p>
+      Are you sure you want to drop column <strong class="font-mono">{{ columnToDelete() }}</strong
+      >?
+    </p>
+    <p class="text-sm text-red-600 mt-2">
+      This action cannot be undone. All data in this column will be permanently deleted.
+    </p>
   </div>
   <div role="footer" class="flex gap-2 justify-end">
     <button class="btn-outline" (click)="showDeleteColumnConfirm.set(false)">Cancel</button>

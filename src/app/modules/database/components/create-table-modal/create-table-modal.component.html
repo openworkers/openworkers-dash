@@ -65,20 +65,12 @@
               </label>
 
               <label class="flex items-center gap-1 cursor-pointer">
-                <input
-                  type="checkbox"
-                  [ngModel]="col.notNull"
-                  (ngModelChange)="updateColumn(i, 'notNull', $event)"
-                />
+                <input type="checkbox" [ngModel]="col.notNull" (ngModelChange)="updateColumn(i, 'notNull', $event)" />
                 NN
               </label>
 
               <label class="flex items-center gap-1 cursor-pointer">
-                <input
-                  type="checkbox"
-                  [ngModel]="col.unique"
-                  (ngModelChange)="updateColumn(i, 'unique', $event)"
-                />
+                <input type="checkbox" [ngModel]="col.unique" (ngModelChange)="updateColumn(i, 'unique', $event)" />
                 UQ
               </label>
             </div>
@@ -95,9 +87,7 @@
         }
       </div>
 
-      <p class="text-xs text-gray-500 mt-2">
-        PK = Primary Key, NN = Not Null, UQ = Unique
-      </p>
+      <p class="text-xs text-gray-500 mt-2">PK = Primary Key, NN = Not Null, UQ = Unique</p>
     </div>
   </div>
 

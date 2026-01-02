@@ -2,7 +2,8 @@
   <div class="card shadow-sm mt-8">
     <h4>Create Storage Config</h4>
     <p class="text-sm text-gray-500 mt-1">
-      Storage configs can be used as either <strong>assets</strong> (read-only) or <strong>storage</strong> (read/write) bindings.
+      Storage configs can be used as either <strong>assets</strong> (read-only) or <strong>storage</strong> (read/write)
+      bindings.
     </p>
 
     <form class="mt-3" [formGroup]="form" (ngSubmit)="submitForm()">
@@ -58,7 +59,12 @@
 
           <fieldset class="mt-2">
             <label>Prefix</label>
-            <input type="text" class="input-outline w-full" formControlName="prefix" placeholder="optional/path/prefix" />
+            <input
+              type="text"
+              class="input-outline w-full"
+              formControlName="prefix"
+              placeholder="optional/path/prefix"
+            />
             <p class="text-xs text-gray-500">Optional path prefix within the bucket</p>
           </fieldset>
 
@@ -96,12 +102,7 @@
 
           <fieldset class="mt-2">
             <label>Region</label>
-            <input
-              type="text"
-              class="input-outline w-full"
-              formControlName="region"
-              placeholder="us-east-1"
-            />
+            <input type="text" class="input-outline w-full" formControlName="region" placeholder="us-east-1" />
             <p class="text-xs text-gray-500">AWS region (not needed for R2)</p>
           </fieldset>
 

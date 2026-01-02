@@ -11,12 +11,16 @@
           <label class="text-sm text-gray-500">Provider</label>
           <div class="text-sm">
             @if (storage.provider === 'platform') {
-              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+              >
                 Platform
               </span>
               <span class="text-gray-500 ml-2">Shared R2 storage</span>
             } @else {
-              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+              <span
+                class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+              >
                 S3
               </span>
               <span class="text-gray-500 ml-2">Custom S3/R2 endpoint</span>
@@ -115,7 +119,9 @@
               @if (selectedFiles.size > 0) {
                 <div class="mb-2 flex items-center gap-2">
                   <span class="text-sm text-gray-600">{{ selectedFiles.size }} selected</span>
-                  <button class="text-sm text-red-600 hover:text-red-800" (click)="deleteSelected()">Delete selected</button>
+                  <button class="text-sm text-red-600 hover:text-red-800" (click)="deleteSelected()">
+                    Delete selected
+                  </button>
                 </div>
               }
 
@@ -140,15 +146,22 @@
                     @for (file of state.files; track file.key) {
                       <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
                         <td class="py-2 px-2">
-                          <input type="checkbox" [checked]="selectedFiles.has(file.key)" (change)="toggleSelect(file.key)" />
+                          <input
+                            type="checkbox"
+                            [checked]="selectedFiles.has(file.key)"
+                            (change)="toggleSelect(file.key)"
+                          />
                         </td>
                         <td class="py-2 px-2 font-mono text-xs">
-                          <button class="text-blue-600 hover:text-blue-800 hover:underline" (click)="openFile(file.key)">
+                          <button
+                            class="text-blue-600 hover:text-blue-800 hover:underline"
+                            (click)="openFile(file.key)"
+                          >
                             {{ file.key }}
                           </button>
                         </td>
                         <td class="py-2 px-2 text-right text-gray-500">{{ formatSize(file.size) }}</td>
-                        <td class="py-2 px-2 text-right text-gray-500">{{ file.lastModified | date:'short' }}</td>
+                        <td class="py-2 px-2 text-right text-gray-500">{{ file.lastModified | date: 'short' }}</td>
                       </tr>
                     }
                   </tbody>

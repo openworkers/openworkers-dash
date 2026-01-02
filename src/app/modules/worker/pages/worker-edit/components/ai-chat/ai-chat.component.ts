@@ -24,7 +24,6 @@ import { NgIconComponent } from '@ng-icons/core';
   styleUrls: ['./ai-chat.component.css']
 })
 export class AiChatComponent implements OnDestroy {
-
   @Output() codeApplied = new EventEmitter<string>();
 
   @ViewChild('outputArea') outputArea?: ElementRef<HTMLDivElement>;

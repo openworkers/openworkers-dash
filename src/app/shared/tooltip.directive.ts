@@ -25,7 +25,10 @@ export class TooltipDirective implements OnInit {
     setTimeout(() => this.tooltip.classList.add('hidden'), 200);
   }
 
-  constructor(private el: ElementRef<HTMLElement>, private renderer: Renderer) {}
+  constructor(
+    private el: ElementRef<HTMLElement>,
+    private renderer: Renderer
+  ) {}
 
   ngOnInit() {
     const tooltip = this.renderer.createElement('span');

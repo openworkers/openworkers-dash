@@ -13,7 +13,7 @@
                   <code [innerHTML]="log.message"></code>
                 </td>
                 <td>
-                  <code>{{ log.date | date:'MMM dd, yyyy HH:mm:ss.SSS' }}</code>
+                  <code>{{ log.date | date: 'MMM dd, yyyy HH:mm:ss.SSS' }}</code>
                 </td>
               </tr>
             }
@@ -24,7 +24,7 @@
                   <code> Connected to log service, waiting for logs... </code>
                 </td>
                 <td>
-                  <code>{{ log.date | date:'MMM dd, yyyy HH:mm:ss.SSS' }}</code>
+                  <code>{{ log.date | date: 'MMM dd, yyyy HH:mm:ss.SSS' }}</code>
                 </td>
               </tr>
             }
@@ -33,14 +33,16 @@
                 <td></td>
                 <td>
                   <code>
-                    Error connecting to log service@if (log.message) {
-                    <span> ({{ log.message | json }})</span>
-                    }, <br />
+                    Error connecting to log service
+                    @if (log.message) {
+                      <span> ({{ log.message | json }})</span>
+                    }
+                    , <br />
                     trying again in 3 seconds...
                   </code>
                 </td>
                 <td>
-                  <code>{{ log.date | date:'MMM dd, yyyy HH:mm:ss.SSS' }}</code>
+                  <code>{{ log.date | date: 'MMM dd, yyyy HH:mm:ss.SSS' }}</code>
                 </td>
               </tr>
             }
@@ -55,7 +57,7 @@
                   </code>
                 </td>
                 <td>
-                  <code>{{ log.date | date:'MMM dd, yyyy HH:mm:ss.SSS' }}</code>
+                  <code>{{ log.date | date: 'MMM dd, yyyy HH:mm:ss.SSS' }}</code>
                 </td>
               </tr>
             }
@@ -66,7 +68,6 @@
             <td></td>
           </tr>
         }
-
       </tbody>
     </table>
   </div>

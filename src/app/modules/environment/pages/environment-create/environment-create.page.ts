@@ -1,4 +1,3 @@
-
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -15,7 +14,10 @@ import { EnvironmentsService } from '~/services/environments.service';
 export default class EnvironmentCreatePage {
   public readonly form: FormGroup;
 
-  constructor(private readonly envs: EnvironmentsService, private router: Router) {
+  constructor(
+    private readonly envs: EnvironmentsService,
+    private router: Router
+  ) {
     this.form = new FormGroup({
       name: new FormControl('', [Validators.required, visibleValidator, Validators.maxLength(255)]),
       desc: new FormControl('', [visibleBlockValidator, Validators.maxLength(255)])

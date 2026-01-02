@@ -1,48 +1,48 @@
 <div>
   @if (vm$ | async; as vm) {
-  <div class="card shadow-sm mt-8">
-    <div class="inline-block p-4 w-full">
-      <h4>Variables & Bindings</h4>
-      <app-key-value
-        [kv]="vm.environment.values ?? []"
-        [storageConfigs]="vm.storageConfigs"
-        [kvNamespaces]="vm.kvNamespaces"
-        [databases]="vm.databases"
-        [workers]="vm.workers"
-        (update)="update(vm.environment.id, $event)"
-        (addStorage)="openStorageModal()"
-        (addKv)="openKvModal()"
-        (addDatabase)="openDatabaseModal()"
-        (addWorker)="openWorkerModal()"
-      />
+    <div class="card shadow-sm mt-8">
+      <div class="inline-block p-4 w-full">
+        <h4>Variables & Bindings</h4>
+        <app-key-value
+          [kv]="vm.environment.values ?? []"
+          [storageConfigs]="vm.storageConfigs"
+          [kvNamespaces]="vm.kvNamespaces"
+          [databases]="vm.databases"
+          [workers]="vm.workers"
+          (update)="update(vm.environment.id, $event)"
+          (addStorage)="openStorageModal()"
+          (addKv)="openKvModal()"
+          (addDatabase)="openDatabaseModal()"
+          (addWorker)="openWorkerModal()"
+        />
+      </div>
     </div>
-  </div>
 
-  <div class="card shadow-sm mt-8">
-    <div class="inline-block p-4 w-full">
-      <h4 class="mb-2">Related workers</h4>
-      @if (vm.environment.workers?.length) {
-      <div>
-        @for (worker of vm.environment.workers; track worker) {
-        <div class="flex">
-          <a class="btn-light flex-1 text-left justify-start" [routerLink]="['/worker', worker.id]">
-            {{ worker.name }}
-          </a>
-        </div>
+    <div class="card shadow-sm mt-8">
+      <div class="inline-block p-4 w-full">
+        <h4 class="mb-2">Related workers</h4>
+        @if (vm.environment.workers?.length) {
+          <div>
+            @for (worker of vm.environment.workers; track worker) {
+              <div class="flex">
+                <a class="btn-light flex-1 text-left justify-start" [routerLink]="['/worker', worker.id]">
+                  {{ worker.name }}
+                </a>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="text-center p-4">
+            <p class="text-gray-500">No related workers</p>
+            <p>
+              <a routerLink="/workers">Go to workers</a>
+            </p>
+          </div>
         }
       </div>
-      } @else {
-      <div class="text-center p-4">
-        <p class="text-gray-500">No related workers</p>
-        <p>
-          <a routerLink="/workers">Go to workers</a>
-        </p>
-      </div>
-      }
     </div>
-  </div>
 
-  <app-debug [expand]="true">{{ vm.environment | json }}</app-debug>
+    <app-debug [expand]="true">{{ vm.environment | json }}</app-debug>
   }
 
   <!-- Storage Binding Modal -->
@@ -56,20 +56,20 @@
       </fieldset>
 
       @if (storageConfigs$ | async; as storageConfigs) {
-      <fieldset class="mb-3">
-        <label>Storage Config *</label>
-        <select class="input-outline w-full" formControlName="configId">
-          <option value="">Select a storage config...</option>
-          @for (config of storageConfigs; track config.id) {
-          <option [value]="config.id">{{ config.name }}</option>
+        <fieldset class="mb-3">
+          <label>Storage Config *</label>
+          <select class="input-outline w-full" formControlName="configId">
+            <option value="">Select a storage config...</option>
+            @for (config of storageConfigs; track config.id) {
+              <option [value]="config.id">{{ config.name }}</option>
+            }
+          </select>
+          @if (storageConfigs.length === 0) {
+            <p class="text-xs text-gray-500 mt-1">
+              No storage configs. <a routerLink="/storage/create" class="text-blue-600">Create one</a>
+            </p>
           }
-        </select>
-        @if (storageConfigs.length === 0) {
-        <p class="text-xs text-gray-500 mt-1">
-          No storage configs. <a routerLink="/storage/create" class="text-blue-600">Create one</a>
-        </p>
-        }
-      </fieldset>
+        </fieldset>
       }
 
       <fieldset class="mb-4">
@@ -98,20 +98,20 @@
       </fieldset>
 
       @if (kvNamespaces$ | async; as kvNamespaces) {
-      <fieldset class="mb-4">
-        <label>KV Namespace *</label>
-        <select class="input-outline w-full" formControlName="namespaceId">
-          <option value="">Select a namespace...</option>
-          @for (ns of kvNamespaces; track ns.id) {
-          <option [value]="ns.id">{{ ns.name }}</option>
+        <fieldset class="mb-4">
+          <label>KV Namespace *</label>
+          <select class="input-outline w-full" formControlName="namespaceId">
+            <option value="">Select a namespace...</option>
+            @for (ns of kvNamespaces; track ns.id) {
+              <option [value]="ns.id">{{ ns.name }}</option>
+            }
+          </select>
+          @if (kvNamespaces.length === 0) {
+            <p class="text-xs text-gray-500 mt-1">
+              No KV namespaces. <a routerLink="/kv/create" class="text-blue-600">Create one</a>
+            </p>
           }
-        </select>
-        @if (kvNamespaces.length === 0) {
-        <p class="text-xs text-gray-500 mt-1">
-          No KV namespaces. <a routerLink="/kv/create" class="text-blue-600">Create one</a>
-        </p>
-        }
-      </fieldset>
+        </fieldset>
       }
     </form>
 
@@ -132,26 +132,28 @@
       </fieldset>
 
       @if (databases$ | async; as databases) {
-      <fieldset class="mb-4">
-        <label>Database *</label>
-        <select class="input-outline w-full" formControlName="databaseId">
-          <option value="">Select a database...</option>
-          @for (db of databases; track db.id) {
-          <option [value]="db.id">{{ db.name }}</option>
+        <fieldset class="mb-4">
+          <label>Database *</label>
+          <select class="input-outline w-full" formControlName="databaseId">
+            <option value="">Select a database...</option>
+            @for (db of databases; track db.id) {
+              <option [value]="db.id">{{ db.name }}</option>
+            }
+          </select>
+          @if (databases.length === 0) {
+            <p class="text-xs text-gray-500 mt-1">
+              No databases. <a routerLink="/database/create" class="text-blue-600">Create one</a>
+            </p>
           }
-        </select>
-        @if (databases.length === 0) {
-        <p class="text-xs text-gray-500 mt-1">
-          No databases. <a routerLink="/database/create" class="text-blue-600">Create one</a>
-        </p>
-        }
-      </fieldset>
+        </fieldset>
       }
     </form>
 
     <div role="footer" class="flex justify-end gap-2">
       <button type="button" class="btn-light" (click)="showDatabaseModal = false">Cancel</button>
-      <button type="button" class="btn-blue" [disabled]="databaseForm.invalid" (click)="addDatabaseBinding()">Add</button>
+      <button type="button" class="btn-blue" [disabled]="databaseForm.invalid" (click)="addDatabaseBinding()">
+        Add
+      </button>
     </div>
   </app-modal>
 
@@ -166,20 +168,20 @@
       </fieldset>
 
       @if (workers$ | async; as workers) {
-      <fieldset class="mb-4">
-        <label>Worker *</label>
-        <select class="input-outline w-full" formControlName="workerId">
-          <option value="">Select a worker...</option>
-          @for (worker of workers; track worker.id) {
-          <option [value]="worker.id">{{ worker.name }}</option>
+        <fieldset class="mb-4">
+          <label>Worker *</label>
+          <select class="input-outline w-full" formControlName="workerId">
+            <option value="">Select a worker...</option>
+            @for (worker of workers; track worker.id) {
+              <option [value]="worker.id">{{ worker.name }}</option>
+            }
+          </select>
+          @if (workers.length === 0) {
+            <p class="text-xs text-gray-500 mt-1">
+              No workers. <a routerLink="/workers" class="text-blue-600">Create one</a>
+            </p>
           }
-        </select>
-        @if (workers.length === 0) {
-        <p class="text-xs text-gray-500 mt-1">
-          No workers. <a routerLink="/workers" class="text-blue-600">Create one</a>
-        </p>
-        }
-      </fieldset>
+        </fieldset>
       }
     </form>
 

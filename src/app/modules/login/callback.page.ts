@@ -4,7 +4,6 @@ import { AuthService } from '~/services/auth.service';
 import { firstValueFrom, forkJoin, timer } from 'rxjs';
 import { logger } from '~/logger';
 
-
 const log = logger.getLogger('CallbackPage');
 
 @Component({
@@ -23,7 +22,7 @@ const log = logger.getLogger('CallbackPage');
         </div>
       }
     </div>
-    `
+  `
 })
 export class CallbackPage {
   public error: string | null = null;

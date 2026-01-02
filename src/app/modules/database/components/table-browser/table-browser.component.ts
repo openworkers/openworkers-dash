@@ -7,7 +7,18 @@ import type { ITableInfo, IColumnInfo, IColumnDefinition } from '@openworkers/ap
 import { ModalComponent } from '~/app/shared/modal/modal.component';
 import { CreateTableModalComponent } from '../create-table-modal/create-table-modal.component';
 
-const COMMON_TYPES = ['TEXT', 'INTEGER', 'BIGINT', 'SERIAL', 'BOOLEAN', 'TIMESTAMPTZ', 'UUID', 'JSONB', 'NUMERIC', 'REAL'];
+const COMMON_TYPES = [
+  'TEXT',
+  'INTEGER',
+  'BIGINT',
+  'SERIAL',
+  'BOOLEAN',
+  'TIMESTAMPTZ',
+  'UUID',
+  'JSONB',
+  'NUMERIC',
+  'REAL'
+];
 
 @Component({
   standalone: true,

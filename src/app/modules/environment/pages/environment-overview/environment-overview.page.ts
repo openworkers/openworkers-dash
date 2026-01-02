@@ -12,7 +12,14 @@ import { StorageService } from '~/services/storage.service';
 import { KvService } from '~/services/kv.service';
 import { DatabasesService } from '~/app/services/databases.service';
 import { WorkersService } from '~/app/services/workers.service';
-import type { IEnvironment, IEnvironmentValueUpdateInput, IStorageConfig, IKvNamespace, IDatabase, IWorker } from '@openworkers/api-types';
+import type {
+  IEnvironment,
+  IEnvironmentValueUpdateInput,
+  IStorageConfig,
+  IKvNamespace,
+  IDatabase,
+  IWorker
+} from '@openworkers/api-types';
 
 @Component({
   imports: [CommonModule, RouterLink, ReactiveFormsModule, DebugComponent, KeyValueComponent, ModalComponent],
@@ -77,25 +84,13 @@ export default class EnvironmentOverviewPage {
     this.environment$ = env.asObservable?.() ?? this.envs.findById(env.id);
 
     // Load storage configs and kv namespaces as observables
-    this.storageConfigs$ = this.storageService.findAll().pipe(
-      startWith([] as IStorageConfig[]),
-      shareReplay(1)
-    );
+    this.storageConfigs$ = this.storageService.findAll().pipe(startWith([] as IStorageConfig[]), shareReplay(1));
 
-    this.kvNamespaces$ = this.kvService.findAll().pipe(
-      startWith([] as IKvNamespace[]),
-      shareReplay(1)
-    );
+    this.kvNamespaces$ = this.kvService.findAll().pipe(startWith([] as IKvNamespace[]), shareReplay(1));
 
-    this.databases$ = this.databasesService.findAll().pipe(
-      startWith([] as IDatabase[]),
-      shareReplay(1)
-    );
+    this.databases$ = this.databasesService.findAll().pipe(startWith([] as IDatabase[]), shareReplay(1));
 
-    this.workers$ = this.workersService.findAll().pipe(
-      startWith([] as IWorker[]),
-      shareReplay(1)
-    );
+    this.workers$ = this.workersService.findAll().pipe(startWith([] as IWorker[]), shareReplay(1));
 
     // Combine all data into a single view model
     this.vm$ = combineLatest([
@@ -134,10 +129,12 @@ export default class EnvironmentOverviewPage {
 
     const { key, configId, type } = this.storageForm.value;
 
-    await firstValueFrom(this.envs.update({
-      id: this.environmentId,
-      values: [{ key: key!, value: configId!, type: type! }]
-    }));
+    await firstValueFrom(
+      this.envs.update({
+        id: this.environmentId,
+        values: [{ key: key!, value: configId!, type: type! }]
+      })
+    );
 
     this.showStorageModal = false;
   }
@@ -147,10 +144,12 @@ export default class EnvironmentOverviewPage {
 
     const { key, namespaceId } = this.kvForm.value;
 
-    await firstValueFrom(this.envs.update({
-      id: this.environmentId,
-      values: [{ key: key!, value: namespaceId!, type: 'kv' }]
-    }));
+    await firstValueFrom(
+      this.envs.update({
+        id: this.environmentId,
+        values: [{ key: key!, value: namespaceId!, type: 'kv' }]
+      })
+    );
 
     this.showKvModal = false;
   }
@@ -165,10 +164,12 @@ export default class EnvironmentOverviewPage {
 
     const { key, databaseId } = this.databaseForm.value;
 
-    await firstValueFrom(this.envs.update({
-      id: this.environmentId,
-      values: [{ key: key!, value: databaseId!, type: 'database' }]
-    }));
+    await firstValueFrom(
+      this.envs.update({
+        id: this.environmentId,
+        values: [{ key: key!, value: databaseId!, type: 'database' }]
+      })
+    );
 
     this.showDatabaseModal = false;
   }
@@ -183,10 +184,12 @@ export default class EnvironmentOverviewPage {
 
     const { key, workerId } = this.workerForm.value;
 
-    await firstValueFrom(this.envs.update({
-      id: this.environmentId,
-      values: [{ key: key!, value: workerId!, type: 'worker' }]
-    }));
+    await firstValueFrom(
+      this.envs.update({
+        id: this.environmentId,
+        values: [{ key: key!, value: workerId!, type: 'worker' }]
+      })
+    );
 
     this.showWorkerModal = false;
   }
