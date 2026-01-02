@@ -7,36 +7,7 @@ import { TypedSimpleChanges } from '~/app/interfaces/typed-changes';
 @Component({
   imports: [CommonModule, ReactiveFormsModule, NgIconComponent],
   selector: 'app-editable',
-  template: `
-    @switch (editing) {
-      @case (true) {
-        <form class="flex flex-row items-center" (submit)="$event.preventDefault(); submit()">
-          <input
-            style="height: unset"
-            class="border-none p-0"
-            [ngClass]="class"
-            [placeholder]="placeholder"
-            #input
-            type="text"
-            [formControl]="control"
-            [minlength]="1"
-            required
-          />
-          <ng-icon [ngClass]="class" class="clickable ml-1" name="heroCheckCircle" (click)="submit()" />
-        </form>
-      }
-      @case (false) {
-        <div class="flex flex-row items-center">
-          @if (control.value; as value) {
-            <span>{{ value }}</span>
-          } @else {
-            <i class="font-light"><ng-content></ng-content></i>
-          }
-          <ng-icon [ngClass]="class" class="clickable ml-1" name="heroPencilSquare" (click)="editing = true" />
-        </div>
-      }
-    }
-  `,
+  templateUrl: './editable.component.html',
   styles: [':host:not(:hover) { span.clickable { opacity: 0.5; } }'],
   standalone: true
 }) // https://github.com/microsoft/TypeScript/issues/31325#issuecomment-490923127

@@ -136,13 +136,57 @@ export class AuthService {
     );
   }
 
-  public login(username: string, password: string): Observable<boolean> {
-    return this.httpClient.post<ILoginResponse>('/api/v1/login', { username, password }).pipe(
+  public login(email: string, password: string): Observable<boolean> {
+    return this.httpClient.post<ILoginResponse>('/api/v1/login', { email, password }).pipe(
       tap((tokens) => this.setTokens(tokens)),
       mergeMap(() => this.init()),
       tap((user) => this.com.postMessage(user)),
       map((e) => !!e),
       catchError(() => of(false))
+    );
+  }
+
+  public register(email: string): Observable<{ success: boolean; message?: string }> {
+    return this.httpClient.post<{ message: string }>('/api/v1/register', { email }).pipe(
+      map((res) => ({ success: true, message: res.message })),
+      catchError((err) => of({ success: false, message: err.error?.error || 'Registration failed' }))
+    );
+  }
+
+  public setPassword(token: string, password: string): Observable<boolean> {
+    return this.httpClient.post<ILoginResponse>('/api/v1/set-password', { token, password }).pipe(
+      tap((tokens) => this.setTokens(tokens)),
+      mergeMap(() => this.init()),
+      tap((user) => this.com.postMessage(user)),
+      map((e) => !!e),
+      catchError(() => of(false))
+    );
+  }
+
+  public forgotPassword(email: string): Observable<{ success: boolean; message: string }> {
+    return this.httpClient.post<{ message: string }>('/api/v1/forgot-password', { email }).pipe(
+      map((res) => ({ success: true, message: res.message })),
+      catchError((err) => {
+        log.error('Forgot password error:', err);
+        return of({ success: true, message: 'If an account exists with this email, you will receive a password reset link.' });
+      })
+    );
+  }
+
+  public resetPassword(token: string, password: string): Observable<boolean> {
+    return this.httpClient.post<ILoginResponse>('/api/v1/reset-password', { token, password }).pipe(
+      tap((tokens) => this.setTokens(tokens)),
+      mergeMap(() => this.init()),
+      tap((user) => this.com.postMessage(user)),
+      map((e) => !!e),
+      catchError(() => of(false))
+    );
+  }
+
+  public resendSetPassword(email: string): Observable<{ success: boolean; message: string }> {
+    return this.httpClient.post<{ message: string }>('/api/v1/resend-set-password', { email }).pipe(
+      map((res) => ({ success: true, message: res.message })),
+      catchError(() => of({ success: true, message: 'If a pending account exists, a new link has been sent.' }))
     );
   }
 

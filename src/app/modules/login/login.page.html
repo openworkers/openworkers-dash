@@ -8,11 +8,13 @@
     </div>
   </div>
 
-  <!-- Sign in -->
+  <!-- Sign in / Register -->
   <div class="flex flex-col lg:justify-center lg:w-1/3 mx-8 lg:mx-16 min-w-[50%]">
     <div class="mx-auto">
       <div class="my-12 xs:w-72">
-        <h2 class="text-xl font-semibold lg:text-2xl">Sign in</h2>
+        <h2 class="text-xl font-semibold lg:text-2xl">
+          {{ mode === 'login' ? 'Sign in' : 'Create account' }}
+        </h2>
 
         <div class="text-gray-500 text-sm max-w-sm">
           By signing in you accept our
@@ -24,41 +26,130 @@
         @if ({ displayPassForm: false }; as ctx) {
           <div>
             @if (allowPassword && ctx.displayPassForm) {
-              <form class="flex flex-col my-12" [formGroup]="form" (ngSubmit)="submitForm()">
-                <div class="flex flex-col my-2">
-                  <label class="mb-1 text-sm" for="username">E-mail</label>
-                  <input
-                    class="input-outline mb-0"
-                    type="email"
-                    formControlName="username"
-                    placeholder="email"
-                    autocomplete="email"
+              <!-- Login Form -->
+              @if (mode === 'login') {
+                <form class="flex flex-col my-12" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+                  <div class="flex flex-col my-2">
+                    <label class="mb-1 text-sm" for="email">E-mail</label>
+                    <input
+                      class="input-outline mb-0"
+                      type="email"
+                      formControlName="email"
+                      placeholder="you@example.com"
+                      autocomplete="email"
                     />
-                  <span class="text-xs pb-2 text-red">
-                    <form-error [control]="form.get('username')"></form-error>
-                  </span>
-                </div>
-                <div class="flex flex-col my-2">
-                  <label class="mb-1 text-sm" for="username">Password</label>
-                  <input
-                    class="input-outline mb-0"
-                    type="password"
-                    formControlName="password"
-                    placeholder="password"
-                    autocomplete="current-password"
+                    <span class="text-xs pb-2 text-red">
+                      <form-error [control]="loginForm.get('email')"></form-error>
+                    </span>
+                  </div>
+
+                  <div class="flex flex-col my-2">
+                    <label class="mb-1 text-sm" for="password">Password</label>
+                    <input
+                      class="input-outline mb-0"
+                      type="password"
+                      formControlName="password"
+                      placeholder="••••••••"
+                      autocomplete="current-password"
                     />
-                  <span class="text-xs pb-2 text-red">
-                    <form-error [control]="form.get('password')"></form-error>
-                  </span>
+                    <span class="text-xs pb-2 text-red">
+                      <form-error [control]="loginForm.get('password')"></form-error>
+                    </span>
+                  </div>
+
+                  <button
+                    class="btn-blue shadow w-64 mt-2"
+                    [disabled]="loginForm.touched && loginForm.invalid || (loading$ | async)"
+                    type="submit"
+                  >
+                    @if (loading$ | async) {
+                      <span>Signing in...</span>
+                    } @else {
+                      Sign in
+                    }
+                  </button>
+
+                  @if (error$ | async; as error) {
+                    <p class="text-red text-sm mt-2">{{ error }}</p>
+                  }
+
+                  <a routerLink="/sign-in/forgot-password" class="text-sm text-blue mt-4">
+                    Forgot password?
+                  </a>
+
+                  <button
+                    type="button"
+                    class="text-sm text-gray-500 mt-4 text-left"
+                    (click)="toggleMode()"
+                  >
+                    Don't have an account? Sign up
+                  </button>
+                </form>
+              }
+
+              <!-- Register Form (email only) -->
+              @if (mode === 'register') {
+                <div class="flex flex-col my-12">
+                  @if (success$ | async; as success) {
+                    <div class="text-center">
+                      <p class="text-green-600 mb-4">{{ success }}</p>
+                      <button
+                        type="button"
+                        class="text-sm text-gray-500"
+                        (click)="toggleMode()"
+                      >
+                        Back to sign in
+                      </button>
+                    </div>
+                  } @else {
+                    <form [formGroup]="registerForm" (ngSubmit)="submitRegister()">
+                      <div class="flex flex-col my-2">
+                        <label class="mb-1 text-sm" for="email">E-mail</label>
+                        <input
+                          class="input-outline mb-0"
+                          type="email"
+                          formControlName="email"
+                          placeholder="you@example.com"
+                          autocomplete="email"
+                        />
+                        <span class="text-xs pb-2 text-red">
+                          <form-error [control]="registerForm.get('email')"></form-error>
+                        </span>
+                      </div>
+
+                      <p class="text-xs text-gray-500 mb-4">
+                        We'll send you an email to set your password.
+                      </p>
+
+                      <button
+                        class="btn-blue shadow w-64 mt-2"
+                        [disabled]="registerForm.touched && registerForm.invalid || (loading$ | async)"
+                        type="submit"
+                      >
+                        @if (loading$ | async) {
+                          <span>Creating account...</span>
+                        } @else {
+                          Create account
+                        }
+                      </button>
+
+                      @if (error$ | async; as error) {
+                        <p class="text-red text-sm mt-2">{{ error }}</p>
+                      }
+
+                      <button
+                        type="button"
+                        class="text-sm text-gray-500 mt-4 text-left"
+                        (click)="toggleMode()"
+                      >
+                        Already have an account? Sign in
+                      </button>
+                    </form>
+                  }
                 </div>
-                <button class="btn-blue shadow w-64 mt-2" [disabled]="form.touched && form.invalid" type="submit">
-                  Sign in
-                </button>
-                @if (error) {
-                  <p class="text-red">Login failed</p>
-                }
-              </form>
+              }
             }
+
             @if (!ctx.displayPassForm) {
               <div class="flex flex-col mx-auto my-12">
                 <form action="/api/v1/openid/github" method="post">
@@ -68,20 +159,21 @@
                       <path
                         class="transition-colors dark:fill-white"
                         d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
-                        />
+                      />
                     </svg>
                     <span>Sign in with Github</span>
                   </button>
                 </form>
               </div>
             }
+
             @if (allowPassword) {
               <button
                 class="text-sm text-gray-500 text-center w-full"
                 type="button"
                 (click)="ctx.displayPassForm = !ctx.displayPassForm"
-                >
-                Sign in using {{ ctx.displayPassForm ? 'Github' : 'password' }}
+              >
+                Sign in using {{ ctx.displayPassForm ? 'Github' : 'email' }}
               </button>
             }
           </div>

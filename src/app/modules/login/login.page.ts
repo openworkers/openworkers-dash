@@ -1,46 +1,91 @@
-
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
-import { visibleValidator } from '~/app/utils/validators';
+import { Router, RouterLink } from '@angular/router';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
+import { AsyncPipe } from '@angular/common';
+
 import { AuthService } from '~/services/auth.service';
 import { FormErrorComponent } from '../form-error/form-error.component';
 
+type AuthMode = 'login' | 'register';
+
 @Component({
-  imports: [ReactiveFormsModule, FormErrorComponent],
+  imports: [ReactiveFormsModule, FormErrorComponent, RouterLink, AsyncPipe],
   templateUrl: './login.page.html'
 })
 export class LoginPage {
   public readonly domain: string;
-  public readonly form: FormGroup;
-  public readonly allowPassword = false;
-  public error = false;
+  public readonly allowPassword = true;
+
+  public loginForm: FormGroup;
+  public registerForm: FormGroup;
+  public mode: AuthMode = 'login';
+
+  public readonly error$ = new BehaviorSubject<string | null>(null);
+  public readonly success$ = new BehaviorSubject<string | null>(null);
+  public readonly loading$ = new BehaviorSubject<boolean>(false);
 
   constructor(private readonly auth: AuthService, private router: Router) {
-    this.form = new FormGroup({
-      username: new FormControl('', [Validators.required, visibleValidator]),
-      password: new FormControl('', [Validators.required, visibleValidator])
+    this.loginForm = new FormGroup({
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required])
+    });
+
+    this.registerForm = new FormGroup({
+      email: new FormControl('', [Validators.required, Validators.email])
     });
 
     this.domain = window.location.hostname.split('.').slice(-2).join('.');
   }
 
-  public async submitForm(): Promise<any> {
-    this.error = false;
+  public toggleMode(): void {
+    this.mode = this.mode === 'login' ? 'register' : 'login';
+    this.error$.next(null);
+    this.success$.next(null);
+    this.loginForm.reset();
+    this.registerForm.reset();
+  }
 
-    if (this.form.invalid) {
+  public async submitLogin(): Promise<void> {
+    this.error$.next(null);
+
+    if (this.loginForm.invalid) {
       return;
     }
 
-    const { username, password } = this.form.value;
-    const ok = await firstValueFrom(this.auth.login(username, password));
+    this.loading$.next(true);
+    const { email, password } = this.loginForm.value;
+
+    const ok = await firstValueFrom(this.auth.login(email, password));
+    this.loading$.next(false);
 
     if (!ok) {
-      this.error = !ok;
+      this.error$.next('Invalid email or password');
       return;
     }
 
-    return this.router.navigate(['/workers']);
+    await this.router.navigate(['/workers']);
+  }
+
+  public async submitRegister(): Promise<void> {
+    this.error$.next(null);
+    this.success$.next(null);
+
+    if (this.registerForm.invalid) {
+      return;
+    }
+
+    this.loading$.next(true);
+    const { email } = this.registerForm.value;
+
+    const result = await firstValueFrom(this.auth.register(email));
+    this.loading$.next(false);
+
+    if (result.success) {
+      this.success$.next(result.message || 'Check your email to set your password.');
+      this.registerForm.reset();
+    } else {
+      this.error$.next(result.message || 'Registration failed');
+    }
   }
 }
