@@ -1,19 +1,59 @@
-# App
+# OpenWorkers Dashboard
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.6.
+Web UI for managing OpenWorkers — create, edit, and deploy workers from your browser.
 
-## Development server
+## Features
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- **Code Editor** — Monaco Editor with TypeScript support
+- **Live Logs** — Real-time log streaming via SSE
+- **Cron Triggers** — Visual cron expression builder with [croner-wasm](https://github.com/openworkers/croner-wasm)
+- **Environment Variables** — Manage secrets and configuration
+- **Bindings** — Configure KV, Storage, and Database bindings
 
-## Code scaffolding
+## Stack
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- **Angular 21** — Standalone components, signals
+- **Tailwind CSS 4** — Utility-first styling
+- **Monaco Editor** — VS Code's editor component
+- **Heroicons** — Icon set
 
-## Build
+## Development
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```bash
+# Install dependencies
+bun install
 
-## Further help
+# Start dev server (http://localhost:4200)
+bun run dev
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+# Build for production
+bun run build
+```
+
+## Project Structure
+
+```
+src/app/
+├── modules/           # Feature modules (workers, environments, etc.)
+├── services/          # API clients, auth, state
+├── shared/            # Shared components
+├── guards/            # Route guards
+├── interceptors/      # HTTP interceptors
+└── interfaces/        # TypeScript interfaces
+```
+
+## Configuration
+
+The dashboard connects to the OpenWorkers API. Configure the API URL in `src/environments/`:
+
+```typescript
+export const environment = {
+  apiUrl: 'https://api.workers.rocks'
+};
+```
+
+## Related
+
+- [openworkers-api](https://github.com/openworkers/openworkers-api) — REST API
+- [openworkers-runner](https://github.com/openworkers/openworkers-runner) — Worker runtime
+- [openworkers-infra](https://github.com/openworkers/openworkers-infra) — Docker Compose setup
