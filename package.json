@@ -1,6 +1,7 @@
 {
   "name": "openworkers-dash",
   "version": "1.2.1",
+  "license": "MIT",
   "scripts": {
     "ng": "ng",
     "dev": "ng serve --host 127.0.0.1",
