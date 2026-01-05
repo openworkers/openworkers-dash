@@ -1,6 +1,6 @@
 {
   "name": "openworkers-dash",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -36,7 +36,7 @@
     "@angular/cli": "~21.0.0",
     "@angular/compiler-cli": "^21.0.0",
     "@openworkers/api-types": "1.2.1",
-    "@openworkers/workers-types": "0.1.5",
+    "@openworkers/workers-types": "^0.1.6",
     "@tailwindcss/postcss": "4.1.17",
     "@types/jasmine": "5.1.5",
     "ansi_up": "^6.0.2",
