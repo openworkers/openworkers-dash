@@ -9,16 +9,19 @@ import {
   OnDestroy,
   inject
 } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { AiService, StreamEvent, UsageInfo } from '~/app/services/ai.service';
+import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { AiService, StreamEvent, UsageInfo, ClaudeModel } from '~/app/services/ai.service';
 import { EditorStateService } from '~/app/services/editor-state.service';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
 import { NgIconComponent } from '@ng-icons/core';
 
+const CLAUDE_TOKEN_KEY = 'claude_token';
+
 @Component({
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MonacoEditorModule, NgIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, MonacoEditorModule, NgIconComponent],
   selector: 'app-ai-chat',
   templateUrl: './ai-chat.component.html',
   styleUrls: ['./ai-chat.component.css']
@@ -34,6 +37,11 @@ export class AiChatComponent implements OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   readonly store = inject(EditorStateService);
 
+  // Check if Claude token is configured
+  get hasClaudeToken(): boolean {
+    return !!localStorage.getItem(CLAUDE_TOKEN_KEY);
+  }
+
   // Local UI state (not persisted)
   recording = false;
   transcribing = false;
@@ -46,6 +54,9 @@ export class AiChatComponent implements OnDestroy {
 
   // Usage tracking (session only)
   usage: UsageInfo | null = null;
+
+  // Model selection
+  selectedModel: ClaudeModel = 'sonnet';
 
   private mediaRecorder?: MediaRecorder;
   private audioChunks: Blob[] = [];
@@ -65,7 +76,7 @@ export class AiChatComponent implements OnDestroy {
   originalCode = '';
   modifiedCode = '';
 
-  hints = ['Add error handling', 'Add rate limiting', 'Explain this code', 'Add logging'];
+  hints = ['Add error handling', 'Explain this code', 'Add debug logs', 'Make it prettier'];
 
   ngOnDestroy() {
     this.streamSubscription?.unsubscribe();
@@ -212,6 +223,7 @@ export class AiChatComponent implements OnDestroy {
         diagnostics: this.store.diagnostics(),
         messages: this.store.getMessagesForApi(),
         userMessage: content,
+        model: this.selectedModel,
         enableThinking: this.store.thinkingEnabled(),
         thinkingBudget: 10000
       })

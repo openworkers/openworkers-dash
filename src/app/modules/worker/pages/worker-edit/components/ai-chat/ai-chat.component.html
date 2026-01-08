@@ -25,12 +25,33 @@
     @if (!store.hasMessages() && !store.isStreaming() && !store.streamingText()) {
       <div class="cli-welcome">
         <div class="cli-title">Claude Assistant</div>
-        <div class="cli-subtitle">Ask me to modify your worker code</div>
-        <div class="cli-hints">
-          @for (hint of hints; track $index) {
-            <button class="cli-hint" (click)="quickPrompt(hint)">{{ hint }}</button>
-          }
-        </div>
+        @if (hasClaudeToken) {
+          <div class="cli-subtitle">Ask me to modify your worker code</div>
+          <div class="cli-hints">
+            @for (hint of hints; track $index) {
+              <button class="cli-hint" (click)="quickPrompt(hint)">{{ hint }}</button>
+            }
+          </div>
+          <div class="cli-coming-soon">
+            <div class="cli-coming-soon-label">Coming soon</div>
+            <div class="cli-hints">
+              <button class="cli-hint cli-hint-disabled" disabled title="Coming soon">
+                Create Database with sample data
+              </button>
+              <button class="cli-hint cli-hint-disabled" disabled title="Coming soon">
+                Create KV to store user sessions
+              </button>
+              <button class="cli-hint cli-hint-disabled" disabled title="Coming soon">
+                Do you see any error in the logs?
+              </button>
+            </div>
+          </div>
+        } @else {
+          <div class="cli-subtitle">
+            Configure your Claude token in
+            <a routerLink="/account" class="text-blue hover:underline">Account Settings</a> to use the AI assistant.
+          </div>
+        }
       </div>
     }
 
@@ -102,13 +123,29 @@
 
   <!-- Input area -->
   <div class="cli-input-area" [class.hidden]="showDiff">
-    <!-- Usage display -->
-    @if (usage) {
-      <div class="cli-usage">
-        <span class="usage-label">Tokens:</span>
-        <span class="usage-value">{{ usage.input_tokens || 0 }} in / {{ usage.output_tokens || 0 }} out</span>
+    <!-- Model selector and usage display -->
+    <div class="cli-toolbar">
+      <div class="cli-model-selector">
+        <label class="cli-model-option">
+          <input type="radio" name="model" value="haiku" [(ngModel)]="selectedModel" [disabled]="store.isStreaming()" />
+          <span>Haiku</span>
+        </label>
+        <label class="cli-model-option">
+          <input type="radio" name="model" value="sonnet" [(ngModel)]="selectedModel" [disabled]="store.isStreaming()" />
+          <span>Sonnet</span>
+        </label>
+        <label class="cli-model-option">
+          <input type="radio" name="model" value="opus" [(ngModel)]="selectedModel" [disabled]="store.isStreaming()" />
+          <span>Opus</span>
+        </label>
       </div>
-    }
+      @if (usage) {
+        <div class="cli-usage">
+          <span class="usage-label">Tokens:</span>
+          <span class="usage-value">{{ usage.input_tokens || 0 }} in / {{ usage.output_tokens || 0 }} out</span>
+        </div>
+      }
+    </div>
 
     <div class="cli-input-row">
       <button

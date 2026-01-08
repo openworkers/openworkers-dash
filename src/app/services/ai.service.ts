@@ -1,17 +1,22 @@
-import { HttpClient, HttpDownloadProgressEvent, HttpEvent, HttpEventType } from '@angular/common/http';
+import { HttpClient, HttpDownloadProgressEvent, HttpEvent, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
+
+const CLAUDE_TOKEN_KEY = 'claude_token';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
 }
 
+export type ClaudeModel = 'haiku' | 'sonnet' | 'opus';
+
 export interface ChatRequest {
   code: string;
   diagnostics: string[];
   messages: ChatMessage[];
   userMessage: string;
+  model?: ClaudeModel;
   enableThinking?: boolean;
   thinkingBudget?: number;
 }
@@ -49,8 +54,21 @@ export type StreamEvent =
 export class AiService {
   constructor(private http: HttpClient) {}
 
+  private getHeaders(): HttpHeaders {
+    let headers = new HttpHeaders();
+    const claudeToken = localStorage.getItem(CLAUDE_TOKEN_KEY);
+
+    if (claudeToken) {
+      headers = headers.set('X-Claude-Token', claudeToken);
+    }
+
+    return headers;
+  }
+
   chat(request: ChatRequest): Observable<ChatResponse> {
-    return this.http.post<ChatResponse>('/api/v1/ai/chat', request);
+    return this.http.post<ChatResponse>('/api/v1/ai/chat', request, {
+      headers: this.getHeaders()
+    });
   }
 
   chatStream(request: ChatRequest): Observable<StreamEvent> {
@@ -59,6 +77,7 @@ export class AiService {
 
     this.http
       .post('/api/v1/ai/chat/stream', request, {
+        headers: this.getHeaders(),
         responseType: 'text',
         observe: 'events',
         reportProgress: true
@@ -116,6 +135,13 @@ export class AiService {
   transcribe(audio: Blob): Observable<TranscribeResponse> {
     const formData = new FormData();
     formData.append('audio', audio, 'audio.webm');
-    return this.http.post<TranscribeResponse>('/api/v1/ai/transcribe', formData);
+    return this.http.post<TranscribeResponse>('/api/v1/ai/transcribe', formData, {
+      headers: this.getHeaders()
+    });
+  }
+
+  testToken(token: string): Observable<{ valid: boolean; error?: string }> {
+    const headers = new HttpHeaders().set('X-Claude-Token', token);
+    return this.http.post<{ valid: boolean; error?: string }>('/api/v1/ai/test-token', {}, { headers });
   }
 }

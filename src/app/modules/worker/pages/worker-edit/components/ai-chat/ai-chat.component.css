@@ -518,12 +518,60 @@
   display: none;
 }
 
+/* Toolbar with model selector and usage */
+.cli-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  gap: 12px;
+}
+
+/* Model selector */
+.cli-model-selector {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.cli-model-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.cli-model-option input {
+  display: none;
+}
+
+.cli-model-option span {
+  padding: 4px 10px;
+  font-size: 11px;
+  border-radius: 3px;
+  color: var(--text-muted);
+  transition: all 0.15s;
+}
+
+.cli-model-option:hover span {
+  color: var(--text);
+}
+
+.cli-model-option input:checked + span {
+  background: var(--accent);
+  color: white;
+}
+
+.cli-model-option input:disabled + span {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Usage display */
 .cli-usage {
   display: flex;
-  justify-content: flex-end;
   gap: 6px;
-  padding: 4px 0;
   font-size: 11px;
   color: var(--text-muted);
 }
@@ -566,4 +614,31 @@
 .cli-thinking-toggle:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+}
+
+/* Coming soon section */
+.cli-coming-soon {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+}
+
+.cli-coming-soon-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+.cli-hint-disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-style: dashed;
+}
+
+.cli-hint-disabled:hover {
+  border-color: var(--border);
+  color: var(--text-hint);
 }
