@@ -5,34 +5,35 @@
     "": {
       "name": "app",
       "dependencies": {
-        "@angular/animations": "^21.0.0",
-        "@angular/common": "^21.0.0",
-        "@angular/compiler": "^21.0.0",
-        "@angular/core": "^21.0.0",
-        "@angular/forms": "^21.0.0",
-        "@angular/platform-browser": "^21.0.0",
-        "@angular/platform-browser-dynamic": "^21.0.0",
-        "@angular/router": "^21.0.0",
+        "@angular/animations": "^21.0.7",
+        "@angular/common": "^21.0.7",
+        "@angular/compiler": "^21.0.7",
+        "@angular/core": "^21.0.7",
+        "@angular/forms": "^21.0.7",
+        "@angular/platform-browser": "^21.0.7",
+        "@angular/platform-browser-dynamic": "^21.0.7",
+        "@angular/router": "^21.0.7",
         "@materia-ui/ngx-monaco-editor": "^6.0.0",
         "@ng-icons/core": "^33.0.0",
         "@ng-icons/heroicons": "^33.0.0",
-        "@openworkers/croner-wasm": "^0.3.0",
+        "@openworkers/croner-wasm": "^0.3.1",
         "dexie": "^4.2.1",
+        "marked": "^17.0.1",
         "monaco-editor": "0.55.1",
-        "rxjs": "^7.8.1",
-        "tslib": "^2.3.0",
+        "rxjs": "^7.8.2",
+        "tslib": "^2.8.1",
       },
       "devDependencies": {
-        "@angular/build": "^21.0.0",
-        "@angular/cli": "~21.0.0",
-        "@angular/compiler-cli": "^21.0.0",
+        "@angular/build": "^21.0.5",
+        "@angular/cli": "~21.0.5",
+        "@angular/compiler-cli": "^21.0.7",
         "@openworkers/api-types": "1.2.1",
         "@openworkers/workers-types": "^0.1.6",
         "@tailwindcss/postcss": "4.1.17",
         "@types/jasmine": "5.1.5",
-        "ansi_up": "^6.0.2",
-        "autoprefixer": "^10.4.13",
-        "postcss": "^8.4.20",
+        "ansi_up": "^6.0.6",
+        "autoprefixer": "^10.4.23",
+        "postcss": "^8.5.6",
         "tailwindcss": "4.1.17",
         "typescript": "5.9.3",
       },
@@ -817,7 +818,7 @@
 
     "make-fetch-happen": ["make-fetch-happen@15.0.3", "", { "dependencies": { "@npmcli/agent": "^4.0.0", "cacache": "^20.0.1", "http-cache-semantics": "^4.1.1", "minipass": "^7.0.2", "minipass-fetch": "^5.0.0", "minipass-flush": "^1.0.5", "minipass-pipeline": "^1.2.4", "negotiator": "^1.0.0", "proc-log": "^6.0.0", "promise-retry": "^2.0.1", "ssri": "^13.0.0" } }, "sha512-iyyEpDty1mwW3dGlYXAJqC/azFn5PPvgKVwXayOGBSmKLxhKZ9fg4qIan2ePpp1vJIwfFiO34LAPZgq9SZW9Aw=="],
 
-    "marked": ["marked@14.0.0", "", { "bin": { "marked": "bin/marked.js" } }, "sha512-uIj4+faQ+MgHgwUW1l2PsPglZLOLOT1uErt06dAPtx2kjteLAkbsd/0FiYg/MGS+i7ZKLb7w2WClxHkzOOuryQ=="],
+    "marked": ["marked@17.0.1", "", { "bin": { "marked": "bin/marked.js" } }, "sha512-boeBdiS0ghpWcSwoNm/jJBwdpFaMnZWRzjA6SkUMYb40SVaN1x7mmfGKp0jvexGcx+7y2La5zRZsYFZI6Qpypg=="],
 
     "math-intrinsics": ["math-intrinsics@1.1.0", "", {}, "sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g=="],
 
@@ -1176,6 +1177,8 @@
     "minipass-pipeline/minipass": ["minipass@3.3.6", "", { "dependencies": { "yallist": "^4.0.0" } }, "sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw=="],
 
     "minipass-sized/minipass": ["minipass@3.3.6", "", { "dependencies": { "yallist": "^4.0.0" } }, "sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw=="],
+
+    "monaco-editor/marked": ["marked@14.0.0", "", { "bin": { "marked": "bin/marked.js" } }, "sha512-uIj4+faQ+MgHgwUW1l2PsPglZLOLOT1uErt06dAPtx2kjteLAkbsd/0FiYg/MGS+i7ZKLb7w2WClxHkzOOuryQ=="],
 
     "node-gyp/proc-log": ["proc-log@6.1.0", "", {}, "sha512-iG+GYldRf2BQ0UDUAd6JQ/RwzaQy6mXmsk/IzlYyal4A4SNFw54MeH4/tLkF4I5WoWG9SQwuqWzS99jaFQHBuQ=="],
 

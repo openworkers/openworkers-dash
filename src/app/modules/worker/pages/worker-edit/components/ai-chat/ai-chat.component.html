@@ -59,7 +59,11 @@
     @for (message of store.messages(); track $index) {
       <div class="cli-message" [class.cli-user]="message.role === 'user'">
         <span class="cli-prompt">{{ message.role === 'user' ? '>' : '◆' }}</span>
-        <span class="cli-content">{{ message.content }}</span>
+        @if (message.role === 'user') {
+          <span class="cli-content">{{ message.content }}</span>
+        } @else {
+          <span class="cli-content cli-markdown" [innerHTML]="message.content | markdown"></span>
+        }
       </div>
     }
 
@@ -67,7 +71,7 @@
     @if (store.streamingText()) {
       <div class="cli-message">
         <span class="cli-prompt">◆</span>
-        <span class="cli-content">{{ store.streamingText() }}</span>
+        <span class="cli-content cli-markdown" [innerHTML]="store.streamingText() | markdown"></span>
         @if (store.isStreaming()) {
           <span class="streaming-indicator"> <span></span><span></span><span></span> </span>
         }

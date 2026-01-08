@@ -16,12 +16,13 @@ import { EditorStateService } from '~/app/services/editor-state.service';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
 import { NgIconComponent } from '@ng-icons/core';
+import { MarkdownPipe } from '~/app/pipes/markdown.pipe';
 
 const CLAUDE_TOKEN_KEY = 'claude_token';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, MonacoEditorModule, NgIconComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterLink, MonacoEditorModule, NgIconComponent, MarkdownPipe],
   selector: 'app-ai-chat',
   templateUrl: './ai-chat.component.html',
   styleUrls: ['./ai-chat.component.css']
