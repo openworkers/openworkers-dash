@@ -21,7 +21,7 @@ export class WorkersService extends ResourceService<IWorker, IWorkerCreateInput,
   }
 
   updateCron(id: string, value: string) {
-    return this.http.put<IWorker>(`/api/v1/crons/${id}`, { expression: value }).pipe(
+    return this.http.patch<IWorker>(`/api/v1/crons/${id}`, { expression: value }).pipe(
       map((data) => this.cacheAndWatch(data)),
       mergeMap((worker) => worker.asObservable())
     );
