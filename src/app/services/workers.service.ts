@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, mergeMap } from 'rxjs';
+import { ActivatedRouteSnapshot } from '@angular/router';
+import { first, map, mergeMap } from 'rxjs';
 import type { IWorker, IWorkerCreateInput, IWorkerUpdateInput } from '@openworkers/api-types';
 import { ResourceService } from './resource.service';
 
@@ -11,6 +12,29 @@ type WorkerUpdateInput = IWorkerUpdateInput & { id: string };
 export class WorkersService extends ResourceService<IWorker, IWorkerCreateInput, WorkerUpdateInput> {
   constructor(http: HttpClient) {
     super(http, 'workers');
+  }
+
+  /**
+   * Fetch worker with script included (for editor page).
+   */
+  findByIdWithScript(id: string) {
+    return this.http.get<IWorker>(`/api/v1/workers/${id}`, { params: { script: 'true' } }).pipe(
+      map((data) => this.cacheAndWatch(data)),
+      mergeMap((data) => data.asObservable())
+    );
+  }
+
+  /**
+   * Resolver for editor page (includes script).
+   */
+  resolveWithScript(route: ActivatedRouteSnapshot) {
+    const id = route.paramMap.get('id');
+
+    if (!id) {
+      throw new Error('Missing id');
+    }
+
+    return this.findByIdWithScript(id).pipe(first());
   }
 
   createCron(workerId: string, value: string) {

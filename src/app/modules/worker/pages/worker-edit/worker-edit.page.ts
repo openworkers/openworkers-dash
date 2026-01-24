@@ -95,9 +95,9 @@ export default class WorkerEditPage implements OnInit, OnDestroy {
     );
 
     this.theme$ = themeService.theme$;
-    this.script = new FormControl(this.worker.script);
+    this.script = new FormControl(this.worker.script!);
     this.options.theme = this.theme = themeService.isDark() ? 'vs-dark' : 'vs';
-    this.options.language = this.worker.language;
+    this.options.language = this.worker.language ?? undefined;
 
     const env = this.worker.environment;
     let environmentId = env?.id ?? null;
@@ -107,7 +107,7 @@ export default class WorkerEditPage implements OnInit, OnDestroy {
         log.debug('Worker changed', worker);
         if (worker.script !== this.script.value) {
           log.debug('Script changed');
-          this.script.setValue(worker.script);
+          this.script.setValue(worker.script!);
         }
 
         if (worker.environment?.id !== environmentId) {

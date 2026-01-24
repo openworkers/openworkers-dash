@@ -27,7 +27,7 @@
         "@angular/build": "^21.1.1",
         "@angular/cli": "~21.1.1",
         "@angular/compiler-cli": "^21.1.1",
-        "@openworkers/api-types": "1.2.1",
+        "@openworkers/api-types": "^1.4.0",
         "@openworkers/workers-types": "^0.1.7",
         "@tailwindcss/postcss": "4.1.17",
         "@types/jasmine": "6.0.0",
@@ -338,7 +338,7 @@
 
     "@npmcli/run-script": ["@npmcli/run-script@10.0.3", "", { "dependencies": { "@npmcli/node-gyp": "^5.0.0", "@npmcli/package-json": "^7.0.0", "@npmcli/promise-spawn": "^9.0.0", "node-gyp": "^12.1.0", "proc-log": "^6.0.0", "which": "^6.0.0" } }, "sha512-ER2N6itRkzWbbtVmZ9WKaWxVlKlOeBFF1/7xx+KA5J1xKa4JjUwBdb6tDpk0v1qA+d+VDwHI9qmLcXSWcmi+Rw=="],
 
-    "@openworkers/api-types": ["@openworkers/api-types@1.2.1", "", {}, "sha512-9BL1NzYJpLhFOQ2yzzO904i7geY7goenZl22mYqSFiLfbkEwuyU0hPhqWcSHfz20ejh//P17yvl1AlRjN7mddg=="],
+    "@openworkers/api-types": ["@openworkers/api-types@1.4.0", "", {}, "sha512-kuUs0IYNgYnMBysNslYZ2aJYC0udkHGE+fIZ7mKGLl1TUJNqzdW/hOw4SM72z8ejCizNZRUb+Y9g5Yj9p7LOIw=="],
 
     "@openworkers/croner-wasm": ["@openworkers/croner-wasm@0.3.1", "", {}, "sha512-03yc9hYWt4Fhu3K9kWw7cV3ig3aefMFMp3ylkqa1t/wWHSwelwzmepHRXlvKL8ZsegnDWK1yQuzS2oruspmLiA=="],
 

@@ -24,7 +24,7 @@ import { ActivatedRouteSnapshot } from '@angular/router';
       // Editor is not child of WorkerRootComponent because it needs to be full page
       {
         path: ':id/edit',
-        resolve: { worker: (route: ActivatedRouteSnapshot) => inject(WorkersService).resolve(route) },
+        resolve: { worker: (route: ActivatedRouteSnapshot) => inject(WorkersService).resolveWithScript(route) },
         canActivate: [UUIDGuard],
         loadComponent: () => import('./pages/worker-edit/worker-edit.page')
       },
