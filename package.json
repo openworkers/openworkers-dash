@@ -1,6 +1,6 @@
 {
   "name": "openworkers-dash",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -10,7 +10,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "bun x prettier --write ."
+    "format": "bun x prettier --write .",
+    "check": "tsc --noEmit --project tsconfig.app.json"
   },
   "private": true,
   "dependencies": {
@@ -36,7 +37,7 @@
     "@angular/build": "^21.1.1",
     "@angular/cli": "~21.1.1",
     "@angular/compiler-cli": "^21.1.1",
-    "@openworkers/api-types": "^1.4.0",
+    "@openworkers/api-types": "^1.4.5",
     "@openworkers/workers-types": "^0.1.7",
     "@tailwindcss/postcss": "4.1.17",
     "@types/jasmine": "6.0.0",

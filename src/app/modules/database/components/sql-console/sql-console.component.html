@@ -1,0 +1,145 @@
+<div>
+  <!-- Shortcuts -->
+  <div class="flex flex-wrap gap-2 mb-3">
+    @for (shortcut of shortcuts; track shortcut.label) {
+      <button
+        class="px-2 py-1 text-xs rounded bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300"
+        (click)="useShortcut(shortcut.query)"
+      >
+        {{ shortcut.label }}
+      </button>
+    }
+    <button
+      class="px-2 py-1 text-xs rounded text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+      (click)="showHelp = !showHelp"
+    >
+      {{ showHelp ? 'Hide help' : 'Help' }}
+    </button>
+  </div>
+
+  <!-- Help -->
+  @if (showHelp) {
+    <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded text-sm">
+      <p class="font-medium text-blue-800 dark:text-blue-200 mb-2">Available helpers</p>
+      <ul class="text-blue-700 dark:text-blue-300 space-y-1 text-xs font-mono">
+        <li><code>SELECT * FROM postgate_helpers.list_tables()</code> — List all tables with row counts</li>
+        <li><code>SELECT * FROM postgate_helpers.describe_table('name')</code> — Describe table columns</li>
+      </ul>
+      <p class="mt-2 text-xs text-blue-600 dark:text-blue-400">
+        Use <code>$1, $2, ...</code> for parameters (not supported in console yet).
+      </p>
+    </div>
+  }
+
+  <div class="mb-3">
+    <textarea
+      [(ngModel)]="sqlQuery"
+      placeholder="SELECT * FROM users LIMIT 10"
+      class="input-outline w-full font-mono text-sm"
+      rows="4"
+      (keydown.ctrl.enter)="executeQuery()"
+      (keydown.meta.enter)="executeQuery()"
+    ></textarea>
+    <p class="text-xs text-gray-500 mt-1">Ctrl+Enter to execute</p>
+  </div>
+
+  <div class="flex gap-2 mb-4">
+    <button class="btn-blue" (click)="executeQuery()" [disabled]="!sqlQuery.trim() || (executing$ | async)">
+      @if (executing$ | async) {
+        Executing...
+      } @else {
+        Execute
+      }
+    </button>
+    @if (sqlResult || sqlError) {
+      <button class="btn-outline" (click)="clearResult()">Clear</button>
+    }
+  </div>
+
+  <!-- Error -->
+  @if (sqlError) {
+    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-3 rounded">
+      <p class="text-sm text-red-800 dark:text-red-200 font-mono">{{ sqlError }}</p>
+    </div>
+  }
+
+  <!-- Results -->
+  @if (sqlResult) {
+    <div class="border dark:border-gray-700 rounded overflow-hidden">
+      <!-- Tabs -->
+      <div class="flex border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+        <button
+          class="px-4 py-2 text-sm font-medium border-b-2 -mb-px"
+          [class.border-blue-500]="activeTab === 'table'"
+          [class.text-blue-600]="activeTab === 'table'"
+          [class.dark:text-blue-400]="activeTab === 'table'"
+          [class.border-transparent]="activeTab !== 'table'"
+          [class.text-gray-600]="activeTab !== 'table'"
+          [class.dark:text-gray-400]="activeTab !== 'table'"
+          (click)="activeTab = 'table'"
+        >
+          Table
+        </button>
+        <button
+          class="px-4 py-2 text-sm font-medium border-b-2 -mb-px"
+          [class.border-blue-500]="activeTab === 'json'"
+          [class.text-blue-600]="activeTab === 'json'"
+          [class.dark:text-blue-400]="activeTab === 'json'"
+          [class.border-transparent]="activeTab !== 'json'"
+          [class.text-gray-600]="activeTab !== 'json'"
+          [class.dark:text-gray-400]="activeTab !== 'json'"
+          (click)="activeTab = 'json'"
+        >
+          JSON
+        </button>
+        <div class="flex-1"></div>
+        <span class="px-4 py-2 text-sm text-gray-500">
+          {{ sqlResult.rowCount }} row{{ sqlResult.rowCount !== 1 ? 's' : '' }}
+        </span>
+      </div>
+
+      <!-- Table View -->
+      @if (activeTab === 'table') {
+        @if (sqlResult.rows.length > 0) {
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-gray-100 dark:bg-gray-800">
+                  @for (col of getColumns(); track col) {
+                    <th class="px-3 py-2 text-left border-b dark:border-gray-700 font-medium">{{ col }}</th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of sqlResult.rows; track $index) {
+                  <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                    @for (col of getColumns(); track col) {
+                      <td class="px-3 py-2 font-mono text-xs">
+                        @if (getCellValue(row, col) === null) {
+                          <span class="text-gray-400 italic">null</span>
+                        } @else if (getCellValue(row, col) === true) {
+                          <span class="text-green-600 dark:text-green-400">true</span>
+                        } @else if (getCellValue(row, col) === false) {
+                          <span class="text-red-600 dark:text-red-400">false</span>
+                        } @else {
+                          {{ getCellValue(row, col) }}
+                        }
+                      </td>
+                    }
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="p-4 text-sm text-gray-500 text-center">No rows returned</div>
+        }
+      }
+
+      <!-- JSON View -->
+      @if (activeTab === 'json') {
+        <pre class="p-4 text-xs font-mono overflow-x-auto bg-gray-50 dark:bg-gray-900 max-h-96">{{ formatJson() }}</pre>
+      }
+    </div>
+  }
+</div>

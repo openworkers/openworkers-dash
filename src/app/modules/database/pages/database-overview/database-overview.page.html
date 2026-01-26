@@ -57,6 +57,139 @@
       </div>
     }
 
+    <!-- SQL Console -->
+    <div class="card shadow-sm mt-8">
+      <div class="p-4">
+        <h4 class="mb-4">SQL Console</h4>
+        <app-sql-console [databaseId]="databaseId" />
+      </div>
+    </div>
+
+    <!-- Access Tokens -->
+    <div class="card shadow-sm mt-8">
+      <div class="p-4">
+        <div class="flex justify-between items-center mb-4">
+          <h4>Access Tokens</h4>
+          <button class="btn-blue text-sm" (click)="showCreateToken = true" [disabled]="showCreateToken">
+            Create Token
+          </button>
+        </div>
+
+        <!-- Create Token Form -->
+        @if (showCreateToken) {
+          <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded mb-4">
+            <form (ngSubmit)="createToken()">
+              <div class="mb-3">
+                <label class="text-sm text-gray-500 block mb-1">Token Name</label>
+                <input
+                  type="text"
+                  [(ngModel)]="newTokenName"
+                  name="tokenName"
+                  placeholder="e.g., worker-api, read-only"
+                  class="input-outline w-full"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="text-sm text-gray-500 block mb-2">Permissions</label>
+                <div class="flex flex-wrap gap-2">
+                  @for (op of allOperations; track op) {
+                    <label
+                      class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium cursor-pointer"
+                      [class.bg-blue-100]="newTokenOps[op]"
+                      [class.text-blue-800]="newTokenOps[op]"
+                      [class.dark:bg-blue-900]="newTokenOps[op]"
+                      [class.dark:text-blue-200]="newTokenOps[op]"
+                      [class.bg-gray-200]="!newTokenOps[op]"
+                      [class.text-gray-600]="!newTokenOps[op]"
+                      [class.dark:bg-gray-700]="!newTokenOps[op]"
+                      [class.dark:text-gray-400]="!newTokenOps[op]"
+                    >
+                      <input
+                        type="checkbox"
+                        [(ngModel)]="newTokenOps[op]"
+                        [name]="'op_' + op"
+                        class="sr-only"
+                      />
+                      {{ op }}
+                    </label>
+                  }
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button type="submit" class="btn-blue" [disabled]="!newTokenName || (creating$ | async)">
+                  @if (creating$ | async) {
+                    Creating...
+                  } @else {
+                    Create
+                  }
+                </button>
+                <button type="button" class="btn-outline" (click)="cancelCreate()">Cancel</button>
+              </div>
+            </form>
+          </div>
+        }
+
+        <!-- New Token Display -->
+        @if (newToken) {
+          <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 p-4 rounded mb-4">
+            <p class="text-sm text-green-800 dark:text-green-200 mb-2">
+              Copy your token now. You won't be able to see it again!
+            </p>
+            <div class="flex gap-2">
+              <code class="flex-1 bg-white dark:bg-gray-900 p-2 rounded text-sm font-mono break-all">
+                {{ newToken }}
+              </code>
+              <button class="btn-outline text-sm" (click)="copyToken()">Copy</button>
+            </div>
+            <button class="text-sm text-green-700 dark:text-green-300 mt-2" (click)="newToken = null">Done</button>
+          </div>
+        }
+
+        <!-- Tokens List -->
+        @if (tokens$ | async; as tokens) {
+          @if (tokens.length === 0 && !showCreateToken) {
+            <p class="text-gray-500 text-sm">No tokens yet. Create one to access this database via Postgate.</p>
+          } @else if (tokens.length > 0) {
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="text-left text-gray-500 border-b dark:border-gray-700">
+                    <th class="pb-2">Name</th>
+                    <th class="pb-2">Token</th>
+                    <th class="pb-2">Permissions</th>
+                    <th class="pb-2">Last Used</th>
+                    <th class="pb-2"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (token of tokens; track token.id) {
+                    <tr class="border-b dark:border-gray-700">
+                      <td class="py-2">{{ token.name }}</td>
+                      <td class="py-2 font-mono text-gray-500">{{ token.tokenPrefix }}...</td>
+                      <td class="py-2">
+                        <div class="flex flex-wrap gap-1">
+                          @for (op of token.allowedOperations; track op) {
+                            <span class="px-1.5 py-0.5 rounded text-xs bg-gray-200 dark:bg-gray-700">{{ op }}</span>
+                          }
+                        </div>
+                      </td>
+                      <td class="py-2 text-gray-500">
+                        {{ token.lastUsedAt ? (token.lastUsedAt | date: 'short') : 'Never' }}
+                      </td>
+                      <td class="py-2">
+                        <button class="text-red hover:underline text-sm" (click)="deleteToken(token.id)">Delete</button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        }
+      </div>
+    </div>
+
     <!-- Usage -->
     <div class="card shadow-sm mt-8">
       <div class="inline-block p-4 w-full">
