@@ -27,8 +27,9 @@
         "@angular/build": "^21.1.1",
         "@angular/cli": "~21.1.1",
         "@angular/compiler-cli": "^21.1.1",
-        "@openworkers/api-types": "^1.4.5",
-        "@openworkers/workers-types": "^0.1.7",
+        "@openworkers/adapter-static": "^0.1.2",
+        "@openworkers/api-types": "^1.4.7",
+        "@openworkers/workers-types": "^0.1.9",
         "@tailwindcss/postcss": "4.1.17",
         "@types/jasmine": "6.0.0",
         "ansi_up": "^6.0.6",
@@ -338,11 +339,13 @@
 
     "@npmcli/run-script": ["@npmcli/run-script@10.0.3", "", { "dependencies": { "@npmcli/node-gyp": "^5.0.0", "@npmcli/package-json": "^7.0.0", "@npmcli/promise-spawn": "^9.0.0", "node-gyp": "^12.1.0", "proc-log": "^6.0.0", "which": "^6.0.0" } }, "sha512-ER2N6itRkzWbbtVmZ9WKaWxVlKlOeBFF1/7xx+KA5J1xKa4JjUwBdb6tDpk0v1qA+d+VDwHI9qmLcXSWcmi+Rw=="],
 
-    "@openworkers/api-types": ["@openworkers/api-types@1.4.5", "", {}, "sha512-PvHDJS21ALknVAXZNcHC5gHDvHFY2Q7rwHVFHz2d5cmIEwFuP9HJ6yBGfO/o6NncMBlDyLjhwYpFm2OmgHitYQ=="],
+    "@openworkers/adapter-static": ["@openworkers/adapter-static@0.1.2", "", { "dependencies": { "esbuild": "^0.27.2", "mime": "^4.1.0" }, "bin": { "adapter-static": "bin/cli.js" } }, "sha512-tWOJA91IRYIsCrXSobYloR+pdBlcoF/Appj2hLOJIufWUN+5NFKMy7AulAXA8CqyMN+ck/OJ5Zx3JGP0vn5CXw=="],
+
+    "@openworkers/api-types": ["@openworkers/api-types@1.4.7", "", {}, "sha512-8kOXzx3s9ltf7DAXhMl39Wvo5O8v+47snjBQ0VGAKxDg8LLWpdheWFXsfkRozp3yWCAJe2ew6bUa4MFUGQ98LQ=="],
 
     "@openworkers/croner-wasm": ["@openworkers/croner-wasm@0.3.1", "", {}, "sha512-03yc9hYWt4Fhu3K9kWw7cV3ig3aefMFMp3ylkqa1t/wWHSwelwzmepHRXlvKL8ZsegnDWK1yQuzS2oruspmLiA=="],
 
-    "@openworkers/workers-types": ["@openworkers/workers-types@0.1.7", "", { "peerDependencies": { "typescript": "^5" } }, "sha512-6Wnn5RuF5yBYROzJPX6wTGZ6riRsNMO/SEoRxMKf+izxB1r95Po+rzAuYcyM4Xx4U3du1+AtLQmdsQnEM4b8OQ=="],
+    "@openworkers/workers-types": ["@openworkers/workers-types@0.1.9", "", { "peerDependencies": { "typescript": "^5.9.3" } }, "sha512-aaRfaOc/C/jl12w+QewCFed2eRLXdj1VaOmQOpjrUtA7kI5SDrMtx0FJf4QuVjyIH1fkn2YTt0xbEJZ81voYSw=="],
 
     "@oxc-project/types": ["@oxc-project/types@0.106.0", "", {}, "sha512-QdsH3rZq480VnOHSHgPYOhjL8O8LBdcnSjM408BpPCCUc0JYYZPG9Gafl9i3OcGk/7137o+gweb4cCv3WAUykg=="],
 
@@ -825,6 +828,8 @@
     "merge-descriptors": ["merge-descriptors@2.0.0", "", {}, "sha512-Snk314V5ayFLhp3fkUREub6WtjBfPdCPY1Ln8/8munuLuiYhsABgBVWsozAG+MWMbVEvcdcpbi9R7ww22l9Q3g=="],
 
     "micromatch": ["micromatch@4.0.8", "", { "dependencies": { "braces": "^3.0.3", "picomatch": "^2.3.1" } }, "sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA=="],
+
+    "mime": ["mime@4.1.0", "", { "bin": { "mime": "bin/cli.js" } }, "sha512-X5ju04+cAzsojXKes0B/S4tcYtFAJ6tTMuSPBEn9CPGlrWr8Fiw7qYeLT0XyH80HSoAoqWCaz+MWKh22P7G1cw=="],
 
     "mime-db": ["mime-db@1.54.0", "", {}, "sha512-aU5EJuIN2WDemCcAp2vFBfp/m4EAhWJnUNSSw0ixs7/kXbd6Pg64EmwJkNdFhB8aWt1sH2CTXrLxo/iAGV3oPQ=="],
 
