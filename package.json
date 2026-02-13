@@ -1,6 +1,6 @@
 {
   "name": "openworkers-dash",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -12,8 +12,12 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "bun x prettier --write .",
     "check": "tsc --noEmit --project tsconfig.app.json",
-    "predeploy:dev": "adapter-static ./dist/browser -o ./dist/openworkers",
-    "deploy:dev": "ow dev workers upload dash-preview ./dist/openworkers"
+    "compile:worker": "bun build worker.ts --outfile ./dist/openworkers/worker.js --format esm --target browser",
+    "predeploy:dev": "adapter-static ./dist/browser -o ./dist/openworkers && bun compile:worker",
+    "deploy:dev": "ow dev workers upload dash-preview ./dist/openworkers",
+    "predeploy:main": "adapter-static ./dist/browser -o ./dist/openworkers && bun compile:worker",
+    "deploy:main": "ow main workers upload openworkers-dash ./dist/openworkers",
+    "clean": "rimraf dist node_modules .angular"
   },
   "private": true,
   "dependencies": {
@@ -47,6 +51,7 @@
     "ansi_up": "^6.0.6",
     "autoprefixer": "^10.4.23",
     "postcss": "^8.5.6",
+    "rimraf": "^6.1.2",
     "tailwindcss": "4.1.17",
     "typescript": "5.9.3"
   }
