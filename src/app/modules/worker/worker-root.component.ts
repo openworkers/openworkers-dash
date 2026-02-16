@@ -18,17 +18,17 @@ import { ResourceRootComponent } from '~/app/shared/resource-root/resource-root.
   imports: [ResourceRootComponent]
 })
 export class WorkerRootComponent {
-  public readonly worker: IWorker;
+  public readonly worker: IWorker & { name: string };
 
   constructor(
     route: ActivatedRoute,
     private workers: WorkersService,
     private router: Router
   ) {
-    this.worker = route.snapshot.data['worker'] as IWorker;
+    this.worker = route.snapshot.data['worker'] as IWorker & { name: string };
   }
 
-  public async update(update: Partial<Pick<IWorker, 'name' | 'desc'>>) {
+  public async update(update: Partial<Pick<IWorker & { name: string }, 'name' | 'desc'>>) {
     const worker = await firstValueFrom(this.workers.update({ id: this.worker.id, ...update }));
     Object.assign(this.worker, worker);
   }

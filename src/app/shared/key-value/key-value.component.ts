@@ -291,7 +291,7 @@ export class KeyValueComponent implements OnChanges {
         name = this.databases.find((db) => db.id === value)?.name;
         break;
       case 'worker':
-        name = this.workers.find((w) => w.id === value)?.name;
+        name = this.workers.find((w) => w.id === value)?.name!;
         break;
     }
 

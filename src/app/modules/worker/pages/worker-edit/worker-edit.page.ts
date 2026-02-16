@@ -47,8 +47,8 @@ const EDITOR_OPTIONS: MonacoEditorConstructionOptions = {
 })
 export default class WorkerEditPage implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
-  public readonly worker: Resolved<IWorker>;
-  public readonly worker$: Observable<IWorker>;
+  public readonly worker: Resolved<IWorker & { name: string }>;
+  public readonly worker$: Observable<IWorker & { name: string }>;
   public readonly workerUrl: string;
   public readonly refreshPreview$$: Subject<void>;
   public readonly refreshPreview$: Observable<string>;
@@ -77,7 +77,7 @@ export default class WorkerEditPage implements OnInit, OnDestroy {
     themeService: ThemeService,
     route: ActivatedRoute
   ) {
-    this.worker = route.snapshot.data['worker'] as Resolved<IWorker>;
+    this.worker = route.snapshot.data['worker'] as Resolved<IWorker & { name: string }>;
 
     console.log('WorkerEditPage worker', this.worker);
 
