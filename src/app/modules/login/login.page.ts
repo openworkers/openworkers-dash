@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 
@@ -25,10 +25,7 @@ export class LoginPage {
   public readonly success$ = new BehaviorSubject<string | null>(null);
   public readonly loading$ = new BehaviorSubject<boolean>(false);
 
-  constructor(
-    private readonly auth: AuthService,
-    private router: Router
-  ) {
+  constructor(private readonly auth: AuthService) {
     this.loginForm = new FormGroup({
       email: new FormControl('', [Validators.required, Validators.email]),
       password: new FormControl('', [Validators.required])
@@ -67,7 +64,8 @@ export class LoginPage {
       return;
     }
 
-    await this.router.navigate(['/workers']);
+    // Hard reload to clear in-memory caches from previous session
+    window.location.href = '/workers';
   }
 
   public async submitRegister(): Promise<void> {

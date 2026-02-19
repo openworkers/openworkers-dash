@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 
@@ -23,8 +23,7 @@ export class ResetPasswordPage implements OnInit {
 
   constructor(
     private readonly auth: AuthService,
-    private readonly route: ActivatedRoute,
-    private readonly router: Router
+    private readonly route: ActivatedRoute
   ) {
     this.form = new FormGroup({
       password: new FormControl('', [Validators.required, Validators.minLength(8)]),
@@ -60,7 +59,8 @@ export class ResetPasswordPage implements OnInit {
 
     if (success) {
       this.state$.next('success');
-      setTimeout(() => this.router.navigate(['/workers']), 2000);
+      // Hard reload to clear in-memory caches from previous session
+      setTimeout(() => (window.location.href = '/workers'), 2000);
     } else {
       this.state$.next('error');
     }
