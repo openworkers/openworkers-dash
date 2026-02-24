@@ -7,7 +7,7 @@ import { visibleBlockValidator } from '~/app/utils/validators';
 import { DatabasesService } from '~/services/databases.service';
 import { SharedModule } from '~/app/shared/shared.module';
 
-type DatabaseProvider = 'platform' | 'postgres';
+type DatabaseProvider = 'platform' | 'postgres' | 'planetscale';
 
 @Component({
   standalone: true,

@@ -29,59 +29,86 @@
           >
             PostgreSQL
           </button>
+          <button
+            type="button"
+            class="px-4 py-2 rounded-md border transition-colors"
+            [class.bg-blue-500]="provider() === 'planetscale'"
+            [class.text-white]="provider() === 'planetscale'"
+            [class.border-blue-500]="provider() === 'planetscale'"
+            [class.border-gray-300]="provider() !== 'planetscale'"
+            [class.dark:border-gray-600]="provider() !== 'planetscale'"
+            (click)="setProvider('planetscale')"
+          >
+            PlanetScale
+          </button>
         </div>
         <p class="text-xs text-gray-500 mt-1">
           @if (provider() === 'platform') {
             Shared multi-tenant database on OpenWorkers infrastructure.
-          } @else {
+          } @else if (provider() === 'postgres') {
             Connect your own PostgreSQL database (Supabase, Neon, etc.).
+          } @else {
+            Connect your PlanetScale database via OAuth.
           }
         </p>
       </fieldset>
 
-      <fieldset class="mt-4">
-        <label>Name *</label>
-        <input
-          focus
-          type="text"
-          class="input-outline w-full"
-          formControlName="name"
-          placeholder="My Database"
-          required
-        />
-        <div class="text-xs pb-2 text-red">
-          <form-error [control]="form.get('name')"></form-error>
-        </div>
-      </fieldset>
-
-      <fieldset class="mt-3">
-        <label>Description</label>
-        <textarea class="input-outline w-full" formControlName="desc" placeholder="Description"> </textarea>
-        <div class="text-xs pb-2 text-red">
-          <form-error [control]="form.get('desc')"></form-error>
-        </div>
-      </fieldset>
-
-      @if (provider() === 'postgres') {
-        <fieldset class="mt-3">
-          <label>Connection String *</label>
+      @if (provider() !== 'planetscale') {
+        <fieldset class="mt-4">
+          <label>Name *</label>
           <input
-            type="password"
-            class="input-outline w-full font-mono text-sm"
-            formControlName="connectionString"
-            placeholder="postgresql://user:password@host:5432/database"
+            focus
+            type="text"
+            class="input-outline w-full"
+            formControlName="name"
+            placeholder="My Database"
             required
           />
           <div class="text-xs pb-2 text-red">
-            <form-error [control]="form.get('connectionString')"></form-error>
+            <form-error [control]="form.get('name')"></form-error>
           </div>
-          <p class="text-xs text-gray-500">Your connection string is encrypted and stored securely.</p>
+        </fieldset>
+
+        <fieldset class="mt-3">
+          <label>Description</label>
+          <textarea class="input-outline w-full" formControlName="desc" placeholder="Description"> </textarea>
+          <div class="text-xs pb-2 text-red">
+            <form-error [control]="form.get('desc')"></form-error>
+          </div>
+        </fieldset>
+
+        @if (provider() === 'postgres') {
+          <fieldset class="mt-3">
+            <label>Connection String *</label>
+            <input
+              type="password"
+              class="input-outline w-full font-mono text-sm"
+              formControlName="connectionString"
+              placeholder="postgresql://user:password@host:5432/database"
+              required
+            />
+            <div class="text-xs pb-2 text-red">
+              <form-error [control]="form.get('connectionString')"></form-error>
+            </div>
+            <p class="text-xs text-gray-500">Your connection string is encrypted and stored securely.</p>
+          </fieldset>
+        }
+
+        <fieldset class="mt-5">
+          <button class="btn-outline" type="submit" [disabled]="form.touched && form.invalid">Create</button>
         </fieldset>
       }
 
-      <fieldset class="mt-5">
-        <button class="btn-outline" type="submit" [disabled]="form.touched && form.invalid">Create</button>
-      </fieldset>
+      @if (provider() === 'planetscale') {
+        <fieldset class="mt-5">
+          <form action="/api/v1/openid/planetscale" method="post">
+            <button class="btn-outline" type="submit">Connect with PlanetScale</button>
+          </form>
+          <p class="text-xs text-gray-500 mt-2">
+            You'll be redirected to PlanetScale to authorize access, then select your database and branch.
+          </p>
+        </fieldset>
+      }
     </form>
   </div>
 </div>

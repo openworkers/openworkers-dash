@@ -1,0 +1,161 @@
+<div class="flex justify-center">
+  <div class="card shadow-sm mt-8">
+    <h4>Connect PlanetScale Database</h4>
+
+    @if (error(); as err) {
+      <div class="mt-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
+        <p class="text-sm text-red-600 dark:text-red-400">{{ err }}</p>
+      </div>
+      <div class="mt-4">
+        <a class="btn-outline" routerLink="/database/create">Back</a>
+      </div>
+    }
+
+    @if (!error()) {
+      @if (step() === 'exchanging') {
+        <p class="mt-4 text-gray-500">Connecting to PlanetScale...</p>
+      }
+
+      @if (step() === 'org' || step() === 'database' || step() === 'branch' || step() === 'name') {
+        <fieldset class="mt-4">
+          <label>Organization *</label>
+          @if (!loading() && organizations().length === 0) {
+            <p class="text-sm text-gray-500 mt-1">
+              No organizations found. Make sure your PlanetScale account belongs to at least one organization.
+            </p>
+          } @else {
+            <div class="flex gap-2 mt-1 flex-wrap">
+              @for (org of organizations(); track org.id) {
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border text-sm transition-colors"
+                  [class.bg-blue-500]="selectedOrg() === org.name"
+                  [class.text-white]="selectedOrg() === org.name"
+                  [class.border-blue-500]="selectedOrg() === org.name"
+                  [class.border-gray-300]="selectedOrg() !== org.name"
+                  [class.dark:border-gray-600]="selectedOrg() !== org.name"
+                  (click)="selectOrg(org.name)"
+                >
+                  {{ org.name }}
+                </button>
+              }
+            </div>
+          }
+        </fieldset>
+      }
+
+      @if (step() === 'database' || step() === 'branch' || step() === 'name') {
+        <fieldset class="mt-4">
+          <label>Database *</label>
+          @if (!loading() && databases().length === 0) {
+            <p class="text-sm text-gray-500 mt-1">
+              No databases found in this organization.
+              <a class="text-blue-500" href="https://app.planetscale.com/{{ selectedOrg() }}" target="_blank" rel="noopener">
+                Create a database on PlanetScale
+              </a>
+              first, then come back and select the organization again.
+            </p>
+          } @else {
+            <div class="flex gap-2 mt-1 flex-wrap">
+              @for (db of databases(); track db.id) {
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border text-sm transition-colors"
+                  [class.bg-blue-500]="selectedDb() === db.name"
+                  [class.text-white]="selectedDb() === db.name"
+                  [class.border-blue-500]="selectedDb() === db.name"
+                  [class.border-gray-300]="selectedDb() !== db.name"
+                  [class.dark:border-gray-600]="selectedDb() !== db.name"
+                  (click)="selectDb(db.name)"
+                >
+                  {{ db.name }}
+                </button>
+              }
+            </div>
+          }
+        </fieldset>
+      }
+
+      @if (step() === 'branch' || step() === 'name') {
+        <fieldset class="mt-4">
+          <label>Branch *</label>
+          @if (!loading() && branches().length === 0) {
+            <p class="text-sm text-gray-500 mt-1">
+              No branches found for this database.
+              <a class="text-blue-500" href="https://app.planetscale.com/{{ selectedOrg() }}/{{ selectedDb() }}/branches" target="_blank" rel="noopener">
+                Create a branch on PlanetScale
+              </a>
+              first, then come back and select the database again.
+            </p>
+          } @else {
+            <div class="flex gap-2 mt-1 flex-wrap">
+              @for (branch of branches(); track branch.id) {
+                <button
+                  type="button"
+                  class="px-3 py-1.5 rounded-md border text-sm transition-colors"
+                  [class.bg-blue-500]="selectedBranch() === branch.name"
+                  [class.text-white]="selectedBranch() === branch.name"
+                  [class.border-blue-500]="selectedBranch() === branch.name"
+                  [class.border-gray-300]="selectedBranch() !== branch.name"
+                  [class.dark:border-gray-600]="selectedBranch() !== branch.name"
+                  (click)="selectBranch(branch.name)"
+                >
+                  {{ branch.name }}
+                </button>
+              }
+            </div>
+          }
+        </fieldset>
+      }
+
+      @if (step() === 'name') {
+        <form [formGroup]="form" (ngSubmit)="submitForm()">
+          <fieldset class="mt-4">
+            <label>Database name *</label>
+            <input
+              type="text"
+              class="input-outline w-full font-mono text-sm"
+              formControlName="dbName"
+              placeholder="postgres"
+              required
+            />
+            <div class="text-xs pb-2 text-red">
+              <form-error [control]="form.get('dbName')"></form-error>
+            </div>
+            <p class="text-xs text-gray-500">PostgreSQL database name on PlanetScale (usually "postgres").</p>
+          </fieldset>
+
+          <fieldset class="mt-4">
+            <label>Name *</label>
+            <input
+              type="text"
+              class="input-outline w-full"
+              formControlName="name"
+              placeholder="My PlanetScale Database"
+              required
+            />
+            <div class="text-xs pb-2 text-red">
+              <form-error [control]="form.get('name')"></form-error>
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-3">
+            <label>Description</label>
+            <textarea class="input-outline w-full" formControlName="desc" placeholder="Description"> </textarea>
+            <div class="text-xs pb-2 text-red">
+              <form-error [control]="form.get('desc')"></form-error>
+            </div>
+          </fieldset>
+
+          <fieldset class="mt-5">
+            <button class="btn-outline" type="submit" [disabled]="form.invalid || loading()">Create</button>
+          </fieldset>
+        </form>
+      }
+
+      @if (loading()) {
+        <p class="mt-4 text-sm text-gray-500">Loading...</p>
+      }
+    }
+  </div>
+</div>

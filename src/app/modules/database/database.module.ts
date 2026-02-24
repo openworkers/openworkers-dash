@@ -21,6 +21,11 @@ import { ActivatedRouteSnapshot } from '@angular/router';
         pathMatch: 'full'
       },
       {
+        path: 'connect/planetscale',
+        loadComponent: () => import('./pages/planetscale-connect/planetscale-connect.page'),
+        pathMatch: 'full'
+      },
+      {
         path: ':id',
         loadComponent: () => import('./database-root.component'),
         resolve: { database: (route: ActivatedRouteSnapshot) => inject(DatabasesService).resolve(route) },
