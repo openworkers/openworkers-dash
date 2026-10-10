@@ -1,5 +1,11 @@
 # OpenWorkers Dashboard
 
+> **Archived.** This repository is read-only.
+>
+> [openworkers-api](https://github.com/openworkers/openworkers-api) serves the
+> dashboard. Runner v1.15.0 and later send every path of the dashboard hosts to
+> that worker, so they do not serve this application.
+
 Web UI for managing OpenWorkers — create, edit, and deploy workers from your browser.
 
 ## Features
